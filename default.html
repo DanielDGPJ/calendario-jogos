@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Calendário Desportivo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { padding: 20px; }
+    .table td, .table th { vertical-align: middle; }
+    .localizacao { font-size: 0.85em; color: #6c757d; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1 class="mb-4">📅 Calendário Desportivo</h1>
+
+    <div class="row g-3 mb-4">
+      <div class="col-md-3">
+        <label for="desportoSelect" class="form-label">Desporto</label>
+        <select id="desportoSelect" class="form-select" onchange="atualizarEscaloes()"></select>
+      </div>
+      <div class="col-md-3">
+        <label for="escalaoSelect" class="form-label">Escalão</label>
+        <select id="escalaoSelect" class="form-select" onchange="atualizarSeries()"></select>
+      </div>
+      <div class="col-md-3">
+        <label for="serieSelect" class="form-label">Série</label>
+        <select id="serieSelect" class="form-select" onchange="atualizarJornadas()"></select>
+      </div>
+      <div class="col-md-3">
+        <label for="jornadaSelect" class="form-label">Jornada</label>
+        <select id="jornadaSelect" class="form-select" onchange="atualizarCalendario()"></select>
+      </div>
+      <div class="col-md-3">
+	    <label for="equipaDestaqueSelect" class="form-label">Destacar Equipa</label>
+	    <select id="equipaDestaqueSelect" class="form-select" onchange="atualizarCalendario()"></select>
+	  </div>
+    </div>
+
+  <div id="jornada"></div>
+
+  <script>
+    const dados = {
+      desportos: [
+        { id: "FTB", nome: "Futebol" }
+      ],
+      escaloes: [
+        { id: "S11", nome: "Sub-11" },
+        { id: "S12", nome: "Sub-12" }
+      ],
+      clubes: [
+        { id: "0000", nome: "ISENTO", cor: "#ffffcc" },
+		{ id: "0050", nome: "BOBADELENSE", cor: "#ffffcc" },
+		{ id: "0053", nome: "CARREGADO", cor: "#ffffcc" },
+		{ id: "0080", nome: "OEIRAS", cor: "#ffffcc" },
+		{ id: "0131", nome: "CACÉM", cor: "#ffffcc" },
+		{ id: "0137", nome: "MALVEIRA", cor: "#ffffcc" },
+		{ id: "0145", nome: "ATLÉTICO", cor: "#ffffcc" },
+		{ id: "0147", nome: "TOJAL", cor: "#ffffcc" },
+		{ id: "0155", nome: "AVEIRAS", cor: "#ffffcc" },
+		{ id: "0180", nome: "CASA PIA", cor: "#ffffcc" },
+		{ id: "0190", nome: "OLIVAIS SUL", cor: "#b2d8cc" },
+		{ id: "0191", nome: "OLIVAIS", cor: "#ffffcc" },
+		{ id: "0218", nome: "CADAVAL", cor: "#ffffcc" },
+		{ id: "0220", nome: "CULTURAL", cor: "#ffffcc" },
+		{ id: "0251", nome: "BELAS", cor: "#ffffcc" },
+		{ id: "0277", nome: "CD MAFRA", cor: "#ffffcc" },
+		{ id: "0283", nome: "DESP O. MOSCAVIDE", cor: "#ffffcc" },
+		{ id: "0315", nome: "VENDA PINHEIRO", cor: "#ffffcc" },
+		{ id: "0327", nome: "BELENENSES", cor: "#ffffcc" },
+		{ id: "0328", nome: "FUTEBOL BENFICA", cor: "#ffffcc" },
+		{ id: "0353", nome: "MONTELAVARENSES", cor: "#ffffcc" },
+		{ id: "0365", nome: "SANTA IRIA", cor: "#ffffcc" },
+		{ id: "0376", nome: "UNIDOS", cor: "#ffffcc" },
+		{ id: "0384", nome: "CIF", cor: "#ffffcc" },
+		{ id: "0389", nome: "OPERÁRIO", cor: "#ffffcc" },
+		{ id: "0391", nome: "ORIENTAL", cor: "#ffffcc" },
+		{ id: "0401", nome: "ARRUDENSE", cor: "#ffffcc" },
+		{ id: "0456", nome: "ESTORIL AC", cor: "#ffffcc" },
+		{ id: "0471", nome: "ALVERCA", cor: "#e6e6fA" },
+		{ id: "0577", nome: "CAMARATE", cor: "#ffffcc" },
+		{ id: "0641", nome: "ESTORIL PRAIA", cor: "#ffffcc" },
+		{ id: "0681", nome: "RIO MOURO", cor: "#ffffcc" },
+		{ id: "0703", nome: "PONTE FRIELAS", cor: "#ffffcc" },
+		{ id: "0710", nome: "REAL", cor: "#ffffcc" },
+		{ id: "0719", nome: "FONTAINHAS", cor: "#ffffcc" },
+		{ id: "0769", nome: "VIALONGA", cor: "#ffffcc" },
+		{ id: "0774", nome: "CASCAIS", cor: "#ffffcc" },
+		{ id: "0792", nome: "TALAIDE", cor: "#ffffcc" },
+		{ id: "0795", nome: "CARCAVELOS", cor: "#ffffcc" },
+		{ id: "0813", nome: "CASTANHEIRA", cor: "#ffffcc" },
+		{ id: "0854", nome: "MEM-MARTINS", cor: "#ffffcc" },
+		{ id: "0865", nome: "MONTE AGRAÇO", cor: "#ffffcc" },
+		{ id: "0908", nome: "MUSGUEIRA", cor: "#ffffcc" },
+		{ id: "0948", nome: "CANEÇAS", cor: "#ffffcc" },
+		{ id: "0950", nome: "NEGRAIS", cor: "#ffffcc" },
+		{ id: "0952", nome: "1º DEZEMBRO", cor: "#ffffcc" },
+		{ id: "0955", nome: "ALENQUER", cor: "#ffffcc" },
+		{ id: "0979", nome: "FRIELAS", cor: "#ffffcc" },
+		{ id: "1002", nome: "SANJOANENSE", cor: "#ffffcc" },
+		{ id: "1015", nome: "DAMAIENSE", cor: "#ffffcc" },
+		{ id: "1016", nome: "PALMENSE", cor: "#ffffcc" },
+		{ id: "1017", nome: "SACAVENENSE", cor: "#fce4ec" },
+		{ id: "1023", nome: "BENFICA", cor: "#ffffcc" },
+		{ id: "1033", nome: "OLIVAIS", cor: "#ffffcc" },
+		{ id: "1041", nome: "SINTRENSE", cor: "#ffffcc" },
+		{ id: "1077", nome: "LINDA A VELHA", cor: "#ffffcc" },
+		{ id: "1080", nome: "LOUREL", cor: "#ffffcc" },
+		{ id: "1081", nome: "LOURINHANENSE", cor: "#ffffcc" },
+		{ id: "1095", nome: "SPORTING", cor: "#ffffcc" },
+		{ id: "1114", nome: "VILA VERDE", cor: "#ffffcc" },
+		{ id: "1125", nome: "POVOENSE", cor: "#ffffcc" },
+		{ id: "1147", nome: "ALGÉS", cor: "#ffffcc" },
+		{ id: "1151", nome: "SANTA MARIA", cor: "#ffffcc" },
+		{ id: "1209", nome: "VITÓRIA", cor: "#ffffcc" },
+		{ id: "1216", nome: "ZAMBUJALENSE", cor: "#ffffcc" },
+		{ id: "1315", nome: "UD RECREIO", cor: "#ffffcc" },
+		{ id: "1669", nome: "TENENTE VALDEZ", cor: "#ffffcc" },
+		{ id: "2128", nome: "TRAJOUCE", cor: "#ffffcc" },
+		{ id: "2155", nome: "ASS TORRE", cor: "#ffffcc" },
+		{ id: "2159", nome: "IGREJA NOVA", cor: "#ffffcc" },
+		{ id: "2545", nome: "OUTURELA", cor: "#ffffcc" },
+		{ id: "2595", nome: "COL S J BRITO", cor: "#ffffcc" },
+		{ id: "2712", nome: "CATUJALENSE", cor: "#ffffcc" },
+		{ id: "2727", nome: "MALVEIRA SERRA", cor: "#ffffcc" },
+		{ id: "2903", nome: "DESPERTAR", cor: "#ffffcc" },
+		{ id: "3003", nome: "ARNEIROS", cor: "#ffffcc" },
+		{ id: "3274", nome: "LEÕES PORTO SALVO", cor: "#ffffcc" },
+		{ id: "3527", nome: "UNIÃO MERCÊS", cor: "#ffffcc" },
+		{ id: "4421", nome: "JANITAS", cor: "#ffffcc" },
+		{ id: "4887", nome: "ALTA LISBOA", cor: "#ffffcc" },
+		{ id: "5156", nome: "CF ESTRELA", cor: "#ffffcc" },
+		{ id: "5368", nome: "ACAD TORRES VEDRAS", cor: "#ffffcc" },
+		{ id: "5372", nome: "SPORT TÚLIAS", cor: "#ffffcc" },
+		{ id: "5414", nome: "BRAGADENSE", cor: "#ffffcc" },
+		{ id: "5629", nome: "COL PEDRO ARRUPE", cor: "#ffffcc" },
+		{ id: "5647", nome: "EF BELÉM", cor: "#ffffcc" },
+		{ id: "5815", nome: "ACADEMIA ALCOITÃO", cor: "#ffffcc" },
+		{ id: "5903", nome: "TOCOF", cor: "#ffffcc" },
+		{ id: "5911", nome: "AD AMADORA", cor: "#ffffcc" },
+		{ id: "5925", nome: "EFBO", cor: "#ffffcc" },
+		{ id: "5937", nome: "SALESIANOS ESTORIL", cor: "#ffffcc" },
+		{ id: "5979", nome: "FALCONS", cor: "#ffffcc" },
+		{ id: "6036", nome: "CD MARISTA", cor: "#ffffcc" },
+		{ id: "6051", nome: "3FFF", cor: "#ffffcc" },
+		{ id: "6209", nome: "CD AGUALVA", cor: "#ffffcc" },
+		{ id: "6356", nome: "BLESS ACADEMY", cor: "#ffffcc" },
+		{ id: "6439", nome: "VILAFRANQUENSE 1957", cor: "#ffffcc" },
+      ],
+      equipas: [
+		{ id: "FTB.S11.5368.01", clubeId: "5368", escalaoId: "S11", desportoId: "FTB", nome: "ACADEMIA TORRES VEDRAS" },
+		{ id: "FTB.S11.3003.01", clubeId: "3003", escalaoId: "S11", desportoId: "FTB", nome: "ARNEIROS" },
+		{ id: "FTB.S11.0277.01", clubeId: "0277", escalaoId: "S11", desportoId: "FTB", nome: "CD MAFRA 'A'" },
+		{ id: "FTB.S11.4030.01", clubeId: "4030", escalaoId: "S11", desportoId: "FTB", nome: "CERCA" },
+		{ id: "FTB.S11.0608.01", clubeId: "0608", escalaoId: "S11", desportoId: "FTB", nome: "COUTADA" },
+		{ id: "FTB.S11.1606.01", clubeId: "1606", escalaoId: "S11", desportoId: "FTB", nome: "ENCARNACENSE" },
+		{ id: "FTB.S11.0762.01", clubeId: "0762", escalaoId: "S11", desportoId: "FTB", nome: "ERICEIRENSE 'A'" },
+		{ id: "FTB.S11.4421.01", clubeId: "4421", escalaoId: "S11", desportoId: "FTB", nome: "JANITAS" },
+		{ id: "FTB.S11.1079.01", clubeId: "1079", escalaoId: "S11", desportoId: "FTB", nome: "LIVRAMENTO" },
+		{ id: "FTB.S11.1081.01", clubeId: "1081", escalaoId: "S11", desportoId: "FTB", nome: "LOURINHANENSE" },
+		{ id: "FTB.S11.0717.01", clubeId: "0717", escalaoId: "S11", desportoId: "FTB", nome: "PONTERROLENSE" },
+		{ id: "FTB.S11.0537.01", clubeId: "0537", escalaoId: "S11", desportoId: "FTB", nome: "SÃO PEDRO" },
+		{ id: "FTB.S11.0751.01", clubeId: "0751", escalaoId: "S11", desportoId: "FTB", nome: "SOBREIRENSE" },
+		{ id: "FTB.S11.1004.01", clubeId: "1004", escalaoId: "S11", desportoId: "FTB", nome: "TORREENSE" },
+		{ id: "FTB.S11.2605.01", clubeId: "2605", escalaoId: "S11", desportoId: "FTB", nome: "VF ROSÁRIO" },
+		{ id: "FTB.S11.0000.01", clubeId: "0000", escalaoId: "S11", desportoId: "FTB", nome: "ISENTO" },
+		{ id: "FTB.S11.0955.02", clubeId: "0955", escalaoId: "S11", desportoId: "FTB", nome: "ALENQUER" },
+		{ id: "FTB.S11.0471.02", clubeId: "0471", escalaoId: "S11", desportoId: "FTB", nome: "ALVERCA 'C'" },
+		{ id: "FTB.S11.0401.02", clubeId: "0401", escalaoId: "S11", desportoId: "FTB", nome: "ARRUDENSE" },
+		{ id: "FTB.S11.0155.02", clubeId: "0155", escalaoId: "S11", desportoId: "FTB", nome: "AVEIRAS" },
+		{ id: "FTB.S11.5414.02", clubeId: "5414", escalaoId: "S11", desportoId: "FTB", nome: "BRAGADENSE" },
+		{ id: "FTB.S11.0218.02", clubeId: "0218", escalaoId: "S11", desportoId: "FTB", nome: "CADAVAL" },
+		{ id: "FTB.S11.0813.02", clubeId: "0813", escalaoId: "S11", desportoId: "FTB", nome: "CASTANHEIRA" },
+		{ id: "FTB.S11.0865.02", clubeId: "0865", escalaoId: "S11", desportoId: "FTB", nome: "MONTE AGRAÇO" },
+		{ id: "FTB.S11.1125.02", clubeId: "1125", escalaoId: "S11", desportoId: "FTB", nome: "POVOENSE 'A'" },
+		{ id: "FTB.S11.0365.02", clubeId: "0365", escalaoId: "S11", desportoId: "FTB", nome: "SANTA IRIA" },
+		{ id: "FTB.S11.0147.02", clubeId: "0147", escalaoId: "S11", desportoId: "FTB", nome: "TOJAL" },
+		{ id: "FTB.S11.1315.02", clubeId: "1315", escalaoId: "S11", desportoId: "FTB", nome: "UD RECREIO" },
+		{ id: "FTB.S11.4740.02", clubeId: "4740", escalaoId: "S11", desportoId: "FTB", nome: "UNIÃO ATALAIA" },
+		{ id: "FTB.S11.0769.02", clubeId: "0769", escalaoId: "S11", desportoId: "FTB", nome: "VIALONGA" },
+		{ id: "FTB.S11.6439.02", clubeId: "6439", escalaoId: "S11", desportoId: "FTB", nome: "VILAFRANQUENSE 1957" },
+		{ id: "FTB.S11.0000.02", clubeId: "0000", escalaoId: "S11", desportoId: "FTB", nome: "ISENTO" },
+		{ id: "FTB.S11.4887.03", clubeId: "4887", escalaoId: "S11", desportoId: "FTB", nome: "ALTA LISBOA 'B'" },
+		{ id: "FTB.S11.0471.03", clubeId: "0471", escalaoId: "S11", desportoId: "FTB", nome: "ALVERCA 'A'" },
+		{ id: "FTB.S11.0050.03", clubeId: "0050", escalaoId: "S11", desportoId: "FTB", nome: "BOBADELENSE" },
+		{ id: "FTB.S11.0330.03", clubeId: "0330", escalaoId: "S11", desportoId: "FTB", nome: "BUCELENSES" },
+		{ id: "FTB.S11.0577.03", clubeId: "0577", escalaoId: "S11", desportoId: "FTB", nome: "CAMARATE" },
+		{ id: "FTB.S11.5979.03", clubeId: "5979", escalaoId: "S11", desportoId: "FTB", nome: "FALCONS" },
+		{ id: "FTB.S11.0979.03", clubeId: "0979", escalaoId: "S11", desportoId: "FTB", nome: "FRIELAS" },
+		{ id: "FTB.S11.0908.03", clubeId: "0908", escalaoId: "S11", desportoId: "FTB", nome: "MUSGUEIRA 'A'" },
+		{ id: "FTB.S11.1093.03", clubeId: "1093", escalaoId: "S11", desportoId: "FTB", nome: "PINHEIRO LOURES" },
+		{ id: "FTB.S11.0703.03", clubeId: "0703", escalaoId: "S11", desportoId: "FTB", nome: "PONTE FRIELAS 'A'" },
+		{ id: "FTB.S11.1125.03", clubeId: "1125", escalaoId: "S11", desportoId: "FTB", nome: "POVOENSE 'B'" },
+		{ id: "FTB.S11.1017.03", clubeId: "1017", escalaoId: "S11", desportoId: "FTB", nome: "SACAVENENSE 'B'" },
+		{ id: "FTB.S11.1002.03", clubeId: "1002", escalaoId: "S11", desportoId: "FTB", nome: "SANJOANENSE" },
+		{ id: "FTB.S11.5903.03", clubeId: "5903", escalaoId: "S11", desportoId: "FTB", nome: "TOCOF" },
+		{ id: "FTB.S11.1216.03", clubeId: "1216", escalaoId: "S11", desportoId: "FTB", nome: "ZAMBUJALENSE" },
+		{ id: "FTB.S11.0000.03", clubeId: "0000", escalaoId: "S11", desportoId: "FTB", nome: "ISENTO" },
+		{ id: "FTB.S11.4887.04", clubeId: "4887", escalaoId: "S11", desportoId: "FTB", nome: "ALTA LISBOA 'A'" },
+		{ id: "FTB.S11.0471.04", clubeId: "0471", escalaoId: "S11", desportoId: "FTB", nome: "ALVERCA 'B'" },
+		{ id: "FTB.S11.5629.04", clubeId: "5629", escalaoId: "S11", desportoId: "FTB", nome: "COL PEDRO ARRUPE" },
+		{ id: "FTB.S11.0283.04", clubeId: "0283", escalaoId: "S11", desportoId: "FTB", nome: "O. MOSCAVIDE" },
+		{ id: "FTB.S11.5647.04", clubeId: "5647", escalaoId: "S11", desportoId: "FTB", nome: "EF BELÉM 'A'" },
+		{ id: "FTB.S11.0908.04", clubeId: "0908", escalaoId: "S11", desportoId: "FTB", nome: "MUSGUEIRA 'B'" },
+		{ id: "FTB.S11.1033.04", clubeId: "1033", escalaoId: "S11", desportoId: "FTB", nome: "OLIVAIS" },
+		{ id: "FTB.S11.0190.04", clubeId: "0190", escalaoId: "S11", desportoId: "FTB", nome: "OLIVAIS SUL" },
+		{ id: "FTB.S11.0389.04", clubeId: "0389", escalaoId: "S11", desportoId: "FTB", nome: "OPERÁRIO" },
+		{ id: "FTB.S11.0391.04", clubeId: "0391", escalaoId: "S11", desportoId: "FTB", nome: "ORIENTAL" },
+		{ id: "FTB.S11.1016.04", clubeId: "1016", escalaoId: "S11", desportoId: "FTB", nome: "PALMENSE" },
+		{ id: "FTB.S11.0703.04", clubeId: "0703", escalaoId: "S11", desportoId: "FTB", nome: "PONTE FRIELAS 'B'" },
+		{ id: "FTB.S11.1017.04", clubeId: "1017", escalaoId: "S11", desportoId: "FTB", nome: "SACAVENENSE 'A'", highlighted: true },
+		{ id: "FTB.S11.1095.04", clubeId: "1095", escalaoId: "S11", desportoId: "FTB", nome: "SPORTING 'A'" },
+		{ id: "FTB.S11.1209.04", clubeId: "1209", escalaoId: "S11", desportoId: "FTB", nome: "VITÓRIA" },
+		{ id: "FTB.S11.0000.04", clubeId: "0000", escalaoId: "S11", desportoId: "FTB", nome: "ISENTO" },
+		{ id: "FTB.S11.0145.05", clubeId: "0145", escalaoId: "S11", desportoId: "FTB", nome: "ATLÉTICO" },
+		{ id: "FTB.S11.1023.05", clubeId: "1023", escalaoId: "S11", desportoId: "FTB", nome: "BENFICA" },
+		{ id: "FTB.S11.0948.05", clubeId: "0948", escalaoId: "S11", desportoId: "FTB", nome: "CANEÇAS 'B'" },
+		{ id: "FTB.S11.0180.05", clubeId: "0180", escalaoId: "S11", desportoId: "FTB", nome: "CASA PIA 'A'" },
+		{ id: "FTB.S11.5156.05", clubeId: "5156", escalaoId: "S11", desportoId: "FTB", nome: "CF ESTRELA 'B'" },
+		{ id: "FTB.S11.0384.05", clubeId: "0384", escalaoId: "S11", desportoId: "FTB", nome: "CIF" },
+		{ id: "FTB.S11.0220.05", clubeId: "0220", escalaoId: "S11", desportoId: "FTB", nome: "CULTURAL 'A'" },
+		{ id: "FTB.S11.1015.05", clubeId: "1015", escalaoId: "S11", desportoId: "FTB", nome: "DAMAIENSE" },
+		{ id: "FTB.S11.0436.05", clubeId: "0436", escalaoId: "S11", desportoId: "FTB", nome: "DOMINGOS SÁVIO" },
+		{ id: "FTB.S11.5647.05", clubeId: "5647", escalaoId: "S11", desportoId: "FTB", nome: "EF BELÉM 'B'" },
+		{ id: "FTB.S11.0328.05", clubeId: "0328", escalaoId: "S11", desportoId: "FTB", nome: "FUTEBOL BENFICA 'A'" },
+		{ id: "FTB.S11.1151.05", clubeId: "1151", escalaoId: "S11", desportoId: "FTB", nome: "SANTA MARIA 'B'" },
+		{ id: "FTB.S11.1095.05", clubeId: "1095", escalaoId: "S11", desportoId: "FTB", nome: "SPORTING 'B'" },
+		{ id: "FTB.S11.1669.05", clubeId: "1669", escalaoId: "S11", desportoId: "FTB", nome: "TENENTE VALDEZ" },
+		{ id: "FTB.S11.0376.05", clubeId: "0376", escalaoId: "S11", desportoId: "FTB", nome: "UNIDOS" },
+		{ id: "FTB.S11.0000.05", clubeId: "0000", escalaoId: "S11", desportoId: "FTB", nome: "ISENTO" },
+		{ id: "FTB.S11.5911.06", clubeId: "5911", escalaoId: "S11", desportoId: "FTB", nome: "AD AMADORA" },
+		{ id: "FTB.S11.0327.06", clubeId: "0327", escalaoId: "S11", desportoId: "FTB", nome: "BELENENSES 'A'" },
+		{ id: "FTB.S11.1023.06", clubeId: "1023", escalaoId: "S11", desportoId: "FTB", nome: "BENFICA" },
+		{ id: "FTB.S11.6356.06", clubeId: "6356", escalaoId: "S11", desportoId: "FTB", nome: "BLESS ACADEMY 'A'" },
+		{ id: "FTB.S11.0948.06", clubeId: "0948", escalaoId: "S11", desportoId: "FTB", nome: "CANEÇAS 'A'" },
+		{ id: "FTB.S11.0180.06", clubeId: "0180", escalaoId: "S11", desportoId: "FTB", nome: "CASA PIA 'B'" },
+		{ id: "FTB.S11.5156.06", clubeId: "5156", escalaoId: "S11", desportoId: "FTB", nome: "CF ESTRELA 'A'" },
+		{ id: "FTB.S11.2595.06", clubeId: "2595", escalaoId: "S11", desportoId: "FTB", nome: "COL S J BRITO" },
+		{ id: "FTB.S11.0220.06", clubeId: "0220", escalaoId: "S11", desportoId: "FTB", nome: "CULTURAL 'B'" },
+		{ id: "FTB.S11.5647.06", clubeId: "5647", escalaoId: "S11", desportoId: "FTB", nome: "EF BELÉM 'C'" },
+		{ id: "FTB.S11.6310.06", clubeId: "6310", escalaoId: "S11", desportoId: "FTB", nome: "ESTRELAS SJB" },
+		{ id: "FTB.S11.0328.06", clubeId: "0328", escalaoId: "S11", desportoId: "FTB", nome: "FUTEBOL BENFICA 'B'" },
+		{ id: "FTB.S11.1077.06", clubeId: "1077", escalaoId: "S11", desportoId: "FTB", nome: "LINDA A VELHA 'B'" },
+		{ id: "FTB.S11.1151.06", clubeId: "1151", escalaoId: "S11", desportoId: "FTB", nome: "SANTA MARIA 'A'" },
+		{ id: "FTB.S11.1095.06", clubeId: "1095", escalaoId: "S11", desportoId: "FTB", nome: "SPORTING 'C'" },
+		{ id: "FTB.S11.0000.06", clubeId: "0000", escalaoId: "S11", desportoId: "FTB", nome: "ISENTO" },
+		{ id: "FTB.S11.0251.07", clubeId: "0251", escalaoId: "S11", desportoId: "FTB", nome: "BELAS" },
+		{ id: "FTB.S11.6356.07", clubeId: "6356", escalaoId: "S11", desportoId: "FTB", nome: "BLESS ACADEMY 'B'" },
+		{ id: "FTB.S11.6209.07", clubeId: "6209", escalaoId: "S11", desportoId: "FTB", nome: "CD AGUALVA" },
+		{ id: "FTB.S11.0277.07", clubeId: "0277", escalaoId: "S11", desportoId: "FTB", nome: "CD MAFRA 'B'" },
+		{ id: "FTB.S11.5998.07", clubeId: "5998", escalaoId: "S11", desportoId: "FTB", nome: "CONQUISTADORES" },
+		{ id: "FTB.S11.2903.07", clubeId: "2903", escalaoId: "S11", desportoId: "FTB", nome: "DESPERTAR" },
+		{ id: "FTB.S11.6461.07", clubeId: "6461", escalaoId: "S11", desportoId: "FTB", nome: "EFSDB" },
+		{ id: "FTB.S11.0762.07", clubeId: "0762", escalaoId: "S11", desportoId: "FTB", nome: "ERICEIRENSE 'B'" },
+		{ id: "FTB.S11.0137.07", clubeId: "0137", escalaoId: "S11", desportoId: "FTB", nome: "MALVEIRA 'B'" },
+		{ id: "FTB.S11.0854.07", clubeId: "0854", escalaoId: "S11", desportoId: "FTB", nome: "MEM MARTINS 'A'" },
+		{ id: "FTB.S11.0353.07", clubeId: "0353", escalaoId: "S11", desportoId: "FTB", nome: "MONTELAVARENSES" },
+		{ id: "FTB.S11.1179.07", clubeId: "1179", escalaoId: "S11", desportoId: "FTB", nome: "MUCIFALENSE" },
+		{ id: "FTB.S11.0950.07", clubeId: "0950", escalaoId: "S11", desportoId: "FTB", nome: "NEGRAIS" },
+		{ id: "FTB.S11.0226.07", clubeId: "0226", escalaoId: "S11", desportoId: "FTB", nome: "PÊRO PINHEIRO" },
+		{ id: "FTB.S11.1041.07", clubeId: "1041", escalaoId: "S11", desportoId: "FTB", nome: "SINTRENSE 'A'" },
+		{ id: "FTB.S11.1114.07", clubeId: "1114", escalaoId: "S11", desportoId: "FTB", nome: "VILA VERDE 'A'" },
+		{ id: "FTB.S11.0000.07", clubeId: "0000", escalaoId: "S11", desportoId: "FTB", nome: "ISENTO" },
+		{ id: "FTB.S11.0952.08", clubeId: "0952", escalaoId: "S11", desportoId: "FTB", nome: "1º DEZEMBRO" },
+		{ id: "FTB.S11.0914.08", clubeId: "0914", escalaoId: "S11", desportoId: "FTB", nome: "ALGUEIRÃO" },
+		{ id: "FTB.S11.2992.08", clubeId: "2992", escalaoId: "S11", desportoId: "FTB", nome: "ARSENAL 72" },
+		{ id: "FTB.S11.6098.08", clubeId: "6098", escalaoId: "S11", desportoId: "FTB", nome: "GONÇALVINHENSE" },
+		{ id: "FTB.S11.2159.08", clubeId: "2159", escalaoId: "S11", desportoId: "FTB", nome: "IGREJA NOVA" },
+		{ id: "FTB.S11.1080.08", clubeId: "1080", escalaoId: "S11", desportoId: "FTB", nome: "LOUREL" },
+		{ id: "FTB.S11.0137.08", clubeId: "0137", escalaoId: "S11", desportoId: "FTB", nome: "MALVEIRA 'A'" },
+		{ id: "FTB.S11.0854.08", clubeId: "0854", escalaoId: "S11", desportoId: "FTB", nome: "MEM MARTINS 'B'" },
+		{ id: "FTB.S11.0797.08", clubeId: "0797", escalaoId: "S11", desportoId: "FTB", nome: "MTBA" },
+		{ id: "FTB.S11.0144.08", clubeId: "0144", escalaoId: "S11", desportoId: "FTB", nome: "PORTO SALVO 'B'" },
+		{ id: "FTB.S11.0681.08", clubeId: "0681", escalaoId: "S11", desportoId: "FTB", nome: "RIO MOURO" },
+		{ id: "FTB.S11.1041.08", clubeId: "1041", escalaoId: "S11", desportoId: "FTB", nome: "SINTRENSE 'B'" },
+		{ id: "FTB.S11.3527.08", clubeId: "3527", escalaoId: "S11", desportoId: "FTB", nome: "UNIÃO MERCÊS" },
+		{ id: "FTB.S11.0315.08", clubeId: "0315", escalaoId: "S11", desportoId: "FTB", nome: "VENDA PINHEIRO 'A'" },
+		{ id: "FTB.S11.1114.08", clubeId: "1114", escalaoId: "S11", desportoId: "FTB", nome: "VILA VERDE 'B'" },
+		{ id: "FTB.S11.0000.08", clubeId: "0000", escalaoId: "S11", desportoId: "FTB", nome: "ISENTO" },
+		{ id: "FTB.S11.5815.09", clubeId: "5815", escalaoId: "S11", desportoId: "FTB", nome: "ACADEMIA ALCOITÃO 'B'" },
+		{ id: "FTB.S11.1147.09", clubeId: "1147", escalaoId: "S11", desportoId: "FTB", nome: "ALGÉS" },
+		{ id: "FTB.S11.2155.09", clubeId: "2155", escalaoId: "S11", desportoId: "FTB", nome: "ASSOCIAÇÃO TORRE 'A'" },
+		{ id: "FTB.S11.0327.09", clubeId: "0327", escalaoId: "S11", desportoId: "FTB", nome: "BELENENSES 'B'" },
+		{ id: "FTB.S11.0795.09", clubeId: "0795", escalaoId: "S11", desportoId: "FTB", nome: "CARCAVELOS" },
+		{ id: "FTB.S11.0774.09", clubeId: "0774", escalaoId: "S11", desportoId: "FTB", nome: "CASCAIS" },
+		{ id: "FTB.S11.3529.09", clubeId: "3529", escalaoId: "S11", desportoId: "FTB", nome: "CD MARISTA" },
+		{ id: "FTB.S11.5647.09", clubeId: "5647", escalaoId: "S11", desportoId: "FTB", nome: "EF BELÉM 'E'" },
+		{ id: "FTB.S11.0456.09", clubeId: "0456", escalaoId: "S11", desportoId: "FTB", nome: "ESTORIL AC 'B'" },
+		{ id: "FTB.S11.0641.09", clubeId: "0641", escalaoId: "S11", desportoId: "FTB", nome: "ESTORIL PRAIA 'A'" },
+		{ id: "FTB.S11.0719.09", clubeId: "0719", escalaoId: "S11", desportoId: "FTB", nome: "FONTAINHAS" },
+		{ id: "FTB.S11.3274.09", clubeId: "3274", escalaoId: "S11", desportoId: "FTB", nome: "LEÕES PORTO SALVO 'A'" },
+		{ id: "FTB.S11.1077.09", clubeId: "1077", escalaoId: "S11", desportoId: "FTB", nome: "LINDA A VELHA 'A'" },
+		{ id: "FTB.S11.2545.09", clubeId: "2545", escalaoId: "S11", desportoId: "FTB", nome: "OUTURELA" },
+		{ id: "FTB.S11.5937.09", clubeId: "5937", escalaoId: "S11", desportoId: "FTB", nome: "SALESIANOS ESTORIL" },
+		{ id: "FTB.S11.5372.09", clubeId: "5372", escalaoId: "S11", desportoId: "FTB", nome: "SPORT TULIAS 'B'" },
+		{ id: "FTB.S12.0000.05", clubeId: "0000", escalaoId: "S12", desportoId: "FTB", nome: "ISENTO" },
+		{ id: "FTB.S12.0050.02", clubeId: "0050", escalaoId: "S12", desportoId: "FTB", nome: "BOBADELENSE" },
+		{ id: "FTB.S12.0053.01", clubeId: "0053", escalaoId: "S12", desportoId: "FTB", nome: "CARREGADO" },
+		{ id: "FTB.S12.0080.07", clubeId: "0080", escalaoId: "S12", desportoId: "FTB", nome: "OEIRAS" },
+		{ id: "FTB.S12.0131.05", clubeId: "0131", escalaoId: "S12", desportoId: "FTB", nome: "CACÉM" },
+		{ id: "FTB.S12.0137.06", clubeId: "0137", escalaoId: "S12", desportoId: "FTB", nome: "MALVEIRA" },
+		{ id: "FTB.S12.0145.07", clubeId: "0145", escalaoId: "S12", desportoId: "FTB", nome: "ATLÉTICO" },
+		{ id: "FTB.S12.0147.02", clubeId: "0147", escalaoId: "S12", desportoId: "FTB", nome: "TOJAL" },
+		{ id: "FTB.S12.0155.01", clubeId: "0155", escalaoId: "S12", desportoId: "FTB", nome: "AVEIRAS" },
+		{ id: "FTB.S12.0180.07", clubeId: "0180", escalaoId: "S12", desportoId: "FTB", nome: "CASA PIA" },
+		{ id: "FTB.S12.0190.04", clubeId: "0190", escalaoId: "S12", desportoId: "FTB", nome: "OLIVAIS SUL", highlighted: true },
+		{ id: "FTB.S12.0191.04", clubeId: "0191", escalaoId: "S12", desportoId: "FTB", nome: "OLIVAIS" },
+		{ id: "FTB.S12.0218.01", clubeId: "0218", escalaoId: "S12", desportoId: "FTB", nome: "CADAVAL" },
+		{ id: "FTB.S12.0220.02", clubeId: "0220", escalaoId: "S12", desportoId: "FTB", nome: "CULTURAL 'A'" },
+		{ id: "FTB.S12.0220.03", clubeId: "0220", escalaoId: "S12", desportoId: "FTB", nome: "CULTURAL 'B'" },
+		{ id: "FTB.S12.0251.05", clubeId: "0251", escalaoId: "S12", desportoId: "FTB", nome: "BELAS" },
+		{ id: "FTB.S12.0277.06", clubeId: "0277", escalaoId: "S12", desportoId: "FTB", nome: "CD MAFRA 'A'" },
+		{ id: "FTB.S12.0277.08", clubeId: "0277", escalaoId: "S12", desportoId: "FTB", nome: "CD MAFRA 'B'" },
+		{ id: "FTB.S12.0283.04", clubeId: "0283", escalaoId: "S12", desportoId: "FTB", nome: "DESP O. MOSCAVIDE" },
+		{ id: "FTB.S12.0315.06", clubeId: "0315", escalaoId: "S12", desportoId: "FTB", nome: "VENDA PINHEIRO" },
+		{ id: "FTB.S12.0327.05", clubeId: "0327", escalaoId: "S12", desportoId: "FTB", nome: "BELENENSES 'A'" },
+		{ id: "FTB.S12.0327.07", clubeId: "0327", escalaoId: "S12", desportoId: "FTB", nome: "BELENENSES 'B'" },
+		{ id: "FTB.S12.0328.07", clubeId: "0328", escalaoId: "S12", desportoId: "FTB", nome: "FUTEBOL BENFICA" },
+		{ id: "FTB.S12.0353.06", clubeId: "0353", escalaoId: "S12", desportoId: "FTB", nome: "MONTELAVARENSES" },
+		{ id: "FTB.S12.0365.01", clubeId: "0365", escalaoId: "S12", desportoId: "FTB", nome: "SANTA IRIA 'A'" },
+		{ id: "FTB.S12.0365.03", clubeId: "0365", escalaoId: "S12", desportoId: "FTB", nome: "SANTA IRIA 'B'" },
+		{ id: "FTB.S12.0376.04", clubeId: "0376", escalaoId: "S12", desportoId: "FTB", nome: "UNIDOS" },
+		{ id: "FTB.S12.0384.04", clubeId: "0384", escalaoId: "S12", desportoId: "FTB", nome: "CIF" },
+		{ id: "FTB.S12.0391.03", clubeId: "0391", escalaoId: "S12", desportoId: "FTB", nome: "ORIENTAL 'B'" },
+		{ id: "FTB.S12.0391.04", clubeId: "0391", escalaoId: "S12", desportoId: "FTB", nome: "ORIENTAL 'A'" },
+		{ id: "FTB.S12.0401.01", clubeId: "0401", escalaoId: "S12", desportoId: "FTB", nome: "ARRUDENSE" },
+		{ id: "FTB.S12.0456.07", clubeId: "0456", escalaoId: "S12", desportoId: "FTB", nome: "ESTORIL AC 'B'" },
+		{ id: "FTB.S12.0456.08", clubeId: "0456", escalaoId: "S12", desportoId: "FTB", nome: "ESTORIL AC 'A'" },
+		{ id: "FTB.S12.0471.01", clubeId: "0471", escalaoId: "S12", desportoId: "FTB", nome: "ALVERCA 'A'" },
+		{ id: "FTB.S12.0471.02", clubeId: "0471", escalaoId: "S12", desportoId: "FTB", nome: "ALVERCA 'B'", highlighted: true },
+		{ id: "FTB.S12.0577.03", clubeId: "0577", escalaoId: "S12", desportoId: "FTB", nome: "CAMARATE" },
+		{ id: "FTB.S12.0641.05", clubeId: "0641", escalaoId: "S12", desportoId: "FTB", nome: "ESTORIL PRAIA 'B'" },
+		{ id: "FTB.S12.0641.08", clubeId: "0641", escalaoId: "S12", desportoId: "FTB", nome: "ESTORIL PRAIA 'A'" },
+		{ id: "FTB.S12.0681.06", clubeId: "0681", escalaoId: "S12", desportoId: "FTB", nome: "RIO MOURO" },
+		{ id: "FTB.S12.0703.02", clubeId: "0703", escalaoId: "S12", desportoId: "FTB", nome: "PONTE FRIELAS 'A'" },
+		{ id: "FTB.S12.0703.04", clubeId: "0703", escalaoId: "S12", desportoId: "FTB", nome: "PONTE FRIELAS 'B'" },
+		{ id: "FTB.S12.0719.08", clubeId: "0719", escalaoId: "S12", desportoId: "FTB", nome: "FONTAINHAS" },
+		{ id: "FTB.S12.0769.01", clubeId: "0769", escalaoId: "S12", desportoId: "FTB", nome: "VIALONGA" },
+		{ id: "FTB.S12.0774.08", clubeId: "0774", escalaoId: "S12", desportoId: "FTB", nome: "CASCAIS" },
+		{ id: "FTB.S12.0792.08", clubeId: "0792", escalaoId: "S12", desportoId: "FTB", nome: "TALAIDE" },
+		{ id: "FTB.S12.0795.08", clubeId: "0795", escalaoId: "S12", desportoId: "FTB", nome: "CARCAVELOS" },
+		{ id: "FTB.S12.0813.01", clubeId: "0813", escalaoId: "S12", desportoId: "FTB", nome: "CASTANHEIRA" },
+		{ id: "FTB.S12.0854.05", clubeId: "0854", escalaoId: "S12", desportoId: "FTB", nome: "MEM-MARTINS 'B'" },
+		{ id: "FTB.S12.0854.06", clubeId: "0854", escalaoId: "S12", desportoId: "FTB", nome: "MEM-MARTINS 'A'" },
+		{ id: "FTB.S12.0865.01", clubeId: "0865", escalaoId: "S12", desportoId: "FTB", nome: "MONTE AGRAÇO" },
+		{ id: "FTB.S12.0908.03", clubeId: "0908", escalaoId: "S12", desportoId: "FTB", nome: "MUSGUEIRA 'B'" },
+		{ id: "FTB.S12.0908.04", clubeId: "0908", escalaoId: "S12", desportoId: "FTB", nome: "MUSGUEIRA 'A'" },
+		{ id: "FTB.S12.0948.02", clubeId: "0948", escalaoId: "S12", desportoId: "FTB", nome: "CANEÇAS 'A'" },
+		{ id: "FTB.S12.0948.03", clubeId: "0948", escalaoId: "S12", desportoId: "FTB", nome: "CANEÇAS 'B'" },
+		{ id: "FTB.S12.0950.06", clubeId: "0950", escalaoId: "S12", desportoId: "FTB", nome: "NEGRAIS" },
+		{ id: "FTB.S12.0952.06", clubeId: "0952", escalaoId: "S12", desportoId: "FTB", nome: "1º DEZEMBRO" },
+		{ id: "FTB.S12.0955.01", clubeId: "0955", escalaoId: "S12", desportoId: "FTB", nome: "ALENQUER" },
+		{ id: "FTB.S12.0979.02", clubeId: "0979", escalaoId: "S12", desportoId: "FTB", nome: "FRIELAS" },
+		{ id: "FTB.S12.1002.02", clubeId: "1002", escalaoId: "S12", desportoId: "FTB", nome: "SANJOANENSE" },
+		{ id: "FTB.S12.1015.05", clubeId: "1015", escalaoId: "S12", desportoId: "FTB", nome: "DAMAIENSE 'A'" },
+		{ id: "FTB.S12.1015.07", clubeId: "1015", escalaoId: "S12", desportoId: "FTB", nome: "DAMAIENSE 'B'" },
+		{ id: "FTB.S12.1016.03", clubeId: "1016", escalaoId: "S12", desportoId: "FTB", nome: "PALMENSE 'A'" },
+		{ id: "FTB.S12.1016.04", clubeId: "1016", escalaoId: "S12", desportoId: "FTB", nome: "PALMENSE 'B'" },
+		{ id: "FTB.S12.1017.02", clubeId: "1017", escalaoId: "S12", desportoId: "FTB", nome: "SACAVENENSE 'A'" },
+		{ id: "FTB.S12.1017.03", clubeId: "1017", escalaoId: "S12", desportoId: "FTB", nome: "SACAVENENSE 'B'" },
+		{ id: "FTB.S12.1023.07", clubeId: "1023", escalaoId: "S12", desportoId: "FTB", nome: "BENFICA" },
+		{ id: "FTB.S12.1033.03", clubeId: "1033", escalaoId: "S12", desportoId: "FTB", nome: "OLIVAIS 'A'" },
+		{ id: "FTB.S12.1033.04", clubeId: "1033", escalaoId: "S12", desportoId: "FTB", nome: "OLIVAIS 'B'" },
+		{ id: "FTB.S12.1041.06", clubeId: "1041", escalaoId: "S12", desportoId: "FTB", nome: "SINTRENSE" },
+		{ id: "FTB.S12.1080.06", clubeId: "1080", escalaoId: "S12", desportoId: "FTB", nome: "LOUREL" },
+		{ id: "FTB.S12.1081.01", clubeId: "1081", escalaoId: "S12", desportoId: "FTB", nome: "LOURINHANENSE" },
+		{ id: "FTB.S12.1095.02", clubeId: "1095", escalaoId: "S12", desportoId: "FTB", nome: "SPORTING 'B'" },
+		{ id: "FTB.S12.1095.03", clubeId: "1095", escalaoId: "S12", desportoId: "FTB", nome: "SPORTING 'C'" },
+		{ id: "FTB.S12.1095.04", clubeId: "1095", escalaoId: "S12", desportoId: "FTB", nome: "SPORTING 'A'" },
+		{ id: "FTB.S12.1114.05", clubeId: "1114", escalaoId: "S12", desportoId: "FTB", nome: "VILA VERDE 'B'" },
+		{ id: "FTB.S12.1114.06", clubeId: "1114", escalaoId: "S12", desportoId: "FTB", nome: "VILA VERDE 'A'" },
+		{ id: "FTB.S12.1125.02", clubeId: "1125", escalaoId: "S12", desportoId: "FTB", nome: "POVOENSE 'B'" },
+		{ id: "FTB.S12.1125.03", clubeId: "1125", escalaoId: "S12", desportoId: "FTB", nome: "POVOENSE 'A'" },
+		{ id: "FTB.S12.1147.07", clubeId: "1147", escalaoId: "S12", desportoId: "FTB", nome: "ALGÉS 'A'" },
+		{ id: "FTB.S12.1147.08", clubeId: "1147", escalaoId: "S12", desportoId: "FTB", nome: "ALGÉS 'B'" },
+		{ id: "FTB.S12.1151.02", clubeId: "1151", escalaoId: "S12", desportoId: "FTB", nome: "SANTA MARIA 'A'" },
+		{ id: "FTB.S12.1151.03", clubeId: "1151", escalaoId: "S12", desportoId: "FTB", nome: "SANTA MARIA 'B'" },
+		{ id: "FTB.S12.1209.04", clubeId: "1209", escalaoId: "S12", desportoId: "FTB", nome: "VITÓRIA" },
+		{ id: "FTB.S12.1216.02", clubeId: "1216", escalaoId: "S12", desportoId: "FTB", nome: "ZAMBUJALENSE" },
+		{ id: "FTB.S12.1315.01", clubeId: "1315", escalaoId: "S12", desportoId: "FTB", nome: "UD RECREIO" },
+		{ id: "FTB.S12.1669.03", clubeId: "1669", escalaoId: "S12", desportoId: "FTB", nome: "TENENTE VALDEZ" },
+		{ id: "FTB.S12.2128.08", clubeId: "2128", escalaoId: "S12", desportoId: "FTB", nome: "TRAJOUCE" },
+		{ id: "FTB.S12.2155.05", clubeId: "2155", escalaoId: "S12", desportoId: "FTB", nome: "ASS TORRE 'B'" },
+		{ id: "FTB.S12.2155.08", clubeId: "2155", escalaoId: "S12", desportoId: "FTB", nome: "ASS TORRE 'A'" },
+		{ id: "FTB.S12.2159.06", clubeId: "2159", escalaoId: "S12", desportoId: "FTB", nome: "IGREJA NOVA" },
+		{ id: "FTB.S12.2545.07", clubeId: "2545", escalaoId: "S12", desportoId: "FTB", nome: "OUTURELA" },
+		{ id: "FTB.S12.2595.04", clubeId: "2595", escalaoId: "S12", desportoId: "FTB", nome: "COL S J BRITO" },
+		{ id: "FTB.S12.2712.02", clubeId: "2712", escalaoId: "S12", desportoId: "FTB", nome: "CATUJALENSE" },
+		{ id: "FTB.S12.2727.05", clubeId: "2727", escalaoId: "S12", desportoId: "FTB", nome: "MALVEIRA SERRA 'B'" },
+		{ id: "FTB.S12.2727.07", clubeId: "2727", escalaoId: "S12", desportoId: "FTB", nome: "MALVEIRA SERRA 'C'" },
+		{ id: "FTB.S12.2727.08", clubeId: "2727", escalaoId: "S12", desportoId: "FTB", nome: "MALVEIRA SERRA 'A'" },
+		{ id: "FTB.S12.2903.06", clubeId: "2903", escalaoId: "S12", desportoId: "FTB", nome: "DESPERTAR" },
+		{ id: "FTB.S12.3003.01", clubeId: "3003", escalaoId: "S12", desportoId: "FTB", nome: "ARNEIROS" },
+		{ id: "FTB.S12.3274.07", clubeId: "3274", escalaoId: "S12", desportoId: "FTB", nome: "LEÕES PORTO SALVO" },
+		{ id: "FTB.S12.3527.06", clubeId: "3527", escalaoId: "S12", desportoId: "FTB", nome: "UNIÃO MERCÊS" },
+		{ id: "FTB.S12.4421.01", clubeId: "4421", escalaoId: "S12", desportoId: "FTB", nome: "JANITAS" },
+		{ id: "FTB.S12.4887.03", clubeId: "4887", escalaoId: "S12", desportoId: "FTB", nome: "ALTA LISBOA 'A'" },
+		{ id: "FTB.S12.4887.04", clubeId: "4887", escalaoId: "S12", desportoId: "FTB", nome: "ALTA LISBOA 'B'" },
+		{ id: "FTB.S12.5156.05", clubeId: "5156", escalaoId: "S12", desportoId: "FTB", nome: "CF ESTRELA" },
+		{ id: "FTB.S12.5368.06", clubeId: "5368", escalaoId: "S12", desportoId: "FTB", nome: "ACAD TORRES VEDRAS" },
+		{ id: "FTB.S12.5372.08", clubeId: "5372", escalaoId: "S12", desportoId: "FTB", nome: "SPORT TÚLIAS" },
+		{ id: "FTB.S12.5414.01", clubeId: "5414", escalaoId: "S12", desportoId: "FTB", nome: "BRAGADENSE" },
+		{ id: "FTB.S12.5629.04", clubeId: "5629", escalaoId: "S12", desportoId: "FTB", nome: "COL PEDRO ARRUPE" },
+		{ id: "FTB.S12.5647.03", clubeId: "5647", escalaoId: "S12", desportoId: "FTB", nome: "EF BELÉM 'E'" },
+		{ id: "FTB.S12.5647.04", clubeId: "5647", escalaoId: "S12", desportoId: "FTB", nome: "EF BELÉM 'D'" },
+		{ id: "FTB.S12.5647.05", clubeId: "5647", escalaoId: "S12", desportoId: "FTB", nome: "EF BELÉM 'A'" },
+		{ id: "FTB.S12.5647.07", clubeId: "5647", escalaoId: "S12", desportoId: "FTB", nome: "EF BELÉM 'B'" },
+		{ id: "FTB.S12.5647.08", clubeId: "5647", escalaoId: "S12", desportoId: "FTB", nome: "EF BELÉM 'C'" },
+		{ id: "FTB.S12.5815.08", clubeId: "5815", escalaoId: "S12", desportoId: "FTB", nome: "ACADEMIA ALCOITÃO" },
+		{ id: "FTB.S12.5903.02", clubeId: "5903", escalaoId: "S12", desportoId: "FTB", nome: "TOCOF" },
+		{ id: "FTB.S12.5911.05", clubeId: "5911", escalaoId: "S12", desportoId: "FTB", nome: "AD AMADORA" },
+		{ id: "FTB.S12.5925.07", clubeId: "5925", escalaoId: "S12", desportoId: "FTB", nome: "EFBO" },
+		{ id: "FTB.S12.5937.08", clubeId: "5937", escalaoId: "S12", desportoId: "FTB", nome: "SALESIANOS ESTORIL" },
+		{ id: "FTB.S12.5979.02", clubeId: "5979", escalaoId: "S12", desportoId: "FTB", nome: "FALCONS" },
+		{ id: "FTB.S12.6036.08", clubeId: "6036", escalaoId: "S12", desportoId: "FTB", nome: "CD MARISTA" },
+		{ id: "FTB.S12.6051.03", clubeId: "6051", escalaoId: "S12", desportoId: "FTB", nome: "3FFF" },
+		{ id: "FTB.S12.6209.05", clubeId: "6209", escalaoId: "S12", desportoId: "FTB", nome: "CD AGUALVA" },
+		{ id: "FTB.S12.6356.05", clubeId: "6356", escalaoId: "S12", desportoId: "FTB", nome: "BLESS ACADEMY 'B'" },
+		{ id: "FTB.S12.6356.06", clubeId: "6356", escalaoId: "S12", desportoId: "FTB", nome: "BLESS ACADEMY 'A'" },
+		{ id: "FTB.S12.6439.01", clubeId: "6439", escalaoId: "S12", desportoId: "FTB", nome: "VILAFRANQUENSE 1957" },
+		{ id: "FTB.S13.1077.07", clubeId: "1077", escalaoId: "S13", desportoId: "FTB", nome: "LINDA A VELHA" },
+		{ id: "TFB.S12.0710.05", clubeId: "0710", escalaoId: "S12", desportoId: "TFB", nome: "REAL" },
+      ],
+      localizacoes: [
+		{ id: "0023", clubeId:["0053"], nome: "CAMPO JOSÉ LACERDA PINTO BARREIROS", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "64"}, georef:{latitude:"39.022501", longitude: "-8.978878", link: "https://maps.app.goo.gl/9FcX4z1F8tq3V5sb8"} },
+		{ id: "0085", clubeId:["5156"], nome: "CAMPO Nº 2 ESTÁDIO JOSÉ GOMES", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "45"}, georef:{latitude:"38.752063", longitude: "-9.226883", link: "https://maps.app.goo.gl/kMhLxMq1zMDcoBw1A"} },
+		{ id: "0120", clubeId:["0131"], nome: "CAMPO JOAQUIM VIEIRA, Nº 1", relvado: "Relvado Sintético", dimensoes: {comprimento: "105", largura: "68"}, georef:{latitude:"38.774381", longitude: "-9.317764", link: "https://maps.app.goo.gl/riEdDpstvicCRP8S9"} },
+		{ id: "0131", clubeId:["0703"], nome: "CAMPO BONJARDIM", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "63"}, georef:{latitude:"38.816855", longitude: "-9.152803", link: "https://maps.app.goo.gl/XqFKaVib98d1QoyJ7"} },
+		{ id: "0151", clubeId:["1041"], nome: "CAMPO DO SINTRENSE, Nº 2", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "55"}, georef:{latitude:"38.798499", longitude: "-9.376537", link: "https://maps.app.goo.gl/rJ5kRtkR6FguPm4h6"} },
+		{ id: "0178", clubeId:["0952"], nome: "CAMPO CONDE SUCENA", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "64"}, georef:{latitude:"38.788284", longitude: "-9.374684", link: "https://maps.app.goo.gl/i1qf66W4uzHzj4wx5"} },
+		{ id: "0222", clubeId:["0283"], nome: "ESTÁDIO ALFREDO MARQUES AUGUSTO", relvado: "Relvado Sintético", dimensoes: {comprimento: "102", largura: "68"}, georef:{latitude:"38.774078", longitude: "-9.102491", link: "https://maps.app.goo.gl/fzHcct7Szw1gdcKh9"} },
+		{ id: "0262", clubeId:["0769"], nome: "PARQUE JOGOS GD VIALONGA", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "45"}, georef:{latitude:"38.874314", longitude: "-9.077705", link: "https://maps.app.goo.gl/wTjkdtuYFQcLhhxLA"} },
+		{ id: "0364", clubeId:["0180"], nome: "EST. PINA MANIQUE 3 (C. PROF JOSÉ CRUZ FILIPE)", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "64"}, georef:{latitude:"38.737561", longitude: "-9.203818", link: "https://maps.app.goo.gl/c1K4GavfvkkkCVdH7"} },
+		{ id: "1323", clubeId:["0813"], nome: "CAMPO SÃO JOÃO", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "61"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1335", clubeId:["0328"], nome: "CAMPO Nº2 ESTÁDIO FRANCISCO LAZARO", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "45"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1338", clubeId:["1023"], nome: "CAMPO PUPILOS EXERCITO-ALTO MOINHOS", relvado: "Relvado Sintético", dimensoes: {comprimento: "91", largura: "60"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1363", clubeId:["1080"], nome: "COMPLEXO DESPORTIVO SARGENTO ARMENIO", relvado: "Relvado Sintético", dimensoes: {comprimento: "99", largura: "58"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1370", clubeId:["1015"], nome: "PQ DESP EUGÉNIA E JOAQUIM CANNAS DA SILVA", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "64"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1373", clubeId:["0145"], nome: "CAMPO MANUEL CANDEIAS - ESTÁDIO TAPADINHA", relvado: "Relvado Sintético", dimensoes: {comprimento: "93", largura: "53"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1482", clubeId:["0577"], nome: "CAMPO QUINTA BARROS", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "52"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1483", clubeId:["5911"], nome: "COMPLEXO DESPORTIVO MONTE GALEGA", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "64"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1511", clubeId:["1033"], nome: "CAMPO BRANCA LUCAS", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "65"}, georef:{latitude:"38.762228", longitude: "-9.107908", link: "https://maps.app.goo.gl/YGLZ1JFpZEAdQFLX9"} },
+		{ id: "1534", clubeId:["0327"], nome: "CAMPO MAJOR BAPTISTA SILVA", relvado: "Relvado Sintético", dimensoes: {comprimento: "105", largura: "68"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1641", clubeId:["5647"], nome: "CAMPO Nº 3 RESTELO", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "45"}, georef:{latitude:"38.702241", longitude: "-9.208749", link: "https://maps.app.goo.gl/cRHKn8tWaVTzgNuz6"} },
+		{ id: "1642", clubeId:["1016"], nome: "CAMPO JOSÉ RAMOS", relvado: "Relvado Sintético", dimensoes: {comprimento: "96", largura: "54"}, georef:{latitude:"38.748913", longitude: "-9.170286", link: "https://maps.app.goo.gl/cSXbNZKbKRUeeMuD8"} },
+		{ id: "1649", clubeId:["0080"], nome: "ESTÁDIO MUNICIPAL OEIRAS - MÁRIO WILSON", relvado: "Relvado Sintético", dimensoes: {comprimento: "105", largura: "68"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1732", clubeId:["0719"], nome: "CAMPO ABEL VIEGAS LOPES ( FONTAINHAS )", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "64"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1753", clubeId:["0376"], nome: "CAMPO Bº PADRE CRUZ (UNIDOS)", relvado: "Relvado Sintético", dimensoes: {comprimento: "94", largura: "56"}, georef:{latitude:"38.770323", longitude: "-9.187531", link: "https://maps.app.goo.gl/YyNcfSJ9ewSFiugq8"} },
+		{ id: "1778", clubeId:["2128"], nome: "CAMPO TRAJOUCE", relvado: "Relvado Sintético", dimensoes: {comprimento: "101", largura: "65"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1782", clubeId:["4421"], nome: "CAMPO DA TAPADINHA | FONTE GRADA | TVD", relvado: "Relvado Sintético", dimensoes: {comprimento: "96", largura: "55"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1829", clubeId:["1151"], nome: "COMPLEXO LÚDICO UNIÃO D. R. SANTA MARIA", relvado: "Relvado Sintético", dimensoes: {comprimento: "94", largura: "60"}, georef:{latitude:"38.775548", longitude: "-9.195182", link: "https://maps.app.goo.gl/p8JQfmHLEBooq7Qw6"} },
+		{ id: "1830", clubeId:["0277"], nome: "CAMPO MARIO SILVEIRA N. 2", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "45"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1836", clubeId:["0854"], nome: "CAMPO QUINTA DO RECANTO", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "64"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1849", clubeId:["0147"], nome: "CAMPO MEIA LARANJA", relvado: "Relvado Sintético", dimensoes: {comprimento: "91", largura: "56"}, georef:{latitude:"38.857094", longitude: "-9.140204", link: "https://maps.app.goo.gl/ZB6a8GMWfQUNDwf57"} },
+		{ id: "1850", clubeId:["0155"], nome: "CAMPO PRIMEIRO DE ABRIL", relvado: "Relvado Sintético", dimensoes: {comprimento: "94", largura: "55"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1853", clubeId:["0190"], nome: "CAMPO DO OLIVAIS SUL", relvado: "Relvado Sintético", dimensoes: {comprimento: "101", largura: "68"}, georef:{latitude:"38.763889", longitude: "-9.126543", link: "https://maps.app.goo.gl/1piDpW3nB1F7KRii6"} },
+		{ id: "1855", clubeId:["1669"], nome: "PARQUE JOGOS CER TENENTE VALDEZ", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "60"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1857", clubeId:["0218"], nome: "CAMPO JULIO PEREIRA SILVA", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "60"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1858", clubeId:["3527"], nome: "CP MUN CAMILO NEGRÃO | TAPADA DAS MERCES", relvado: "Relvado Sintético", dimensoes: {comprimento: "93", largura: "53"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1861", clubeId:["0401"], nome: "CAMPO MUNICIPAL ARRUDA DOS VINHOS", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "64"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1862", clubeId:["2595"], nome: "CAMPO COLEGIO SAO JOAO BRITO - SINTETICO", relvado: "Relvado Sintético", dimensoes: {comprimento: "95", largura: "45"}, georef:{latitude:"38.773109", longitude: "-9.158756", link: "https://maps.app.goo.gl/o3k8j7SXGuaN1MC36"} },
+		{ id: "1869", clubeId:["0251,6209"], nome: "CAMPO ENG LEONARDO CARVALHO", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "64"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1872", clubeId:["0681"], nome: "COMPLEXO DESPORTIVO DE RIO DE MOURO", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "49"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1875", clubeId:["5372"], nome: "COMPLEXO DESPORTIVO DA ABÓBODA", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "64"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1878", clubeId:["0865"], nome: "CAMPO MUN SOBRAL MONTE AGRACO", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "60"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1882", clubeId:["2545"], nome: "PARQUE DESP CARLOS QUEIROZ", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "45"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1883", clubeId:["0948"], nome: "CAMPO DA LAPA", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "56"}, georef:{latitude:"38.810801", longitude: "-9.228104", link: "https://maps.app.goo.gl/MRkQ6nc7ajNAeZ3i8"} },
+		{ id: "1886", clubeId:["1002"], nome: "CAMPO DO SC SANJOANENSE", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "49"}, georef:{latitude:"38.821946", longitude: "-9.094710", link: "https://maps.app.goo.gl/FJo12mFrxRvPBHK46"} },
+		{ id: "1891", clubeId:["1147"], nome: "CAMPO DR SIMOES ALVES", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "54"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1892", clubeId:["2155"], nome: "CAMPO ALFREDO PINHEIRO-BºTORRE", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "56"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1894", clubeId:["1209"], nome: "CAMPO DO VITORIA", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "60"}, georef:{latitude:"38.734653", longitude: "-9.119793", link: "https://maps.app.goo.gl/ZkHapw8FpzHAtwaa9"} },
+		{ id: "1896", clubeId:["2159"], nome: "CAMPO DOMINGOS PINTO JORGE - IGREJA NOVA", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "45"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1912", clubeId:["0137"], nome: "CAMPO JOSE ALEGRE (Nº2 MALVEIRA)", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "54"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1917", clubeId:["0979,5903"], nome: "CAMPO DA CORREDOURA", relvado: "Relvado Sintético", dimensoes: {comprimento: "99", largura: "55"}, georef:{latitude:"38.824191", longitude: "-9.144636", link: "https://maps.app.goo.gl/mKzDiZ6uBBYMPWRw7"} },
+		{ id: "1918", clubeId:["2727"], nome: "CAMPO 22 DE MARÇO", relvado: "Relvado Sintético", dimensoes: {comprimento: "95", largura: "55"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1919", clubeId:["0774"], nome: "EST MUNIC DRAMATICO CASCAIS", relvado: "Relvado Sintético", dimensoes: {comprimento: "98", largura: "68"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1921", clubeId:["0950"], nome: "CAMPO DO NEGRAIS", relvado: "Relvado Sintético", dimensoes: {comprimento: "98", largura: "64"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1922", clubeId:["3003"], nome: "CAMPO 1º MAIO | ARNEIROS", relvado: "Relvado Sintético", dimensoes: {comprimento: "92", largura: "52"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1923", clubeId:["6051"], nome: "CAMPO PARQUE JOGOS S J BRITO", relvado: "Relvado Sintético", dimensoes: {comprimento: "101", largura: "66"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1942", clubeId:["1081"], nome: "ESTADIO MUNICIPAL LOURINHA Nº 2", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "64"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1955", clubeId:["0353"], nome: "CAMPO DO VIMAL - MONTELAVAR", relvado: "Relvado Sintético", dimensoes: {comprimento: "92", largura: "58"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1956", clubeId:["1114"], nome: "CAMPO AFONSO ARAUJO SOMMER", relvado: "Relvado Sintético", dimensoes: {comprimento: "96", largura: "60"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1958", clubeId:["0315"], nome: "ESTADIO MUNICIPAL VENDA DO PINHEIRO", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "64"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1967", clubeId:["6356"], nome: "CAMPO DO OUTEIRO | CARENQUE", relvado: "Relvado Sintético", dimensoes: {comprimento: "105", largura: "67"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1981", clubeId:["0792,5925"], nome: "CAMPO FERNANDO SABIDO", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "45"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "1993", clubeId:["0456"], nome: "CAMPO ESTORIL AC-SINTET.-R VALE STA.RITA", relvado: "Relvado Sintético", dimensoes: {comprimento: "50", largura: "25"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "2009", clubeId:["0191,1095"], nome: "CAMPO FERNANDO PERFEITO", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "45"}, georef:{latitude:"38.778211", longitude: "-9.121387", link: "https://maps.app.goo.gl/8DfAuUdCGCiHDLsv6"} },
+		{ id: "2022", clubeId:["6439"], nome: "CAMPO DO CEVADEIRO Nº 2", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "51"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "2045", clubeId:["1095"], nome: "ESTADIO UNIVERSITARIO LISBOA - CAMPO 6", relvado: "Relvado Sintético", dimensoes: {comprimento: "101", largura: "71"}, georef:{latitude:"38.756533", longitude: "-9.164103", link: "https://maps.app.goo.gl/A9LtahzbN4eaWqCH7"} },
+		{ id: "2068", clubeId:["0795"], nome: "CAMPO QUINTA NOVA, Nº 2-SINTETICO", relvado: "Relvado Sintético", dimensoes: {comprimento: "60", largura: "40"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "2070", clubeId:["5368"], nome: "CAMPO JOSÉ ANTÓNIO VIEIRA MIRANDA", relvado: "Relvado Sintético", dimensoes: {comprimento: "94", largura: "56"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "2142", clubeId:["1315"], nome: "CAMPO ARNEIROS", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "60"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "2162", clubeId:["0955"], nome: "CAMPO FERNANDO MANUEL PEREIRA (ALENQUER)", relvado: "Relvado Sintético", dimensoes: {comprimento: "99", largura: "60"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "2199", clubeId:["0641"], nome: "CENT TREI FORM DESP N3-SINTETICO", relvado: "Relvado Sintético", dimensoes: {comprimento: "58", largura: "42"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "2212", clubeId:["0365"], nome: "CAMPO ATLETICO REYNOLDS", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "56"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "2214", clubeId:["0050"], nome: "PARQUE DESP. MUNIC. BOBADELA", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "57"}, georef:{latitude:"38.804748", longitude: "-9.100939", link: "https://maps.app.goo.gl/81UFhKmdqGFvHrjH8"} },
+		{ id: "2221", clubeId:["1216"], nome: "CAMPO CONDE MENDIA - ZAMBUJALENSE", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "64"}, georef:{latitude:"38.870093", longitude: "-9.121151", link: "https://maps.app.goo.gl/LThZAbSPSYBeE4Tb6"} },
+		{ id: "2229", clubeId:["2712,5979"], nome: "CAMPO 1º MAIO | CATUJAL", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "54"}, georef:{latitude:"38.815483", longitude: "-9.117773", link: "https://maps.app.goo.gl/7VvVYgBCLmwWNjfe7"} },
+		{ id: "2231", clubeId:["1017"], nome: "COMPLEXO DESPORTIVO ELIAS PEREIRA - CAMPO Nº 2", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "45"}, georef:{latitude:"38.789721", longitude: "-9.103482", link: "https://maps.app.goo.gl/ksqgnCywh6zAeuob7"} },
+		{ id: "2716", clubeId:["1125"], nome: "COMP. DESP. QTª PIEDADE CAMPO Nº 1", relvado: "Relvado Sintético", dimensoes: {comprimento: "104", largura: "64"}, georef:{latitude:"38.864548", longitude: "-9.070868", link: "https://maps.app.goo.gl/5y2rbN3ghX7TqxcD7"} },
+		{ id: "3053", clubeId:["1077"], nome: "CAMPO LINDA VELHA Nº 2 SINTETICO", relvado: "Relvado Sintético", dimensoes: {comprimento: "", largura: ""}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "3054", clubeId:["0710"], nome: "CAMPO Nº 3 REAL SPORT CLUBE", relvado: "Relvado Sintético", dimensoes: {comprimento: "", largura: ""}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "3348", clubeId:["0908,4887"], nome: "COMPLEXO DESPORTIVO ALTO LUMIAR CAMPO 1", relvado: "Relvado Sintético", dimensoes: {comprimento: "105", largura: "65"}, georef:{latitude:"38.774931", longitude: "-9.145449", link: "https://maps.app.goo.gl/UQ1rsJ71Fsu4u4SM8"} },
+		{ id: "3691", clubeId:["2903"], nome: "CAMPO PARQUE URBANO 25 ABRIL", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "50"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "3736", clubeId:["5937"], nome: "ESTÁDIO DOMINGOS SÁVIO | ESTORIL", relvado: "Relvado Sintético", dimensoes: {comprimento: "96", largura: "46"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "3895", clubeId:["6036"], nome: "CAMPO COLEGIO MARISTA", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "45"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "4064", clubeId:["0384"], nome: "ESTÁDIO PINTO DE BASTO", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "68"}, georef:{latitude:"38.713789", longitude: "-9.209855", link: "https://maps.app.goo.gl/59yLNYAZHSLRHV5F7"} },
+		{ id: "4462", clubeId:["5414"], nome: "CAMPO DR. MANUEL PEREIRA-Bº DAS BRAGADAS", relvado: "Relvado Sintético", dimensoes: {comprimento: "93", largura: "60"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "4577", clubeId:["0391"], nome: "CAMPO ENG. CARLOS SALEMA, Nº 2 - LISBOA", relvado: "Terra batida", dimensoes: {comprimento: "57", largura: "38"}, georef:{latitude:"38.743649", longitude: "-9.109784", link: "https://maps.app.goo.gl/1FyHoTmXFWhX2RELA"} },
+		{ id: "4649", clubeId:["5815"], nome: "CAMPO DO DECATHLON CASCAIS", relvado: "Relvado Sintético", dimensoes: {comprimento: "", largura: ""}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "4753", clubeId:["5629"], nome: "CAMPO COLEGIO PEDRO ARRUPE", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "50"}, georef:{latitude:"38.793282", longitude: "-9.097549", link: "https://maps.app.goo.gl/KSRBDgTBBjsHCxQw6"} },
+		{ id: "5230", clubeId:["0220"], nome: "ACADEMIA JOGADOR - CAMPO 3", relvado: "Relvado Sintético", dimensoes: {comprimento: "105", largura: "68"}, georef:{latitude:"38.790461", longitude: "-9.188389", link: "https://maps.app.goo.gl/ibzVov8TTBGaCFfw9"} },
+		{ id: "5345", clubeId:["0180"], nome: "CAMPO CED-COLÉGIO D.MARIA PIA ( XABREGAS )", relvado: "Relvado Sintético", dimensoes: {comprimento: "50", largura: "40"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "5494", clubeId:["0471"], nome: "CT F FC ALVERCA | T5 MASTER | CAMPO 2", relvado: "Relvado Sintético", dimensoes: {comprimento: "105", largura: "68"}, georef:{latitude:"38.892814", longitude: "-9.034390", link: "https://maps.app.goo.gl/xGysjQgcu5Qr4Xf89"} },
+		{ id: "6219", clubeId:["3274"], nome: "CAMPO DE FUTEBOL DA LAJE", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "64"}, georef:{latitude:"", longitude: "", link: ""} },
+		{ id: "0271", clubeId:["0389"], nome: "PARQUE DE JOGOS VICTOR PERALTA", relvado: "Relvado Sintético", dimensoes: {comprimento: "100", largura: "52"}, georef:{latitude:"38.721871", longitude: "-9.120992", link: "https://maps.app.goo.gl/u2pbbzv4Ryt3fgeRA"} },
+		{ id: "4963", clubeId:["5647"], nome: "CAMPO DAS SALÉSIAS", relvado: "Relvado Sintético", dimensoes: {comprimento: "90", largura: "45"}, georef:{latitude:"38.701219", longitude: "-9.195486", link: "https://maps.app.goo.gl/Jq8sdsYhyLTwMySd7"} },
+      ],
+      competicoes: [
+		{
+          desportoId: "FTB",
+          escalaoId: "S11",
+          series: [
+              {
+              serie: "04",
+              equipas: ["FTB.S11.0908.04","FTB.S11.5647.04","FTB.S11.1017.04","FTB.S11.0703.04","FTB.S11.0190.04","FTB.S11.1095.04","FTB.S11.0389.04","FTB.S11.0000.04","FTB.S11.1033.04","FTB.S11.0283.04","FTB.S11.5629.04","FTB.S11.1209.04","FTB.S11.0471.04","FTB.S11.0391.04","FTB.S11.4887.04","FTB.S11.1016.04"],
+              jornadas: 
+			  [
+				{jornada: "01", data: "18/10/2025", jogos: [{ id: "366.04.001.0", data: "18/10/2025", hora: "10:30", equipacasa: "FTB.S11.0908.04", equipafora: "FTB.S11.1033.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.002.0", data: "18/10/2025", hora: "10:30", equipacasa: "FTB.S11.5647.04", equipafora: "FTB.S11.0283.04", resultado: "", localizacaoId: "4963" },{ id: "366.04.003.0", data: "18/10/2025", hora: "10:30", equipacasa: "FTB.S11.1017.04", equipafora: "FTB.S11.5629.04", resultado: "", localizacaoId: "2231" },{ id: "366.04.005.0", data: "18/10/2025", hora: "10:30", equipacasa: "FTB.S11.0703.04", equipafora: "FTB.S11.1016.04", resultado: "", localizacaoId: "0131" },{ id: "366.04.006.0", data: "18/10/2025", hora: "09:30", equipacasa: "FTB.S11.0190.04", equipafora: "FTB.S11.0471.04", resultado: "", localizacaoId: "1853" },{ id: "366.04.007.0", data: "18/10/2025", hora: "09:00", equipacasa: "FTB.S11.1095.04", equipafora: "FTB.S11.0391.04", resultado: "", localizacaoId: "2045" },{ id: "366.04.008.0", data: "18/10/2025", hora: "12:00", equipacasa: "FTB.S11.0389.04", equipafora: "FTB.S11.4887.04", resultado: "", localizacaoId: "0271" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0000.04", equipafora: "FTB.S11.1209.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "02", data: "25/10/2025", jogos: [{ id: "366.04.009.0", data: "25/10/2025", hora: "12:00", equipacasa: "FTB.S11.1033.04", equipafora: "FTB.S11.0389.04", resultado: "", localizacaoId: "1511" },{ id: "366.04.010.0", data: "25/10/2025", hora: "11:15", equipacasa: "FTB.S11.0283.04", equipafora: "FTB.S11.0908.04", resultado: "", localizacaoId: "0222" },{ id: "366.04.011.0", data: "25/10/2025", hora: "09:00", equipacasa: "FTB.S11.5629.04", equipafora: "FTB.S11.5647.04", resultado: "", localizacaoId: "4753" },{ id: "366.04.012.0", data: "25/10/2025", hora: "12:00", equipacasa: "FTB.S11.1209.04", equipafora: "FTB.S11.1017.04", resultado: "", localizacaoId: "1894" },{ id: "366.04.014.0", data: "25/10/2025", hora: "09:00", equipacasa: "FTB.S11.0471.04", equipafora: "FTB.S11.0703.04", resultado: "", localizacaoId: "5494" },{ id: "366.04.015.0", data: "25/10/2025", hora: "09:30", equipacasa: "FTB.S11.0391.04", equipafora: "FTB.S11.0190.04", resultado: "", localizacaoId: "4577" },{ id: "366.04.016.0", data: "25/10/2025", hora: "10:30", equipacasa: "FTB.S11.4887.04", equipafora: "FTB.S11.1095.04", resultado: "", localizacaoId: "3348" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.1016.04", equipafora: "FTB.S11.0000.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "03", data: "01/11/2025", jogos: [{ id: "366.04.017.0", data: "01/11/2025", hora: "10:30", equipacasa: "FTB.S11.1033.04", equipafora: "FTB.S11.0283.04", resultado: "", localizacaoId: "1511" },{ id: "366.04.018.0", data: "01/11/2025", hora: "10:30", equipacasa: "FTB.S11.0908.04", equipafora: "FTB.S11.5629.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.019.0", data: "01/11/2025", hora: "09:00", equipacasa: "FTB.S11.5647.04", equipafora: "FTB.S11.1209.04", resultado: "", localizacaoId: "4963" },{ id: "366.04.020.0", data: "01/11/2025", hora: "10:30", equipacasa: "FTB.S11.1017.04", equipafora: "FTB.S11.1016.04", resultado: "", localizacaoId: "2231" },{ id: "366.04.022.0", data: "01/11/2025", hora: "10:30", equipacasa: "FTB.S11.0703.04", equipafora: "FTB.S11.0391.04", resultado: "", localizacaoId: "0131" },{ id: "366.04.023.0", data: "01/11/2025", hora: "10:30", equipacasa: "FTB.S11.0190.04", equipafora: "FTB.S11.4887.04", resultado: "", localizacaoId: "1853" },{ id: "366.04.024.0", data: "01/11/2025", hora: "12:00", equipacasa: "FTB.S11.0389.04", equipafora: "FTB.S11.1095.04", resultado: "", localizacaoId: "0271" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0000.04", equipafora: "FTB.S11.0471.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "04", data: "08/11/2025", jogos: [{ id: "366.04.025.0", data: "08/11/2025", hora: "11:15", equipacasa: "FTB.S11.0283.04", equipafora: "FTB.S11.0389.04", resultado: "", localizacaoId: "0222" },{ id: "366.04.026.0", data: "08/11/2025", hora: "09:00", equipacasa: "FTB.S11.5629.04", equipafora: "FTB.S11.1033.04", resultado: "", localizacaoId: "4753" },{ id: "366.04.027.0", data: "08/11/2025", hora: "12:00", equipacasa: "FTB.S11.1209.04", equipafora: "FTB.S11.0908.04", resultado: "", localizacaoId: "1894" },{ id: "366.04.028.0", data: "08/11/2025", hora: "09:00", equipacasa: "FTB.S11.1016.04", equipafora: "FTB.S11.5647.04", resultado: "", localizacaoId: "1642" },{ id: "366.04.029.0", data: "08/11/2025", hora: "10:30", equipacasa: "FTB.S11.0471.04", equipafora: "FTB.S11.1017.04", resultado: "", localizacaoId: "5494" },{ id: "366.04.031.0", data: "08/11/2025", hora: "10:30", equipacasa: "FTB.S11.4887.04", equipafora: "FTB.S11.0703.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.032.0", data: "08/11/2025", hora: "12:00", equipacasa: "FTB.S11.1095.04", equipafora: "FTB.S11.0190.04", resultado: "", localizacaoId: "2045" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0391.04", equipafora: "FTB.S11.0000.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "05", data: "15/11/2025", jogos: [{ id: "366.04.033.0", data: "15/11/2025", hora: "11:15", equipacasa: "FTB.S11.0283.04", equipafora: "FTB.S11.5629.04", resultado: "", localizacaoId: "0222" },{ id: "366.04.034.0", data: "15/11/2025", hora: "09:00", equipacasa: "FTB.S11.1033.04", equipafora: "FTB.S11.1209.04", resultado: "", localizacaoId: "1511" },{ id: "366.04.035.0", data: "15/11/2025", hora: "10:30", equipacasa: "FTB.S11.0908.04", equipafora: "FTB.S11.1016.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.036.0", data: "15/11/2025", hora: "10:30", equipacasa: "FTB.S11.5647.04", equipafora: "FTB.S11.0471.04", resultado: "", localizacaoId: "4963" },{ id: "366.04.037.0", data: "15/11/2025", hora: "10:30", equipacasa: "FTB.S11.1017.04", equipafora: "FTB.S11.0391.04", resultado: "", localizacaoId: "2231" },{ id: "366.04.039.0", data: "15/11/2025", hora: "09:30", equipacasa: "FTB.S11.0703.04", equipafora: "FTB.S11.1095.04", resultado: "", localizacaoId: "0131" },{ id: "366.04.040.0", data: "15/11/2025", hora: "12:00", equipacasa: "FTB.S11.0389.04", equipafora: "FTB.S11.0190.04", resultado: "", localizacaoId: "0271" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0000.04", equipafora: "FTB.S11.4887.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "06", data: "22/11/2025", jogos: [{ id: "366.04.041.0", data: "22/11/2025", hora: "09:00", equipacasa: "FTB.S11.5629.04", equipafora: "FTB.S11.0389.04", resultado: "", localizacaoId: "4753" },{ id: "366.04.042.0", data: "22/11/2025", hora: "12:00", equipacasa: "FTB.S11.1209.04", equipafora: "FTB.S11.0283.04", resultado: "", localizacaoId: "1894" },{ id: "366.04.043.0", data: "22/11/2025", hora: "10:30", equipacasa: "FTB.S11.1016.04", equipafora: "FTB.S11.1033.04", resultado: "", localizacaoId: "1642" },{ id: "366.04.044.0", data: "22/11/2025", hora: "09:00", equipacasa: "FTB.S11.0471.04", equipafora: "FTB.S11.0908.04", resultado: "", localizacaoId: "5494" },{ id: "366.04.045.0", data: "22/11/2025", hora: "09:30", equipacasa: "FTB.S11.0391.04", equipafora: "FTB.S11.5647.04", resultado: "", localizacaoId: "4577" },{ id: "366.04.046.0", data: "22/11/2025", hora: "10:30", equipacasa: "FTB.S11.4887.04", equipafora: "FTB.S11.1017.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.048.0", data: "22/11/2025", hora: "10:30", equipacasa: "FTB.S11.0190.04", equipafora: "FTB.S11.0703.04", resultado: "", localizacaoId: "1853" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.1095.04", equipafora: "FTB.S11.0000.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "07", data: "29/11/2025", jogos: [{ id: "366.04.049.0", data: "29/11/2025", hora: "09:00", equipacasa: "FTB.S11.5629.04", equipafora: "FTB.S11.1209.04", resultado: "", localizacaoId: "4753" },{ id: "366.04.050.0", data: "29/11/2025", hora: "11:15", equipacasa: "FTB.S11.0283.04", equipafora: "FTB.S11.1016.04", resultado: "", localizacaoId: "0222" },{ id: "366.04.051.0", data: "29/11/2025", hora: "10:30", equipacasa: "FTB.S11.1033.04", equipafora: "FTB.S11.0471.04", resultado: "", localizacaoId: "1511" },{ id: "366.04.052.0", data: "29/11/2025", hora: "10:30", equipacasa: "FTB.S11.0908.04", equipafora: "FTB.S11.0391.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.053.0", data: "29/11/2025", hora: "09:00", equipacasa: "FTB.S11.5647.04", equipafora: "FTB.S11.4887.04", resultado: "", localizacaoId: "4963" },{ id: "366.04.054.0", data: "29/11/2025", hora: "12:00", equipacasa: "FTB.S11.1017.04", equipafora: "FTB.S11.1095.04", resultado: "", localizacaoId: "2231" },{ id: "366.04.056.0", data: "29/11/2025", hora: "12:00", equipacasa: "FTB.S11.0389.04", equipafora: "FTB.S11.0703.04", resultado: "", localizacaoId: "0271" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0000.04", equipafora: "FTB.S11.0190.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "08", data: "06/12/2025", jogos: [{ id: "366.04.057.0", data: "06/12/2025", hora: "12:00", equipacasa: "FTB.S11.1209.04", equipafora: "FTB.S11.0389.04", resultado: "", localizacaoId: "1894" },{ id: "366.04.058.0", data: "06/12/2025", hora: "10:30", equipacasa: "FTB.S11.1016.04", equipafora: "FTB.S11.5629.04", resultado: "", localizacaoId: "1642" },{ id: "366.04.059.0", data: "06/12/2025", hora: "09:00", equipacasa: "FTB.S11.0471.04", equipafora: "FTB.S11.0283.04", resultado: "", localizacaoId: "5494" },{ id: "366.04.060.0", data: "06/12/2025", hora: "09:30", equipacasa: "FTB.S11.0391.04", equipafora: "FTB.S11.1033.04", resultado: "", localizacaoId: "4577" },{ id: "366.04.061.0", data: "06/12/2025", hora: "10:30", equipacasa: "FTB.S11.4887.04", equipafora: "FTB.S11.0908.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.062.0", data: "06/12/2025", hora: "10:30", equipacasa: "FTB.S11.1095.04", equipafora: "FTB.S11.5647.04", resultado: "", localizacaoId: "2045" },{ id: "366.04.063.0", data: "06/12/2025", hora: "10:30", equipacasa: "FTB.S11.0190.04", equipafora: "FTB.S11.1017.04", resultado: "", localizacaoId: "1853" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0703.04", equipafora: "FTB.S11.0000.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "09", data: "13/12/2025", jogos: [{ id: "366.04.065.0", data: "13/12/2025", hora: "12:00", equipacasa: "FTB.S11.1209.04", equipafora: "FTB.S11.1016.04", resultado: "", localizacaoId: "1894" },{ id: "366.04.066.0", data: "13/12/2025", hora: "09:00", equipacasa: "FTB.S11.5629.04", equipafora: "FTB.S11.0471.04", resultado: "", localizacaoId: "4753" },{ id: "366.04.067.0", data: "13/12/2025", hora: "11:15", equipacasa: "FTB.S11.0283.04", equipafora: "FTB.S11.0391.04", resultado: "", localizacaoId: "0222" },{ id: "366.04.068.0", data: "13/12/2025", hora: "09:00", equipacasa: "FTB.S11.1033.04", equipafora: "FTB.S11.4887.04", resultado: "", localizacaoId: "1511" },{ id: "366.04.069.0", data: "13/12/2025", hora: "10:30", equipacasa: "FTB.S11.0908.04", equipafora: "FTB.S11.1095.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.070.0", data: "13/12/2025", hora: "10:30", equipacasa: "FTB.S11.5647.04", equipafora: "FTB.S11.0190.04", resultado: "", localizacaoId: "4963" },{ id: "366.04.071.0", data: "13/12/2025", hora: "10:30", equipacasa: "FTB.S11.1017.04", equipafora: "FTB.S11.0703.04", resultado: "", localizacaoId: "2231" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0389.04", equipafora: "FTB.S11.0000.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "10", data: "20/12/2025", jogos: [{ id: "366.04.073.0", data: "20/12/2025", hora: "09:00", equipacasa: "FTB.S11.1016.04", equipafora: "FTB.S11.0389.04", resultado: "", localizacaoId: "1642" },{ id: "366.04.074.0", data: "20/12/2025", hora: "09:00", equipacasa: "FTB.S11.0471.04", equipafora: "FTB.S11.1209.04", resultado: "", localizacaoId: "5494" },{ id: "366.04.075.0", data: "20/12/2025", hora: "09:30", equipacasa: "FTB.S11.0391.04", equipafora: "FTB.S11.5629.04", resultado: "", localizacaoId: "4577" },{ id: "366.04.076.0", data: "20/12/2025", hora: "10:30", equipacasa: "FTB.S11.4887.04", equipafora: "FTB.S11.0283.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.077.0", data: "20/12/2025", hora: "10:30", equipacasa: "FTB.S11.1095.04", equipafora: "FTB.S11.1033.04", resultado: "", localizacaoId: "2045" },{ id: "366.04.078.0", data: "20/12/2025", hora: "10:30", equipacasa: "FTB.S11.0190.04", equipafora: "FTB.S11.0908.04", resultado: "", localizacaoId: "1853" },{ id: "366.04.079.0", data: "20/12/2025", hora: "10:30", equipacasa: "FTB.S11.0703.04", equipafora: "FTB.S11.5647.04", resultado: "", localizacaoId: "0131" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0000.04", equipafora: "FTB.S11.1017.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "11", data: "10/01/2026", jogos: [{ id: "366.04.081.0", data: "10/01/2026", hora: "11:00", equipacasa: "FTB.S11.1016.04", equipafora: "FTB.S11.0471.04", resultado: "", localizacaoId: "1642" },{ id: "366.04.082.0", data: "10/01/2026", hora: "12:00", equipacasa: "FTB.S11.1209.04", equipafora: "FTB.S11.0391.04", resultado: "", localizacaoId: "1894" },{ id: "366.04.083.0", data: "10/01/2026", hora: "09:00", equipacasa: "FTB.S11.5629.04", equipafora: "FTB.S11.4887.04", resultado: "", localizacaoId: "4753" },{ id: "366.04.084.0", data: "10/01/2026", hora: "11:15", equipacasa: "FTB.S11.0283.04", equipafora: "FTB.S11.1095.04", resultado: "", localizacaoId: "0222" },{ id: "366.04.085.0", data: "10/01/2026", hora: "09:00", equipacasa: "FTB.S11.1033.04", equipafora: "FTB.S11.0190.04", resultado: "", localizacaoId: "1511" },{ id: "366.04.086.0", data: "10/01/2026", hora: "10:30", equipacasa: "FTB.S11.0908.04", equipafora: "FTB.S11.0703.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.088.0", data: "10/01/2026", hora: "10:00", equipacasa: "FTB.S11.0389.04", equipafora: "FTB.S11.1017.04", resultado: "", localizacaoId: "0271" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0000.04", equipafora: "FTB.S11.5647.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "12", data: "17/01/2026", jogos: [{ id: "366.04.089.0", data: "17/01/2026", hora: "09:00", equipacasa: "FTB.S11.0471.04", equipafora: "FTB.S11.0389.04", resultado: "", localizacaoId: "5494" },{ id: "366.04.090.0", data: "17/01/2026", hora: "09:30", equipacasa: "FTB.S11.0391.04", equipafora: "FTB.S11.1016.04", resultado: "", localizacaoId: "4577" },{ id: "366.04.091.0", data: "17/01/2026", hora: "10:30", equipacasa: "FTB.S11.4887.04", equipafora: "FTB.S11.1209.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.092.0", data: "17/01/2026", hora: "10:30", equipacasa: "FTB.S11.1095.04", equipafora: "FTB.S11.5629.04", resultado: "", localizacaoId: "2045" },{ id: "366.04.093.0", data: "17/01/2026", hora: "09:00", equipacasa: "FTB.S11.0190.04", equipafora: "FTB.S11.0283.04", resultado: "", localizacaoId: "1853" },{ id: "366.04.094.0", data: "17/01/2026", hora: "10:30", equipacasa: "FTB.S11.0703.04", equipafora: "FTB.S11.1033.04", resultado: "", localizacaoId: "0131" },{ id: "366.04.096.0", data: "17/01/2026", hora: "10:30", equipacasa: "FTB.S11.1017.04", equipafora: "FTB.S11.5647.04", resultado: "", localizacaoId: "2231" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0000.04", equipafora: "FTB.S11.0908.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "13", data: "24/01/2026", jogos: [{ id: "366.04.097.0", data: "24/01/2026", hora: "09:00", equipacasa: "FTB.S11.0471.04", equipafora: "FTB.S11.0391.04", resultado: "", localizacaoId: "5494" },{ id: "366.04.098.0", data: "24/01/2026", hora: "10:30", equipacasa: "FTB.S11.1016.04", equipafora: "FTB.S11.4887.04", resultado: "", localizacaoId: "1642" },{ id: "366.04.099.0", data: "24/01/2026", hora: "12:00", equipacasa: "FTB.S11.1209.04", equipafora: "FTB.S11.1095.04", resultado: "", localizacaoId: "1894" },{ id: "366.04.100.0", data: "24/01/2026", hora: "09:00", equipacasa: "FTB.S11.5629.04", equipafora: "FTB.S11.0190.04", resultado: "", localizacaoId: "4753" },{ id: "366.04.101.0", data: "24/01/2026", hora: "11:15", equipacasa: "FTB.S11.0283.04", equipafora: "FTB.S11.0703.04", resultado: "", localizacaoId: "0222" },{ id: "366.04.103.0", data: "24/01/2026", hora: "10:30", equipacasa: "FTB.S11.0908.04", equipafora: "FTB.S11.1017.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.104.0", data: "24/01/2026", hora: "10:00", equipacasa: "FTB.S11.0389.04", equipafora: "FTB.S11.5647.04", resultado: "", localizacaoId: "0271" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.1033.04", equipafora: "FTB.S11.0000.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "14", data: "31/01/2026", jogos: [{ id: "366.04.105.0", data: "31/01/2026", hora: "10:00", equipacasa: "FTB.S11.0389.04", equipafora: "FTB.S11.0391.04", resultado: "", localizacaoId: "0271" },{ id: "366.04.106.0", data: "31/01/2026", hora: "10:30", equipacasa: "FTB.S11.4887.04", equipafora: "FTB.S11.0471.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.107.0", data: "31/01/2026", hora: "10:30", equipacasa: "FTB.S11.1095.04", equipafora: "FTB.S11.1016.04", resultado: "", localizacaoId: "2045" },{ id: "366.04.108.0", data: "31/01/2026", hora: "09:00", equipacasa: "FTB.S11.0190.04", equipafora: "FTB.S11.1209.04", resultado: "", localizacaoId: "1853" },{ id: "366.04.109.0", data: "31/01/2026", hora: "10:30", equipacasa: "FTB.S11.0703.04", equipafora: "FTB.S11.5629.04", resultado: "", localizacaoId: "0131" },{ id: "366.04.111.0", data: "31/01/2026", hora: "10:30", equipacasa: "FTB.S11.1017.04", equipafora: "FTB.S11.1033.04", resultado: "", localizacaoId: "2231" },{ id: "366.04.112.0", data: "31/01/2026", hora: "10:30", equipacasa: "FTB.S11.5647.04", equipafora: "FTB.S11.0908.04", resultado: "", localizacaoId: "4963" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0000.04", equipafora: "FTB.S11.0283.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "15", data: "07/02/2026", jogos: [{ id: "366.04.113.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S11.0391.04", equipafora: "FTB.S11.4887.04", resultado: "", localizacaoId: "4577" },{ id: "366.04.114.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S11.0471.04", equipafora: "FTB.S11.1095.04", resultado: "", localizacaoId: "5494" },{ id: "366.04.115.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S11.1016.04", equipafora: "FTB.S11.0190.04", resultado: "", localizacaoId: "1642" },{ id: "366.04.116.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S11.1209.04", equipafora: "FTB.S11.0703.04", resultado: "", localizacaoId: "1894" },{ id: "366.04.118.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S11.0283.04", equipafora: "FTB.S11.1017.04", resultado: "", localizacaoId: "0222" },{ id: "366.04.119.0", data: "07/02/2026", hora: "09:00", equipacasa: "FTB.S11.1033.04", equipafora: "FTB.S11.5647.04", resultado: "", localizacaoId: "1511" },{ id: "366.04.120.0", data: "07/02/2026", hora: "10:30", equipacasa: "FTB.S11.0908.04", equipafora: "FTB.S11.0389.04", resultado: "", localizacaoId: "3348" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.5629.04", equipafora: "FTB.S11.0000.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "16", data: "21/02/2026", jogos: [{ id: "366.04.121.0", data: "21/02/2026", hora: "09:00", equipacasa: "FTB.S11.1033.04", equipafora: "FTB.S11.0908.04", resultado: "", localizacaoId: "1511" },{ id: "366.04.122.0", data: "21/02/2026", hora: "11:15", equipacasa: "FTB.S11.0283.04", equipafora: "FTB.S11.5647.04", resultado: "", localizacaoId: "0222" },{ id: "366.04.123.0", data: "21/02/2026", hora: "09:00", equipacasa: "FTB.S11.5629.04", equipafora: "FTB.S11.1017.04", resultado: "", localizacaoId: "4753" },{ id: "366.04.125.0", data: "21/02/2026", hora: "09:00", equipacasa: "FTB.S11.1016.04", equipafora: "FTB.S11.0703.04", resultado: "", localizacaoId: "1642" },{ id: "366.04.126.0", data: "21/02/2026", hora: "09:00", equipacasa: "FTB.S11.0471.04", equipafora: "FTB.S11.0190.04", resultado: "", localizacaoId: "5494" },{ id: "366.04.127.0", data: "21/02/2026", hora: "09:30", equipacasa: "FTB.S11.0391.04", equipafora: "FTB.S11.1095.04", resultado: "", localizacaoId: "4577" },{ id: "366.04.128.0", data: "21/02/2026", hora: "10:30", equipacasa: "FTB.S11.4887.04", equipafora: "FTB.S11.0389.04", resultado: "", localizacaoId: "3348" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.1209.04", equipafora: "FTB.S11.0000.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "17", data: "28/02/2026", jogos: [{ id: "366.04.129.0", data: "28/02/2026", hora: "10:00", equipacasa: "FTB.S11.0389.04", equipafora: "FTB.S11.1033.04", resultado: "", localizacaoId: "0271" },{ id: "366.04.130.0", data: "28/02/2026", hora: "10:30", equipacasa: "FTB.S11.0908.04", equipafora: "FTB.S11.0283.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.131.0", data: "28/02/2026", hora: "09:00", equipacasa: "FTB.S11.5647.04", equipafora: "FTB.S11.5629.04", resultado: "", localizacaoId: "4963" },{ id: "366.04.132.0", data: "28/02/2026", hora: "10:30", equipacasa: "FTB.S11.1017.04", equipafora: "FTB.S11.1209.04", resultado: "", localizacaoId: "2231" },{ id: "366.04.134.0", data: "28/02/2026", hora: "09:30", equipacasa: "FTB.S11.0703.04", equipafora: "FTB.S11.0471.04", resultado: "", localizacaoId: "0131" },{ id: "366.04.135.0", data: "28/02/2026", hora: "09:00", equipacasa: "FTB.S11.0190.04", equipafora: "FTB.S11.0391.04", resultado: "", localizacaoId: "1853" },{ id: "366.04.136.0", data: "28/02/2026", hora: "12:00", equipacasa: "FTB.S11.1095.04", equipafora: "FTB.S11.4887.04", resultado: "", localizacaoId: "2045" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0000.04", equipafora: "FTB.S11.1016.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "18", data: "07/03/2026", jogos: [{ id: "366.04.137.0", data: "07/03/2026", hora: "11:15", equipacasa: "FTB.S11.0283.04", equipafora: "FTB.S11.1033.04", resultado: "", localizacaoId: "0222" },{ id: "366.04.138.0", data: "07/03/2026", hora: "09:00", equipacasa: "FTB.S11.5629.04", equipafora: "FTB.S11.0908.04", resultado: "", localizacaoId: "4753" },{ id: "366.04.139.0", data: "07/03/2026", hora: "10:00", equipacasa: "FTB.S11.1209.04", equipafora: "FTB.S11.5647.04", resultado: "", localizacaoId: "1894" },{ id: "366.04.140.0", data: "07/03/2026", hora: "09:00", equipacasa: "FTB.S11.1016.04", equipafora: "FTB.S11.1017.04", resultado: "", localizacaoId: "1642" },{ id: "366.04.142.0", data: "07/03/2026", hora: "09:30", equipacasa: "FTB.S11.0391.04", equipafora: "FTB.S11.0703.04", resultado: "", localizacaoId: "4577" },{ id: "366.04.143.0", data: "07/03/2026", hora: "10:30", equipacasa: "FTB.S11.4887.04", equipafora: "FTB.S11.0190.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.144.0", data: "07/03/2026", hora: "10:30", equipacasa: "FTB.S11.1095.04", equipafora: "FTB.S11.0389.04", resultado: "", localizacaoId: "2045" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0471.04", equipafora: "FTB.S11.0000.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "19", data: "14/03/2026", jogos: [{ id: "366.04.145.0", data: "14/03/2026", hora: "10:00", equipacasa: "FTB.S11.0389.04", equipafora: "FTB.S11.0283.04", resultado: "", localizacaoId: "0271" },{ id: "366.04.146.0", data: "14/03/2026", hora: "09:00", equipacasa: "FTB.S11.1033.04", equipafora: "FTB.S11.5629.04", resultado: "", localizacaoId: "1511" },{ id: "366.04.147.0", data: "14/03/2026", hora: "10:30", equipacasa: "FTB.S11.0908.04", equipafora: "FTB.S11.1209.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.148.0", data: "14/03/2026", hora: "12:00", equipacasa: "FTB.S11.5647.04", equipafora: "FTB.S11.1016.04", resultado: "", localizacaoId: "4963" },{ id: "366.04.149.0", data: "14/03/2026", hora: "09:00", equipacasa: "FTB.S11.1017.04", equipafora: "FTB.S11.0471.04", resultado: "", localizacaoId: "2231" },{ id: "366.04.151.0", data: "14/03/2026", hora: "10:00", equipacasa: "FTB.S11.0703.04", equipafora: "FTB.S11.4887.04", resultado: "", localizacaoId: "0131" },{ id: "366.04.152.0", data: "14/03/2026", hora: "09:00", equipacasa: "FTB.S11.0190.04", equipafora: "FTB.S11.1095.04", resultado: "", localizacaoId: "1853" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0000.04", equipafora: "FTB.S11.0391.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "20", data: "21/03/2026", jogos: [{ id: "366.04.153.0", data: "21/03/2026", hora: "09:00", equipacasa: "FTB.S11.5629.04", equipafora: "FTB.S11.0283.04", resultado: "", localizacaoId: "4753" },{ id: "366.04.154.0", data: "21/03/2026", hora: "10:00", equipacasa: "FTB.S11.1209.04", equipafora: "FTB.S11.1033.04", resultado: "", localizacaoId: "1894" },{ id: "366.04.155.0", data: "21/03/2026", hora: "09:00", equipacasa: "FTB.S11.1016.04", equipafora: "FTB.S11.0908.04", resultado: "", localizacaoId: "1642" },{ id: "366.04.156.0", data: "21/03/2026", hora: "09:00", equipacasa: "FTB.S11.0471.04", equipafora: "FTB.S11.5647.04", resultado: "", localizacaoId: "5494" },{ id: "366.04.157.0", data: "21/03/2026", hora: "10:00", equipacasa: "FTB.S11.0391.04", equipafora: "FTB.S11.1017.04", resultado: "", localizacaoId: "4577" },{ id: "366.04.159.0", data: "21/03/2026", hora: "10:30", equipacasa: "FTB.S11.1095.04", equipafora: "FTB.S11.0703.04", resultado: "", localizacaoId: "2045" },{ id: "366.04.160.0", data: "21/03/2026", hora: "09:00", equipacasa: "FTB.S11.0190.04", equipafora: "FTB.S11.0389.04", resultado: "", localizacaoId: "1853" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.4887.04", equipafora: "FTB.S11.0000.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "21", data: "28/03/2026", jogos: [{ id: "366.04.161.0", data: "28/03/2026", hora: "10:00", equipacasa: "FTB.S11.0389.04", equipafora: "FTB.S11.5629.04", resultado: "", localizacaoId: "0271" },{ id: "366.04.162.0", data: "28/03/2026", hora: "11:15", equipacasa: "FTB.S11.0283.04", equipafora: "FTB.S11.1209.04", resultado: "", localizacaoId: "0222" },{ id: "366.04.163.0", data: "28/03/2026", hora: "09:00", equipacasa: "FTB.S11.1033.04", equipafora: "FTB.S11.1016.04", resultado: "", localizacaoId: "1511" },{ id: "366.04.164.0", data: "28/03/2026", hora: "10:30", equipacasa: "FTB.S11.0908.04", equipafora: "FTB.S11.0471.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.165.0", data: "28/03/2026", hora: "12:00", equipacasa: "FTB.S11.5647.04", equipafora: "FTB.S11.0391.04", resultado: "", localizacaoId: "4963" },{ id: "366.04.166.0", data: "28/03/2026", hora: "09:00", equipacasa: "FTB.S11.1017.04", equipafora: "FTB.S11.4887.04", resultado: "", localizacaoId: "2231" },{ id: "366.04.168.0", data: "28/03/2026", hora: "09:30", equipacasa: "FTB.S11.0703.04", equipafora: "FTB.S11.0190.04", resultado: "", localizacaoId: "0131" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0000.04", equipafora: "FTB.S11.1095.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "22", data: "11/04/2026", jogos: [{ id: "366.04.169.0", data: "11/04/2026", hora: "10:00", equipacasa: "FTB.S11.1209.04", equipafora: "FTB.S11.5629.04", resultado: "", localizacaoId: "1894" },{ id: "366.04.170.0", data: "11/04/2026", hora: "09:00", equipacasa: "FTB.S11.1016.04", equipafora: "FTB.S11.0283.04", resultado: "", localizacaoId: "1642" },{ id: "366.04.171.0", data: "11/04/2026", hora: "09:00", equipacasa: "FTB.S11.0471.04", equipafora: "FTB.S11.1033.04", resultado: "", localizacaoId: "5494" },{ id: "366.04.172.0", data: "11/04/2026", hora: "09:30", equipacasa: "FTB.S11.0391.04", equipafora: "FTB.S11.0908.04", resultado: "", localizacaoId: "4577" },{ id: "366.04.173.0", data: "11/04/2026", hora: "10:30", equipacasa: "FTB.S11.4887.04", equipafora: "FTB.S11.5647.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.174.0", data: "11/04/2026", hora: "10:30", equipacasa: "FTB.S11.1095.04", equipafora: "FTB.S11.1017.04", resultado: "", localizacaoId: "2045" },{ id: "366.04.176.0", data: "11/04/2026", hora: "09:30", equipacasa: "FTB.S11.0703.04", equipafora: "FTB.S11.0389.04", resultado: "", localizacaoId: "0131" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0190.04", equipafora: "FTB.S11.0000.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "23", data: "18/04/2026", jogos: [{ id: "366.04.177.0", data: "18/04/2026", hora: "10:00", equipacasa: "FTB.S11.0389.04", equipafora: "FTB.S11.1209.04", resultado: "", localizacaoId: "0271" },{ id: "366.04.178.0", data: "18/04/2026", hora: "09:00", equipacasa: "FTB.S11.5629.04", equipafora: "FTB.S11.1016.04", resultado: "", localizacaoId: "4753" },{ id: "366.04.179.0", data: "18/04/2026", hora: "11:15", equipacasa: "FTB.S11.0283.04", equipafora: "FTB.S11.0471.04", resultado: "", localizacaoId: "0222" },{ id: "366.04.180.0", data: "18/04/2026", hora: "09:00", equipacasa: "FTB.S11.1033.04", equipafora: "FTB.S11.0391.04", resultado: "", localizacaoId: "1511" },{ id: "366.04.181.0", data: "18/04/2026", hora: "10:30", equipacasa: "FTB.S11.0908.04", equipafora: "FTB.S11.4887.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.182.0", data: "18/04/2026", hora: "09:00", equipacasa: "FTB.S11.5647.04", equipafora: "FTB.S11.1095.04", resultado: "", localizacaoId: "4963" },{ id: "366.04.183.0", data: "18/04/2026", hora: "09:00", equipacasa: "FTB.S11.1017.04", equipafora: "FTB.S11.0190.04", resultado: "", localizacaoId: "2231" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0000.04", equipafora: "FTB.S11.0703.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "24", data: "25/04/2026", jogos: [{ id: "366.04.185.0", data: "25/04/2026", hora: "09:00", equipacasa: "FTB.S11.1016.04", equipafora: "FTB.S11.1209.04", resultado: "", localizacaoId: "1642" },{ id: "366.04.186.0", data: "25/04/2026", hora: "09:00", equipacasa: "FTB.S11.0471.04", equipafora: "FTB.S11.5629.04", resultado: "", localizacaoId: "5494" },{ id: "366.04.187.0", data: "25/04/2026", hora: "09:30", equipacasa: "FTB.S11.0391.04", equipafora: "FTB.S11.0283.04", resultado: "", localizacaoId: "4577" },{ id: "366.04.188.0", data: "25/04/2026", hora: "10:30", equipacasa: "FTB.S11.4887.04", equipafora: "FTB.S11.1033.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.189.0", data: "25/04/2026", hora: "10:30", equipacasa: "FTB.S11.1095.04", equipafora: "FTB.S11.0908.04", resultado: "", localizacaoId: "2045" },{ id: "366.04.190.0", data: "25/04/2026", hora: "09:00", equipacasa: "FTB.S11.0190.04", equipafora: "FTB.S11.5647.04", resultado: "", localizacaoId: "1853" },{ id: "366.04.191.0", data: "25/04/2026", hora: "09:30", equipacasa: "FTB.S11.0703.04", equipafora: "FTB.S11.1017.04", resultado: "", localizacaoId: "0131" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0000.04", equipafora: "FTB.S11.0389.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "25", data: "02/05/2026", jogos: [{ id: "366.04.193.0", data: "02/05/2026", hora: "10:00", equipacasa: "FTB.S11.0389.04", equipafora: "FTB.S11.1016.04", resultado: "", localizacaoId: "0271" },{ id: "366.04.194.0", data: "02/05/2026", hora: "10:00", equipacasa: "FTB.S11.1209.04", equipafora: "FTB.S11.0471.04", resultado: "", localizacaoId: "1894" },{ id: "366.04.195.0", data: "02/05/2026", hora: "09:00", equipacasa: "FTB.S11.5629.04", equipafora: "FTB.S11.0391.04", resultado: "", localizacaoId: "4753" },{ id: "366.04.196.0", data: "02/05/2026", hora: "11:15", equipacasa: "FTB.S11.0283.04", equipafora: "FTB.S11.4887.04", resultado: "", localizacaoId: "0222" },{ id: "366.04.197.0", data: "02/05/2026", hora: "09:00", equipacasa: "FTB.S11.1033.04", equipafora: "FTB.S11.1095.04", resultado: "", localizacaoId: "1511" },{ id: "366.04.198.0", data: "02/05/2026", hora: "10:30", equipacasa: "FTB.S11.0908.04", equipafora: "FTB.S11.0190.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.199.0", data: "02/05/2026", hora: "09:00", equipacasa: "FTB.S11.5647.04", equipafora: "FTB.S11.0703.04", resultado: "", localizacaoId: "4963" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.1017.04", equipafora: "FTB.S11.0000.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "26", data: "09/05/2026", jogos: [{ id: "366.04.201.0", data: "09/05/2026", hora: "09:00", equipacasa: "FTB.S11.0471.04", equipafora: "FTB.S11.1016.04", resultado: "", localizacaoId: "5494" },{ id: "366.04.202.0", data: "09/05/2026", hora: "09:30", equipacasa: "FTB.S11.0391.04", equipafora: "FTB.S11.1209.04", resultado: "", localizacaoId: "4577" },{ id: "366.04.203.0", data: "09/05/2026", hora: "10:30", equipacasa: "FTB.S11.4887.04", equipafora: "FTB.S11.5629.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.204.0", data: "09/05/2026", hora: "09:00", equipacasa: "FTB.S11.1095.04", equipafora: "FTB.S11.0283.04", resultado: "", localizacaoId: "2045" },{ id: "366.04.205.0", data: "09/05/2026", hora: "09:00", equipacasa: "FTB.S11.0190.04", equipafora: "FTB.S11.1033.04", resultado: "", localizacaoId: "1853" },{ id: "366.04.206.0", data: "09/05/2026", hora: "09:30", equipacasa: "FTB.S11.0703.04", equipafora: "FTB.S11.0908.04", resultado: "", localizacaoId: "0131" },{ id: "366.04.208.0", data: "09/05/2026", hora: "09:00", equipacasa: "FTB.S11.1017.04", equipafora: "FTB.S11.0389.04", resultado: "", localizacaoId: "2231" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0000.04", equipafora: "FTB.S11.5647.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "27", data: "16/05/2026", jogos: [{ id: "366.04.209.0", data: "16/05/2026", hora: "10:00", equipacasa: "FTB.S11.0389.04", equipafora: "FTB.S11.0471.04", resultado: "", localizacaoId: "0271" },{ id: "366.04.210.0", data: "16/05/2026", hora: "09:00", equipacasa: "FTB.S11.1016.04", equipafora: "FTB.S11.0391.04", resultado: "", localizacaoId: "1642" },{ id: "366.04.211.0", data: "16/05/2026", hora: "10:00", equipacasa: "FTB.S11.1209.04", equipafora: "FTB.S11.4887.04", resultado: "", localizacaoId: "1894" },{ id: "366.04.212.0", data: "16/05/2026", hora: "09:00", equipacasa: "FTB.S11.5629.04", equipafora: "FTB.S11.1095.04", resultado: "", localizacaoId: "4753" },{ id: "366.04.213.0", data: "16/05/2026", hora: "11:15", equipacasa: "FTB.S11.0283.04", equipafora: "FTB.S11.0190.04", resultado: "", localizacaoId: "0222" },{ id: "366.04.214.0", data: "16/05/2026", hora: "09:00", equipacasa: "FTB.S11.1033.04", equipafora: "FTB.S11.0703.04", resultado: "", localizacaoId: "1511" },{ id: "366.04.216.0", data: "16/05/2026", hora: "12:00", equipacasa: "FTB.S11.5647.04", equipafora: "FTB.S11.1017.04", resultado: "", localizacaoId: "4963" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0908.04", equipafora: "FTB.S11.0000.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "28", data: "23/05/2026", jogos: [{ id: "366.04.217.0", data: "23/05/2026", hora: "11:00", equipacasa: "FTB.S11.0391.04", equipafora: "FTB.S11.0471.04", resultado: "", localizacaoId: "4577" },{ id: "366.04.218.0", data: "23/05/2026", hora: "10:30", equipacasa: "FTB.S11.4887.04", equipafora: "FTB.S11.1016.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.219.0", data: "23/05/2026", hora: "10:30", equipacasa: "FTB.S11.1095.04", equipafora: "FTB.S11.1209.04", resultado: "", localizacaoId: "2045" },{ id: "366.04.220.0", data: "23/05/2026", hora: "09:00", equipacasa: "FTB.S11.0190.04", equipafora: "FTB.S11.5629.04", resultado: "", localizacaoId: "1853" },{ id: "366.04.221.0", data: "23/05/2026", hora: "09:30", equipacasa: "FTB.S11.0703.04", equipafora: "FTB.S11.0283.04", resultado: "", localizacaoId: "0131" },{ id: "366.04.223.0", data: "23/05/2026", hora: "09:00", equipacasa: "FTB.S11.1017.04", equipafora: "FTB.S11.0908.04", resultado: "", localizacaoId: "2231" },{ id: "366.04.224.0", data: "23/05/2026", hora: "09:00", equipacasa: "FTB.S11.5647.04", equipafora: "FTB.S11.0389.04", resultado: "", localizacaoId: "4963" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0000.04", equipafora: "FTB.S11.1033.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "29", data: "30/05/2026", jogos: [{ id: "366.04.225.0", data: "30/05/2026", hora: "11:00", equipacasa: "FTB.S11.0391.04", equipafora: "FTB.S11.0389.04", resultado: "", localizacaoId: "4577" },{ id: "366.04.226.0", data: "30/05/2026", hora: "09:00", equipacasa: "FTB.S11.0471.04", equipafora: "FTB.S11.4887.04", resultado: "", localizacaoId: "5494" },{ id: "366.04.227.0", data: "30/05/2026", hora: "09:00", equipacasa: "FTB.S11.1016.04", equipafora: "FTB.S11.1095.04", resultado: "", localizacaoId: "1642" },{ id: "366.04.228.0", data: "30/05/2026", hora: "10:00", equipacasa: "FTB.S11.1209.04", equipafora: "FTB.S11.0190.04", resultado: "", localizacaoId: "1894" },{ id: "366.04.229.0", data: "30/05/2026", hora: "09:00", equipacasa: "FTB.S11.5629.04", equipafora: "FTB.S11.0703.04", resultado: "", localizacaoId: "4753" },{ id: "366.04.231.0", data: "30/05/2026", hora: "09:00", equipacasa: "FTB.S11.1033.04", equipafora: "FTB.S11.1017.04", resultado: "", localizacaoId: "1511" },{ id: "366.04.232.0", data: "30/05/2026", hora: "10:30", equipacasa: "FTB.S11.0908.04", equipafora: "FTB.S11.5647.04", resultado: "", localizacaoId: "3348" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0283.04", equipafora: "FTB.S11.0000.04", resultado: "", localizacaoId: "" },]},
+				{jornada: "30", data: "06/06/2026", jogos: [{ id: "366.04.233.0", data: "06/06/2026", hora: "10:30", equipacasa: "FTB.S11.4887.04", equipafora: "FTB.S11.0391.04", resultado: "", localizacaoId: "3348" },{ id: "366.04.234.0", data: "06/06/2026", hora: "10:30", equipacasa: "FTB.S11.1095.04", equipafora: "FTB.S11.0471.04", resultado: "", localizacaoId: "2045" },{ id: "366.04.235.0", data: "06/06/2026", hora: "10:30", equipacasa: "FTB.S11.0190.04", equipafora: "FTB.S11.1016.04", resultado: "", localizacaoId: "1853" },{ id: "366.04.236.0", data: "06/06/2026", hora: "09:30", equipacasa: "FTB.S11.0703.04", equipafora: "FTB.S11.1209.04", resultado: "", localizacaoId: "0131" },{ id: "366.04.238.0", data: "06/06/2026", hora: "09:00", equipacasa: "FTB.S11.1017.04", equipafora: "FTB.S11.0283.04", resultado: "", localizacaoId: "2231" },{ id: "366.04.239.0", data: "06/06/2026", hora: "12:00", equipacasa: "FTB.S11.5647.04", equipafora: "FTB.S11.1033.04", resultado: "", localizacaoId: "4963" },{ id: "366.04.240.0", data: "06/06/2026", hora: "10:00", equipacasa: "FTB.S11.0389.04", equipafora: "FTB.S11.0908.04", resultado: "", localizacaoId: "0271" },{ id: "", data: "", hora: "", equipacasa: "FTB.S11.0000.04", equipafora: "FTB.S11.5629.04", resultado: "", localizacaoId: "" },]},
+			  ]
+            }
+          ]
+        },
+		{
+          desportoId: "FTB",
+          escalaoId: "S12",
+          series: [
+            {
+              serie: "02",
+              equipas: ["FTB.S12.0220.02","FTB.S12.0471.02","FTB.S12.1017.02","FTB.S12.2712.02","FTB.S12.0948.02","FTB.S12.0703.02","FTB.S12.0979.02","FTB.S12.1095.02","FTB.S12.5903.02","FTB.S12.0050.02","FTB.S12.1125.02","FTB.S12.5979.02","FTB.S12.1216.02","FTB.S12.1151.02","FTB.S12.1002.02","FTB.S12.0147.02"],
+              jornadas: 
+			  [
+				{jornada: "01", data: "18/10/2025", jogos: [{ id: "363.02.001.0", data: "18/10/2025", hora: "10:00", equipacasa: "FTB.S12.0220.02", equipafora: "FTB.S12.5903.02", resultado: "", localizacaoId: "5230" },{ id: "363.02.002.0", data: "18/10/2025", hora: "09:00", equipacasa: "FTB.S12.0471.02", equipafora: "FTB.S12.0050.02", resultado: "", localizacaoId: "5494" },{ id: "363.02.003.0", data: "18/10/2025", hora: "09:00", equipacasa: "FTB.S12.1017.02", equipafora: "FTB.S12.1125.02", resultado: "", localizacaoId: "2231" },{ id: "363.02.004.0", data: "18/10/2025", hora: "10:30", equipacasa: "FTB.S12.2712.02", equipafora: "FTB.S12.5979.02", resultado: "", localizacaoId: "2229" },{ id: "363.02.005.0", data: "18/10/2025", hora: "09:00", equipacasa: "FTB.S12.0948.02", equipafora: "FTB.S12.1216.02", resultado: "", localizacaoId: "1883" },{ id: "363.02.006.0", data: "18/10/2025", hora: "09:00", equipacasa: "FTB.S12.0703.02", equipafora: "FTB.S12.1151.02", resultado: "", localizacaoId: "0131" },{ id: "363.02.007.0", data: "18/10/2025", hora: "09:00", equipacasa: "FTB.S12.0979.02", equipafora: "FTB.S12.1002.02", resultado: "", localizacaoId: "1917" },{ id: "363.02.008.0", data: "18/10/2025", hora: "12:00", equipacasa: "FTB.S12.1095.02", equipafora: "FTB.S12.0147.02", resultado: "", localizacaoId: "2009" },]},
+				{jornada: "02", data: " 25/10/2025", jogos: [{ id: "363.02.009.0", data: "25/10/2025", hora: "10:30", equipacasa: "FTB.S12.5903.02", equipafora: "FTB.S12.1095.02", resultado: "", localizacaoId: "1917" },{ id: "363.02.010.0", data: "25/10/2025", hora: "09:30", equipacasa: "FTB.S12.0050.02", equipafora: "FTB.S12.0220.02", resultado: "", localizacaoId: "2214" },{ id: "363.02.011.0", data: "25/10/2025", hora: "09:00", equipacasa: "FTB.S12.1125.02", equipafora: "FTB.S12.0471.02", resultado: "", localizacaoId: "2716" },{ id: "363.02.012.0", data: "25/10/2025", hora: "12:00", equipacasa: "FTB.S12.5979.02", equipafora: "FTB.S12.1017.02", resultado: "", localizacaoId: "2229" },{ id: "363.02.013.0", data: "25/10/2025", hora: "10:00", equipacasa: "FTB.S12.1216.02", equipafora: "FTB.S12.2712.02", resultado: "", localizacaoId: "2221" },{ id: "363.02.014.0", data: "25/10/2025", hora: "10:30", equipacasa: "FTB.S12.1151.02", equipafora: "FTB.S12.0948.02", resultado: "", localizacaoId: "1829" },{ id: "363.02.015.0", data: "25/10/2025", hora: "10:00", equipacasa: "FTB.S12.1002.02", equipafora: "FTB.S12.0703.02", resultado: "", localizacaoId: "1886" },{ id: "363.02.016.0", data: "25/10/2025", hora: "10:30", equipacasa: "FTB.S12.0147.02", equipafora: "FTB.S12.0979.02", resultado: "", localizacaoId: "1849" },]},
+				{jornada: "03", data: " 01/11/2025", jogos: [{ id: "363.02.017.0", data: "01/11/2025", hora: "10:30", equipacasa: "FTB.S12.5903.02", equipafora: "FTB.S12.0050.02", resultado: "", localizacaoId: "1917" },{ id: "363.02.018.0", data: "01/11/2025", hora: "09:00", equipacasa: "FTB.S12.0220.02", equipafora: "FTB.S12.1125.02", resultado: "", localizacaoId: "5230" },{ id: "363.02.019.0", data: "01/11/2025", hora: "09:00", equipacasa: "FTB.S12.0471.02", equipafora: "FTB.S12.5979.02", resultado: "", localizacaoId: "5494" },{ id: "363.02.020.0", data: "01/11/2025", hora: "09:00", equipacasa: "FTB.S12.1017.02", equipafora: "FTB.S12.1216.02", resultado: "", localizacaoId: "2231" },{ id: "363.02.021.0", data: "01/11/2025", hora: "09:00", equipacasa: "FTB.S12.2712.02", equipafora: "FTB.S12.1151.02", resultado: "", localizacaoId: "2229" },{ id: "363.02.022.0", data: "01/11/2025", hora: "09:00", equipacasa: "FTB.S12.0948.02", equipafora: "FTB.S12.1002.02", resultado: "", localizacaoId: "1883" },{ id: "363.02.023.0", data: "01/11/2025", hora: "09:00", equipacasa: "FTB.S12.0703.02", equipafora: "FTB.S12.0147.02", resultado: "", localizacaoId: "0131" },{ id: "363.02.024.0", data: "01/11/2025", hora: "12:00", equipacasa: "FTB.S12.1095.02", equipafora: "FTB.S12.0979.02", resultado: "", localizacaoId: "2009" },]},
+				{jornada: "04", data: " 08/11/2025", jogos: [{ id: "363.02.025.0", data: "08/11/2025", hora: "09:30", equipacasa: "FTB.S12.0050.02", equipafora: "FTB.S12.1095.02", resultado: "", localizacaoId: "2214" },{ id: "363.02.026.0", data: "08/11/2025", hora: "09:00", equipacasa: "FTB.S12.1125.02", equipafora: "FTB.S12.5903.02", resultado: "", localizacaoId: "2716" },{ id: "363.02.027.0", data: "08/11/2025", hora: "12:00", equipacasa: "FTB.S12.5979.02", equipafora: "FTB.S12.0220.02", resultado: "", localizacaoId: "2229" },{ id: "363.02.028.0", data: "08/11/2025", hora: "10:00", equipacasa: "FTB.S12.1216.02", equipafora: "FTB.S12.0471.02", resultado: "", localizacaoId: "2221" },{ id: "363.02.029.0", data: "08/11/2025", hora: "09:00", equipacasa: "FTB.S12.1151.02", equipafora: "FTB.S12.1017.02", resultado: "", localizacaoId: "1829" },{ id: "363.02.030.0", data: "08/11/2025", hora: "09:30", equipacasa: "FTB.S12.1002.02", equipafora: "FTB.S12.2712.02", resultado: "", localizacaoId: "1886" },{ id: "363.02.031.0", data: "08/11/2025", hora: "09:30", equipacasa: "FTB.S12.0147.02", equipafora: "FTB.S12.0948.02", resultado: "", localizacaoId: "1849" },{ id: "363.02.032.0", data: "08/11/2025", hora: "09:00", equipacasa: "FTB.S12.0979.02", equipafora: "FTB.S12.0703.02", resultado: "", localizacaoId: "1917" },]},
+				{jornada: "05", data: " 15/11/2025", jogos: [{ id: "363.02.033.0", data: "15/11/2025", hora: "09:30", equipacasa: "FTB.S12.0050.02", equipafora: "FTB.S12.1125.02", resultado: "", localizacaoId: "2214" },{ id: "363.02.034.0", data: "15/11/2025", hora: "10:30", equipacasa: "FTB.S12.5903.02", equipafora: "FTB.S12.5979.02", resultado: "", localizacaoId: "1917" },{ id: "363.02.035.0", data: "15/11/2025", hora: "09:00", equipacasa: "FTB.S12.0220.02", equipafora: "FTB.S12.1216.02", resultado: "", localizacaoId: "5230" },{ id: "363.02.036.0", data: "15/11/2025", hora: "09:00", equipacasa: "FTB.S12.0471.02", equipafora: "FTB.S12.1151.02", resultado: "", localizacaoId: "5494" },{ id: "363.02.037.0", data: "15/11/2025", hora: "09:00", equipacasa: "FTB.S12.1017.02", equipafora: "FTB.S12.1002.02", resultado: "", localizacaoId: "2231" },{ id: "363.02.038.0", data: "15/11/2025", hora: "10:30", equipacasa: "FTB.S12.2712.02", equipafora: "FTB.S12.0147.02", resultado: "", localizacaoId: "2229" },{ id: "363.02.039.0", data: "15/11/2025", hora: "09:00", equipacasa: "FTB.S12.0948.02", equipafora: "FTB.S12.0979.02", resultado: "", localizacaoId: "1883" },{ id: "363.02.040.0", data: "15/11/2025", hora: "12:00", equipacasa: "FTB.S12.1095.02", equipafora: "FTB.S12.0703.02", resultado: "", localizacaoId: "2009" },]},
+				{jornada: "06", data: " 22/11/2025", jogos: [{ id: "363.02.041.0", data: "22/11/2025", hora: "09:00", equipacasa: "FTB.S12.1125.02", equipafora: "FTB.S12.1095.02", resultado: "", localizacaoId: "2716" },{ id: "363.02.042.0", data: "22/11/2025", hora: "12:00", equipacasa: "FTB.S12.5979.02", equipafora: "FTB.S12.0050.02", resultado: "", localizacaoId: "2229" },{ id: "363.02.043.0", data: "22/11/2025", hora: "10:00", equipacasa: "FTB.S12.1216.02", equipafora: "FTB.S12.5903.02", resultado: "", localizacaoId: "2221" },{ id: "363.02.044.0", data: "22/11/2025", hora: "09:00", equipacasa: "FTB.S12.1151.02", equipafora: "FTB.S12.0220.02", resultado: "", localizacaoId: "1829" },{ id: "363.02.045.0", data: "22/11/2025", hora: "09:30", equipacasa: "FTB.S12.1002.02", equipafora: "FTB.S12.0471.02", resultado: "", localizacaoId: "1886" },{ id: "363.02.046.0", data: "22/11/2025", hora: "09:30", equipacasa: "FTB.S12.0147.02", equipafora: "FTB.S12.1017.02", resultado: "", localizacaoId: "1849" },{ id: "363.02.047.0", data: "22/11/2025", hora: "09:00", equipacasa: "FTB.S12.0979.02", equipafora: "FTB.S12.2712.02", resultado: "", localizacaoId: "1917" },{ id: "363.02.048.0", data: "22/11/2025", hora: "09:00", equipacasa: "FTB.S12.0703.02", equipafora: "FTB.S12.0948.02", resultado: "", localizacaoId: "0131" },]},
+				{jornada: "07", data: " 29/11/2025", jogos: [{ id: "363.02.049.0", data: "29/11/2025", hora: "09:00", equipacasa: "FTB.S12.1125.02", equipafora: "FTB.S12.5979.02", resultado: "", localizacaoId: "2716" },{ id: "363.02.050.0", data: "29/11/2025", hora: "09:30", equipacasa: "FTB.S12.0050.02", equipafora: "FTB.S12.1216.02", resultado: "", localizacaoId: "2214" },{ id: "363.02.051.0", data: "29/11/2025", hora: "12:00", equipacasa: "FTB.S12.5903.02", equipafora: "FTB.S12.1151.02", resultado: "", localizacaoId: "1917" },{ id: "363.02.052.0", data: "29/11/2025", hora: "09:00", equipacasa: "FTB.S12.0220.02", equipafora: "FTB.S12.1002.02", resultado: "", localizacaoId: "5230" },{ id: "363.02.053.0", data: "29/11/2025", hora: "09:00", equipacasa: "FTB.S12.0471.02", equipafora: "FTB.S12.0147.02", resultado: "", localizacaoId: "5494" },{ id: "363.02.054.0", data: "29/11/2025", hora: "09:00", equipacasa: "FTB.S12.1017.02", equipafora: "FTB.S12.0979.02", resultado: "", localizacaoId: "2231" },{ id: "363.02.055.0", data: "29/11/2025", hora: "10:30", equipacasa: "FTB.S12.2712.02", equipafora: "FTB.S12.0703.02", resultado: "", localizacaoId: "2229" },{ id: "363.02.056.0", data: "29/11/2025", hora: "12:00", equipacasa: "FTB.S12.1095.02", equipafora: "FTB.S12.0948.02", resultado: "", localizacaoId: "2009" },]},
+				{jornada: "08", data: " 06/12/2025", jogos: [{ id: "363.02.057.0", data: "06/12/2025", hora: "12:00", equipacasa: "FTB.S12.5979.02", equipafora: "FTB.S12.1095.02", resultado: "", localizacaoId: "2229" },{ id: "363.02.058.0", data: "06/12/2025", hora: "10:00", equipacasa: "FTB.S12.1216.02", equipafora: "FTB.S12.1125.02", resultado: "", localizacaoId: "2221" },{ id: "363.02.059.0", data: "06/12/2025", hora: "09:00", equipacasa: "FTB.S12.1151.02", equipafora: "FTB.S12.0050.02", resultado: "", localizacaoId: "1829" },{ id: "363.02.060.0", data: "06/12/2025", hora: "09:30", equipacasa: "FTB.S12.1002.02", equipafora: "FTB.S12.5903.02", resultado: "", localizacaoId: "1886" },{ id: "363.02.061.0", data: "06/12/2025", hora: "09:30", equipacasa: "FTB.S12.0147.02", equipafora: "FTB.S12.0220.02", resultado: "", localizacaoId: "1849" },{ id: "363.02.062.0", data: "06/12/2025", hora: "09:00", equipacasa: "FTB.S12.0979.02", equipafora: "FTB.S12.0471.02", resultado: "", localizacaoId: "1917" },{ id: "363.02.063.0", data: "06/12/2025", hora: "09:00", equipacasa: "FTB.S12.0703.02", equipafora: "FTB.S12.1017.02", resultado: "", localizacaoId: "0131" },{ id: "363.02.064.0", data: "06/12/2025", hora: "09:00", equipacasa: "FTB.S12.0948.02", equipafora: "FTB.S12.2712.02", resultado: "", localizacaoId: "1883" },]},
+				{jornada: "09", data: " 13/12/2025", jogos: [{ id: "363.02.065.0", data: "13/12/2025", hora: "10:30", equipacasa: "FTB.S12.5979.02", equipafora: "FTB.S12.1216.02", resultado: "", localizacaoId: "2229" },{ id: "363.02.066.0", data: "13/12/2025", hora: "09:00", equipacasa: "FTB.S12.1125.02", equipafora: "FTB.S12.1151.02", resultado: "", localizacaoId: "2716" },{ id: "363.02.067.0", data: "13/12/2025", hora: "10:00", equipacasa: "FTB.S12.0050.02", equipafora: "FTB.S12.1002.02", resultado: "", localizacaoId: "2214" },{ id: "363.02.068.0", data: "13/12/2025", hora: "12:00", equipacasa: "FTB.S12.5903.02", equipafora: "FTB.S12.0147.02", resultado: "", localizacaoId: "1917" },{ id: "363.02.069.0", data: "13/12/2025", hora: "09:00", equipacasa: "FTB.S12.0220.02", equipafora: "FTB.S12.0979.02", resultado: "", localizacaoId: "5230" },{ id: "363.02.070.0", data: "13/12/2025", hora: "09:00", equipacasa: "FTB.S12.0471.02", equipafora: "FTB.S12.0703.02", resultado: "", localizacaoId: "5494" },{ id: "363.02.071.0", data: "13/12/2025", hora: "09:00", equipacasa: "FTB.S12.1017.02", equipafora: "FTB.S12.0948.02", resultado: "", localizacaoId: "2231" },{ id: "363.02.072.0", data: "13/12/2025", hora: "12:00", equipacasa: "FTB.S12.1095.02", equipafora: "FTB.S12.2712.02", resultado: "", localizacaoId: "2009" },]},
+				{jornada: "10", data: " 20/12/2025", jogos: [{ id: "363.02.073.0", data: "20/12/2025", hora: "10:00", equipacasa: "FTB.S12.1216.02", equipafora: "FTB.S12.1095.02", resultado: "", localizacaoId: "2221" },{ id: "363.02.074.0", data: "20/12/2025", hora: "09:00", equipacasa: "FTB.S12.1151.02", equipafora: "FTB.S12.5979.02", resultado: "", localizacaoId: "1829" },{ id: "363.02.075.0", data: "20/12/2025", hora: "09:30", equipacasa: "FTB.S12.1002.02", equipafora: "FTB.S12.1125.02", resultado: "", localizacaoId: "1886" },{ id: "363.02.076.0", data: "20/12/2025", hora: "09:30", equipacasa: "FTB.S12.0147.02", equipafora: "FTB.S12.0050.02", resultado: "", localizacaoId: "1849" },{ id: "363.02.077.0", data: "20/12/2025", hora: "09:00", equipacasa: "FTB.S12.0979.02", equipafora: "FTB.S12.5903.02", resultado: "", localizacaoId: "1917" },{ id: "363.02.078.0", data: "20/12/2025", hora: "09:00", equipacasa: "FTB.S12.0703.02", equipafora: "FTB.S12.0220.02", resultado: "", localizacaoId: "0131" },{ id: "363.02.079.0", data: "20/12/2025", hora: "09:00", equipacasa: "FTB.S12.0948.02", equipafora: "FTB.S12.0471.02", resultado: "", localizacaoId: "1883" },{ id: "363.02.080.0", data: "20/12/2025", hora: "10:30", equipacasa: "FTB.S12.2712.02", equipafora: "FTB.S12.1017.02", resultado: "", localizacaoId: "2229" },]},
+				{jornada: "11", data: " 10/01/2026", jogos: [{ id: "363.02.081.0", data: "10/01/2026", hora: "10:00", equipacasa: "FTB.S12.1216.02", equipafora: "FTB.S12.1151.02", resultado: "", localizacaoId: "2221" },{ id: "363.02.082.0", data: "10/01/2026", hora: "10:30", equipacasa: "FTB.S12.5979.02", equipafora: "FTB.S12.1002.02", resultado: "", localizacaoId: "2229" },{ id: "363.02.083.0", data: "10/01/2026", hora: "09:00", equipacasa: "FTB.S12.1125.02", equipafora: "FTB.S12.0147.02", resultado: "", localizacaoId: "2716" },{ id: "363.02.084.0", data: "10/01/2026", hora: "09:30", equipacasa: "FTB.S12.0050.02", equipafora: "FTB.S12.0979.02", resultado: "", localizacaoId: "2214" },{ id: "363.02.085.0", data: "10/01/2026", hora: "10:30", equipacasa: "FTB.S12.5903.02", equipafora: "FTB.S12.0703.02", resultado: "", localizacaoId: "1917" },{ id: "363.02.086.0", data: "10/01/2026", hora: "09:00", equipacasa: "FTB.S12.0220.02", equipafora: "FTB.S12.0948.02", resultado: "", localizacaoId: "5230" },{ id: "363.02.087.0", data: "10/01/2026", hora: "09:00", equipacasa: "FTB.S12.0471.02", equipafora: "FTB.S12.2712.02", resultado: "", localizacaoId: "5494" },{ id: "363.02.088.0", data: "10/01/2026", hora: "12:00", equipacasa: "FTB.S12.1095.02", equipafora: "FTB.S12.1017.02", resultado: "", localizacaoId: "2009" },]},
+				{jornada: "12", data: " 17/01/2026", jogos: [{ id: "363.02.089.0", data: "17/01/2026", hora: "09:00", equipacasa: "FTB.S12.1151.02", equipafora: "FTB.S12.1095.02", resultado: "", localizacaoId: "1829" },{ id: "363.02.090.0", data: "17/01/2026", hora: "09:30", equipacasa: "FTB.S12.1002.02", equipafora: "FTB.S12.1216.02", resultado: "", localizacaoId: "1886" },{ id: "363.02.091.0", data: "17/01/2026", hora: "09:30", equipacasa: "FTB.S12.0147.02", equipafora: "FTB.S12.5979.02", resultado: "", localizacaoId: "1849" },{ id: "363.02.092.0", data: "17/01/2026", hora: "09:00", equipacasa: "FTB.S12.0979.02", equipafora: "FTB.S12.1125.02", resultado: "", localizacaoId: "1917" },{ id: "363.02.093.0", data: "17/01/2026", hora: "09:00", equipacasa: "FTB.S12.0703.02", equipafora: "FTB.S12.0050.02", resultado: "", localizacaoId: "0131" },{ id: "363.02.094.0", data: "17/01/2026", hora: "09:00", equipacasa: "FTB.S12.0948.02", equipafora: "FTB.S12.5903.02", resultado: "", localizacaoId: "1883" },{ id: "363.02.095.0", data: "17/01/2026", hora: "10:30", equipacasa: "FTB.S12.2712.02", equipafora: "FTB.S12.0220.02", resultado: "", localizacaoId: "2229" },{ id: "363.02.096.0", data: "17/01/2026", hora: "09:00", equipacasa: "FTB.S12.1017.02", equipafora: "FTB.S12.0471.02", resultado: "", localizacaoId: "2231" },]},
+				{jornada: "13", data: " 24/01/2026", jogos: [{ id: "363.02.097.0", data: "24/01/2026", hora: "09:00", equipacasa: "FTB.S12.1151.02", equipafora: "FTB.S12.1002.02", resultado: "", localizacaoId: "1829" },{ id: "363.02.098.0", data: "24/01/2026", hora: "10:00", equipacasa: "FTB.S12.1216.02", equipafora: "FTB.S12.0147.02", resultado: "", localizacaoId: "2221" },{ id: "363.02.099.0", data: "24/01/2026", hora: "12:00", equipacasa: "FTB.S12.5979.02", equipafora: "FTB.S12.0979.02", resultado: "", localizacaoId: "2229" },{ id: "363.02.100.0", data: "24/01/2026", hora: "09:00", equipacasa: "FTB.S12.1125.02", equipafora: "FTB.S12.0703.02", resultado: "", localizacaoId: "2716" },{ id: "363.02.101.0", data: "24/01/2026", hora: "09:30", equipacasa: "FTB.S12.0050.02", equipafora: "FTB.S12.0948.02", resultado: "", localizacaoId: "2214" },{ id: "363.02.102.0", data: "24/01/2026", hora: "10:30", equipacasa: "FTB.S12.5903.02", equipafora: "FTB.S12.2712.02", resultado: "", localizacaoId: "1917" },{ id: "363.02.103.0", data: "24/01/2026", hora: "09:00", equipacasa: "FTB.S12.0220.02", equipafora: "FTB.S12.1017.02", resultado: "", localizacaoId: "5230" },{ id: "363.02.104.0", data: "24/01/2026", hora: "10:00", equipacasa: "FTB.S12.1095.02", equipafora: "FTB.S12.0471.02", resultado: "", localizacaoId: "2009" },]},
+				{jornada: "14", data: " 31/01/2026", jogos: [{ id: "363.02.105.0", data: "31/01/2026", hora: "12:00", equipacasa: "FTB.S12.1095.02", equipafora: "FTB.S12.1002.02", resultado: "", localizacaoId: "2009" },{ id: "363.02.106.0", data: "31/01/2026", hora: "09:30", equipacasa: "FTB.S12.0147.02", equipafora: "FTB.S12.1151.02", resultado: "", localizacaoId: "1849" },{ id: "363.02.107.0", data: "31/01/2026", hora: "09:00", equipacasa: "FTB.S12.0979.02", equipafora: "FTB.S12.1216.02", resultado: "", localizacaoId: "1917" },{ id: "363.02.108.0", data: "31/01/2026", hora: "09:00", equipacasa: "FTB.S12.0703.02", equipafora: "FTB.S12.5979.02", resultado: "", localizacaoId: "0131" },{ id: "363.02.109.0", data: "31/01/2026", hora: "09:00", equipacasa: "FTB.S12.0948.02", equipafora: "FTB.S12.1125.02", resultado: "", localizacaoId: "1883" },{ id: "363.02.110.0", data: "31/01/2026", hora: "10:30", equipacasa: "FTB.S12.2712.02", equipafora: "FTB.S12.0050.02", resultado: "", localizacaoId: "2229" },{ id: "363.02.111.0", data: "31/01/2026", hora: "09:00", equipacasa: "FTB.S12.1017.02", equipafora: "FTB.S12.5903.02", resultado: "", localizacaoId: "2231" },{ id: "363.02.112.0", data: "31/01/2026", hora: "09:00", equipacasa: "FTB.S12.0471.02", equipafora: "FTB.S12.0220.02", resultado: "", localizacaoId: "5494" },]},
+				{jornada: "15", data: " 07/02/2026", jogos: [{ id: "363.02.113.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S12.1002.02", equipafora: "FTB.S12.0147.02", resultado: "", localizacaoId: "1886" },{ id: "363.02.114.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S12.1151.02", equipafora: "FTB.S12.0979.02", resultado: "", localizacaoId: "1829" },{ id: "363.02.115.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S12.1216.02", equipafora: "FTB.S12.0703.02", resultado: "", localizacaoId: "2221" },{ id: "363.02.116.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S12.5979.02", equipafora: "FTB.S12.0948.02", resultado: "", localizacaoId: "2229" },{ id: "363.02.117.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S12.1125.02", equipafora: "FTB.S12.2712.02", resultado: "", localizacaoId: "2716" },{ id: "363.02.118.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S12.0050.02", equipafora: "FTB.S12.1017.02", resultado: "", localizacaoId: "2214" },{ id: "363.02.119.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S12.5903.02", equipafora: "FTB.S12.0471.02", resultado: "", localizacaoId: "1917" },{ id: "363.02.120.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S12.0220.02", equipafora: "FTB.S12.1095.02", resultado: "", localizacaoId: "5230" },]},
+			  ]
+            },
+			{
+              serie: "04",
+              equipas: ["FTB.S12.0908.04","FTB.S12.0191.04","FTB.S12.1016.04","FTB.S12.0384.04","FTB.S12.2595.04","FTB.S12.0283.04","FTB.S12.1033.04","FTB.S12.0391.04","FTB.S12.1095.04","FTB.S12.0376.04","FTB.S12.5629.04","FTB.S12.1209.04","FTB.S12.0190.04","FTB.S12.0703.04","FTB.S12.5647.04","FTB.S12.4887.04"],
+              jornadas: 
+			  [
+				{jornada: "01", data: "18/10/2025", jogos: [{ id: "363.04.001.0", data: "18/10/2025", hora: "09:00", equipacasa: "FTB.S12.0908.04", equipafora: "FTB.S12.1095.04", resultado: "", localizacaoId: "3348" },{ id: "363.04.002.0", data: "18/10/2025", hora: "09:00", equipacasa: "FTB.S12.0191.04", equipafora: "FTB.S12.0376.04", resultado: "", localizacaoId: "2009" },{ id: "363.04.003.0", data: "18/10/2025", hora: "12:00", equipacasa: "FTB.S12.1016.04", equipafora: "FTB.S12.5629.04", resultado: "", localizacaoId: "1642" },{ id: "363.04.004.0", data: "18/10/2025", hora: "09:00", equipacasa: "FTB.S12.0384.04", equipafora: "FTB.S12.1209.04", resultado: "", localizacaoId: "4064" },{ id: "363.04.005.0", data: "18/10/2025", hora: "10:30", equipacasa: "FTB.S12.2595.04", equipafora: "FTB.S12.0190.04", resultado: "", localizacaoId: "1862" },{ id: "363.04.006.0", data: "18/10/2025", hora: "09:30", equipacasa: "FTB.S12.0283.04", equipafora: "FTB.S12.0703.04", resultado: "", localizacaoId: "0222" },{ id: "363.04.007.0", data: "18/10/2025", hora: "09:00", equipacasa: "FTB.S12.1033.04", equipafora: "FTB.S12.5647.04", resultado: "", localizacaoId: "1511" },{ id: "363.04.008.0", data: "18/10/2025", hora: "09:30", equipacasa: "FTB.S12.0391.04", equipafora: "FTB.S12.4887.04", resultado: "", localizacaoId: "4577" },]},
+				{jornada: "02", data: "25/10/2025", jogos: [{ id: "363.04.009.0", data: "25/10/2025", hora: "09:00", equipacasa: "FTB.S12.1095.04", equipafora: "FTB.S12.0391.04", resultado: "", localizacaoId: "2045" },{ id: "363.04.010.0", data: "25/10/2025", hora: "10:30", equipacasa: "FTB.S12.0376.04", equipafora: "FTB.S12.0908.04", resultado: "", localizacaoId: "1753" },{ id: "363.04.011.0", data: "25/10/2025", hora: "11:00", equipacasa: "FTB.S12.5629.04", equipafora: "FTB.S12.0191.04", resultado: "", localizacaoId: "4753" },{ id: "363.04.012.0", data: "25/10/2025", hora: "10:30", equipacasa: "FTB.S12.1209.04", equipafora: "FTB.S12.1016.04", resultado: "", localizacaoId: "1894" },{ id: "363.04.013.0", data: "25/10/2025", hora: "10:00", equipacasa: "FTB.S12.0190.04", equipafora: "FTB.S12.0384.04", resultado: "", localizacaoId: "1853" },{ id: "363.04.014.0", data: "25/10/2025", hora: "09:00", equipacasa: "FTB.S12.0703.04", equipafora: "FTB.S12.2595.04", resultado: "", localizacaoId: "0131" },{ id: "363.04.015.0", data: "25/10/2025", hora: "09:00", equipacasa: "FTB.S12.5647.04", equipafora: "FTB.S12.0283.04", resultado: "", localizacaoId: "1641" },{ id: "363.04.016.0", data: "25/10/2025", hora: "09:00", equipacasa: "FTB.S12.4887.04", equipafora: "FTB.S12.1033.04", resultado: "", localizacaoId: "3348" },]},
+				{jornada: "03", data: "01/11/2025", jogos: [{ id: "363.04.017.0", data: "01/11/2025", hora: "09:00", equipacasa: "FTB.S12.1095.04", equipafora: "FTB.S12.0376.04", resultado: "", localizacaoId: "2045" },{ id: "363.04.018.0", data: "01/11/2025", hora: "09:00", equipacasa: "FTB.S12.0908.04", equipafora: "FTB.S12.5629.04", resultado: "", localizacaoId: "3348" },{ id: "363.04.019.0", data: "01/11/2025", hora: "09:00", equipacasa: "FTB.S12.0191.04", equipafora: "FTB.S12.1209.04", resultado: "", localizacaoId: "2009" },{ id: "363.04.020.0", data: "01/11/2025", hora: "12:00", equipacasa: "FTB.S12.1016.04", equipafora: "FTB.S12.0190.04", resultado: "", localizacaoId: "1642" },{ id: "363.04.021.0", data: "01/11/2025", hora: "09:00", equipacasa: "FTB.S12.0384.04", equipafora: "FTB.S12.0703.04", resultado: "", localizacaoId: "4064" },{ id: "363.04.022.0", data: "01/11/2025", hora: "10:30", equipacasa: "FTB.S12.2595.04", equipafora: "FTB.S12.5647.04", resultado: "", localizacaoId: "1862" },{ id: "363.04.023.0", data: "01/11/2025", hora: "09:30", equipacasa: "FTB.S12.0283.04", equipafora: "FTB.S12.4887.04", resultado: "", localizacaoId: "0222" },{ id: "363.04.024.0", data: "01/11/2025", hora: "11:00", equipacasa: "FTB.S12.0391.04", equipafora: "FTB.S12.1033.04", resultado: "", localizacaoId: "4577" },]},
+				{jornada: "04", data: "08/11/2025", jogos: [{ id: "363.04.025.0", data: "08/11/2025", hora: "10:30", equipacasa: "FTB.S12.0376.04", equipafora: "FTB.S12.0391.04", resultado: "", localizacaoId: "1753" },{ id: "363.04.026.0", data: "08/11/2025", hora: "11:00", equipacasa: "FTB.S12.5629.04", equipafora: "FTB.S12.1095.04", resultado: "", localizacaoId: "4753" },{ id: "363.04.027.0", data: "08/11/2025", hora: "10:30", equipacasa: "FTB.S12.1209.04", equipafora: "FTB.S12.0908.04", resultado: "", localizacaoId: "1894" },{ id: "363.04.028.0", data: "08/11/2025", hora: "10:00", equipacasa: "FTB.S12.0190.04", equipafora: "FTB.S12.0191.04", resultado: "", localizacaoId: "1853" },{ id: "363.04.029.0", data: "08/11/2025", hora: "09:30", equipacasa: "FTB.S12.0703.04", equipafora: "FTB.S12.1016.04", resultado: "", localizacaoId: "0131" },{ id: "363.04.030.0", data: "08/11/2025", hora: "09:00", equipacasa: "FTB.S12.5647.04", equipafora: "FTB.S12.0384.04", resultado: "", localizacaoId: "1641" },{ id: "363.04.031.0", data: "08/11/2025", hora: "09:00", equipacasa: "FTB.S12.4887.04", equipafora: "FTB.S12.2595.04", resultado: "", localizacaoId: "3348" },{ id: "363.04.032.0", data: "08/11/2025", hora: "09:00", equipacasa: "FTB.S12.1033.04", equipafora: "FTB.S12.0283.04", resultado: "", localizacaoId: "1511" },]},
+				{jornada: "05", data: "15/11/2025", jogos: [{ id: "363.04.033.0", data: "15/11/2025", hora: "12:00", equipacasa: "FTB.S12.0376.04", equipafora: "FTB.S12.5629.04", resultado: "", localizacaoId: "1753" },{ id: "363.04.034.0", data: "15/11/2025", hora: "09:00", equipacasa: "FTB.S12.1095.04", equipafora: "FTB.S12.1209.04", resultado: "", localizacaoId: "2045" },{ id: "363.04.035.0", data: "15/11/2025", hora: "09:00", equipacasa: "FTB.S12.0908.04", equipafora: "FTB.S12.0190.04", resultado: "", localizacaoId: "3348" },{ id: "363.04.036.0", data: "15/11/2025", hora: "09:00", equipacasa: "FTB.S12.0191.04", equipafora: "FTB.S12.0703.04", resultado: "", localizacaoId: "2009" },{ id: "363.04.037.0", data: "15/11/2025", hora: "10:30", equipacasa: "FTB.S12.1016.04", equipafora: "FTB.S12.5647.04", resultado: "", localizacaoId: "1642" },{ id: "363.04.038.0", data: "15/11/2025", hora: "09:00", equipacasa: "FTB.S12.0384.04", equipafora: "FTB.S12.4887.04", resultado: "", localizacaoId: "4064" },{ id: "363.04.039.0", data: "15/11/2025", hora: "10:30", equipacasa: "FTB.S12.2595.04", equipafora: "FTB.S12.1033.04", resultado: "", localizacaoId: "1862" },{ id: "363.04.040.0", data: "15/11/2025", hora: "09:30", equipacasa: "FTB.S12.0391.04", equipafora: "FTB.S12.0283.04", resultado: "", localizacaoId: "4577" },]},
+				{jornada: "06", data: "22/11/2025", jogos: [{ id: "363.04.041.0", data: "22/11/2025", hora: "11:00", equipacasa: "FTB.S12.5629.04", equipafora: "FTB.S12.0391.04", resultado: "", localizacaoId: "4753" },{ id: "363.04.042.0", data: "22/11/2025", hora: "10:30", equipacasa: "FTB.S12.1209.04", equipafora: "FTB.S12.0376.04", resultado: "", localizacaoId: "1894" },{ id: "363.04.043.0", data: "22/11/2025", hora: "09:00", equipacasa: "FTB.S12.0190.04", equipafora: "FTB.S12.1095.04", resultado: "", localizacaoId: "1853" },{ id: "363.04.044.0", data: "22/11/2025", hora: "09:00", equipacasa: "FTB.S12.0703.04", equipafora: "FTB.S12.0908.04", resultado: "", localizacaoId: "0131" },{ id: "363.04.045.0", data: "22/11/2025", hora: "10:30", equipacasa: "FTB.S12.5647.04", equipafora: "FTB.S12.0191.04", resultado: "", localizacaoId: "1641" },{ id: "363.04.046.0", data: "22/11/2025", hora: "09:00", equipacasa: "FTB.S12.4887.04", equipafora: "FTB.S12.1016.04", resultado: "", localizacaoId: "3348" },{ id: "363.04.047.0", data: "22/11/2025", hora: "12:00", equipacasa: "FTB.S12.1033.04", equipafora: "FTB.S12.0384.04", resultado: "", localizacaoId: "1511" },{ id: "363.04.048.0", data: "22/11/2025", hora: "09:30", equipacasa: "FTB.S12.0283.04", equipafora: "FTB.S12.2595.04", resultado: "", localizacaoId: "0222" },]},
+				{jornada: "07", data: "29/11/2025", jogos: [{ id: "363.04.049.0", data: "29/11/2025", hora: "11:00", equipacasa: "FTB.S12.5629.04", equipafora: "FTB.S12.1209.04", resultado: "", localizacaoId: "4753" },{ id: "363.04.050.0", data: "29/11/2025", hora: "10:30", equipacasa: "FTB.S12.0376.04", equipafora: "FTB.S12.0190.04", resultado: "", localizacaoId: "1753" },{ id: "363.04.051.0", data: "29/11/2025", hora: "10:30", equipacasa: "FTB.S12.1095.04", equipafora: "FTB.S12.0703.04", resultado: "", localizacaoId: "2045" },{ id: "363.04.052.0", data: "29/11/2025", hora: "09:00", equipacasa: "FTB.S12.0908.04", equipafora: "FTB.S12.5647.04", resultado: "", localizacaoId: "3348" },{ id: "363.04.053.0", data: "29/11/2025", hora: "09:00", equipacasa: "FTB.S12.0191.04", equipafora: "FTB.S12.4887.04", resultado: "", localizacaoId: "2009" },{ id: "363.04.054.0", data: "29/11/2025", hora: "10:30", equipacasa: "FTB.S12.1016.04", equipafora: "FTB.S12.1033.04", resultado: "", localizacaoId: "1642" },{ id: "363.04.055.0", data: "29/11/2025", hora: "09:00", equipacasa: "FTB.S12.0384.04", equipafora: "FTB.S12.0283.04", resultado: "", localizacaoId: "4064" },{ id: "363.04.056.0", data: "29/11/2025", hora: "09:30", equipacasa: "FTB.S12.0391.04", equipafora: "FTB.S12.2595.04", resultado: "", localizacaoId: "4577" },]},
+				{jornada: "08", data: "06/12/2025", jogos: [{ id: "363.04.057.0", data: "06/12/2025", hora: "10:30", equipacasa: "FTB.S12.1209.04", equipafora: "FTB.S12.0391.04", resultado: "", localizacaoId: "1894" },{ id: "363.04.058.0", data: "06/12/2025", hora: "09:00", equipacasa: "FTB.S12.0190.04", equipafora: "FTB.S12.5629.04", resultado: "", localizacaoId: "1853" },{ id: "363.04.059.0", data: "06/12/2025", hora: "10:30", equipacasa: "FTB.S12.0703.04", equipafora: "FTB.S12.0376.04", resultado: "", localizacaoId: "0131" },{ id: "363.04.060.0", data: "06/12/2025", hora: "13:00", equipacasa: "FTB.S12.5647.04", equipafora: "FTB.S12.1095.04", resultado: "", localizacaoId: "1534" },{ id: "363.04.061.0", data: "06/12/2025", hora: "09:00", equipacasa: "FTB.S12.4887.04", equipafora: "FTB.S12.0908.04", resultado: "", localizacaoId: "3348" },{ id: "363.04.062.0", data: "06/12/2025", hora: "09:00", equipacasa: "FTB.S12.1033.04", equipafora: "FTB.S12.0191.04", resultado: "", localizacaoId: "1511" },{ id: "363.04.063.0", data: "06/12/2025", hora: "09:30", equipacasa: "FTB.S12.0283.04", equipafora: "FTB.S12.1016.04", resultado: "", localizacaoId: "0222" },{ id: "363.04.064.0", data: "06/12/2025", hora: "09:00", equipacasa: "FTB.S12.2595.04", equipafora: "FTB.S12.0384.04", resultado: "", localizacaoId: "1862" },]},
+				{jornada: "09", data: "13/12/2025", jogos: [{ id: "363.04.065.0", data: "13/12/2025", hora: "10:30", equipacasa: "FTB.S12.1209.04", equipafora: "FTB.S12.0190.04", resultado: "", localizacaoId: "1894" },{ id: "363.04.066.0", data: "13/12/2025", hora: "11:00", equipacasa: "FTB.S12.5629.04", equipafora: "FTB.S12.0703.04", resultado: "", localizacaoId: "4753" },{ id: "363.04.067.0", data: "13/12/2025", hora: "10:30", equipacasa: "FTB.S12.0376.04", equipafora: "FTB.S12.5647.04", resultado: "", localizacaoId: "1753" },{ id: "363.04.068.0", data: "13/12/2025", hora: "09:00", equipacasa: "FTB.S12.1095.04", equipafora: "FTB.S12.4887.04", resultado: "", localizacaoId: "2045" },{ id: "363.04.069.0", data: "13/12/2025", hora: "09:00", equipacasa: "FTB.S12.0908.04", equipafora: "FTB.S12.1033.04", resultado: "", localizacaoId: "3348" },{ id: "363.04.070.0", data: "13/12/2025", hora: "09:00", equipacasa: "FTB.S12.0191.04", equipafora: "FTB.S12.0283.04", resultado: "", localizacaoId: "2009" },{ id: "363.04.071.0", data: "13/12/2025", hora: "12:00", equipacasa: "FTB.S12.1016.04", equipafora: "FTB.S12.2595.04", resultado: "", localizacaoId: "1642" },{ id: "363.04.072.0", data: "13/12/2025", hora: "09:30", equipacasa: "FTB.S12.0391.04", equipafora: "FTB.S12.0384.04", resultado: "", localizacaoId: "4577" },]},
+				{jornada: "10", data: "20/12/2025", jogos: [{ id: "363.04.073.0", data: "20/12/2025", hora: "09:00", equipacasa: "FTB.S12.0190.04", equipafora: "FTB.S12.0391.04", resultado: "", localizacaoId: "1853" },{ id: "363.04.074.0", data: "20/12/2025", hora: "09:00", equipacasa: "FTB.S12.0703.04", equipafora: "FTB.S12.1209.04", resultado: "", localizacaoId: "0131" },{ id: "363.04.075.0", data: "20/12/2025", hora: "10:30", equipacasa: "FTB.S12.5647.04", equipafora: "FTB.S12.5629.04", resultado: "", localizacaoId: "1641" },{ id: "363.04.076.0", data: "20/12/2025", hora: "09:00", equipacasa: "FTB.S12.4887.04", equipafora: "FTB.S12.0376.04", resultado: "", localizacaoId: "3348" },{ id: "363.04.077.0", data: "20/12/2025", hora: "09:00", equipacasa: "FTB.S12.1033.04", equipafora: "FTB.S12.1095.04", resultado: "", localizacaoId: "1511" },{ id: "363.04.078.0", data: "20/12/2025", hora: "09:30", equipacasa: "FTB.S12.0283.04", equipafora: "FTB.S12.0908.04", resultado: "", localizacaoId: "0222" },{ id: "363.04.079.0", data: "20/12/2025", hora: "10:30", equipacasa: "FTB.S12.2595.04", equipafora: "FTB.S12.0191.04", resultado: "", localizacaoId: "1862" },{ id: "363.04.080.0", data: "20/12/2025", hora: "09:00", equipacasa: "FTB.S12.0384.04", equipafora: "FTB.S12.1016.04", resultado: "", localizacaoId: "4064" },]},
+				{jornada: "11", data: "10/01/2026", jogos: [{ id: "363.04.081.0", data: "10/01/2026", hora: "10:00", equipacasa: "FTB.S12.0190.04", equipafora: "FTB.S12.0703.04", resultado: "", localizacaoId: "1853" },{ id: "363.04.082.0", data: "10/01/2026", hora: "10:30", equipacasa: "FTB.S12.1209.04", equipafora: "FTB.S12.5647.04", resultado: "", localizacaoId: "1894" },{ id: "363.04.083.0", data: "10/01/2026", hora: "11:00", equipacasa: "FTB.S12.5629.04", equipafora: "FTB.S12.4887.04", resultado: "", localizacaoId: "4753" },{ id: "363.04.084.0", data: "10/01/2026", hora: "10:30", equipacasa: "FTB.S12.0376.04", equipafora: "FTB.S12.1033.04", resultado: "", localizacaoId: "1753" },{ id: "363.04.085.0", data: "10/01/2026", hora: "10:30", equipacasa: "FTB.S12.1095.04", equipafora: "FTB.S12.0283.04", resultado: "", localizacaoId: "2045" },{ id: "363.04.086.0", data: "10/01/2026", hora: "09:00", equipacasa: "FTB.S12.0908.04", equipafora: "FTB.S12.2595.04", resultado: "", localizacaoId: "3348" },{ id: "363.04.087.0", data: "10/01/2026", hora: "09:00", equipacasa: "FTB.S12.0191.04", equipafora: "FTB.S12.0384.04", resultado: "", localizacaoId: "2009" },{ id: "363.04.088.0", data: "10/01/2026", hora: "11:00", equipacasa: "FTB.S12.0391.04", equipafora: "FTB.S12.1016.04", resultado: "", localizacaoId: "4577" },]},
+				{jornada: "12", data: "17/01/2026", jogos: [{ id: "363.04.089.0", data: "17/01/2026", hora: "09:00", equipacasa: "FTB.S12.0703.04", equipafora: "FTB.S12.0391.04", resultado: "", localizacaoId: "0131" },{ id: "363.04.090.0", data: "17/01/2026", hora: "08:45", equipacasa: "FTB.S12.5647.04", equipafora: "FTB.S12.0190.04", resultado: "", localizacaoId: "1534" },{ id: "363.04.091.0", data: "17/01/2026", hora: "09:00", equipacasa: "FTB.S12.4887.04", equipafora: "FTB.S12.1209.04", resultado: "", localizacaoId: "3348" },{ id: "363.04.092.0", data: "17/01/2026", hora: "09:00", equipacasa: "FTB.S12.1033.04", equipafora: "FTB.S12.5629.04", resultado: "", localizacaoId: "1511" },{ id: "363.04.093.0", data: "17/01/2026", hora: "09:30", equipacasa: "FTB.S12.0283.04", equipafora: "FTB.S12.0376.04", resultado: "", localizacaoId: "0222" },{ id: "363.04.094.0", data: "17/01/2026", hora: "10:30", equipacasa: "FTB.S12.2595.04", equipafora: "FTB.S12.1095.04", resultado: "", localizacaoId: "1862" },{ id: "363.04.095.0", data: "17/01/2026", hora: "09:00", equipacasa: "FTB.S12.0384.04", equipafora: "FTB.S12.0908.04", resultado: "", localizacaoId: "4064" },{ id: "363.04.096.0", data: "17/01/2026", hora: "10:30", equipacasa: "FTB.S12.1016.04", equipafora: "FTB.S12.0191.04", resultado: "", localizacaoId: "1642" },]},
+				{jornada: "13", data: "24/01/2026", jogos: [{ id: "363.04.097.0", data: "24/01/2026", hora: "09:00", equipacasa: "FTB.S12.0703.04", equipafora: "FTB.S12.5647.04", resultado: "", localizacaoId: "0131" },{ id: "363.04.098.0", data: "24/01/2026", hora: "10:00", equipacasa: "FTB.S12.0190.04", equipafora: "FTB.S12.4887.04", resultado: "", localizacaoId: "1853" },{ id: "363.04.099.0", data: "24/01/2026", hora: "10:30", equipacasa: "FTB.S12.1209.04", equipafora: "FTB.S12.1033.04", resultado: "", localizacaoId: "1894" },{ id: "363.04.100.0", data: "24/01/2026", hora: "11:00", equipacasa: "FTB.S12.5629.04", equipafora: "FTB.S12.0283.04", resultado: "", localizacaoId: "4753" },{ id: "363.04.101.0", data: "24/01/2026", hora: "10:30", equipacasa: "FTB.S12.0376.04", equipafora: "FTB.S12.2595.04", resultado: "", localizacaoId: "1753" },{ id: "363.04.102.0", data: "24/01/2026", hora: "10:30", equipacasa: "FTB.S12.1095.04", equipafora: "FTB.S12.0384.04", resultado: "", localizacaoId: "2045" },{ id: "363.04.103.0", data: "24/01/2026", hora: "09:00", equipacasa: "FTB.S12.0908.04", equipafora: "FTB.S12.1016.04", resultado: "", localizacaoId: "3348" },{ id: "363.04.104.0", data: "24/01/2026", hora: "09:30", equipacasa: "FTB.S12.0391.04", equipafora: "FTB.S12.0191.04", resultado: "", localizacaoId: "4577" },]},
+				{jornada: "14", data: "31/01/2026", jogos: [{ id: "363.04.105.0", data: "31/01/2026", hora: "09:30", equipacasa: "FTB.S12.0391.04", equipafora: "FTB.S12.5647.04", resultado: "", localizacaoId: "4577" },{ id: "363.04.106.0", data: "31/01/2026", hora: "09:00", equipacasa: "FTB.S12.4887.04", equipafora: "FTB.S12.0703.04", resultado: "", localizacaoId: "3348" },{ id: "363.04.107.0", data: "31/01/2026", hora: "09:00", equipacasa: "FTB.S12.1033.04", equipafora: "FTB.S12.0190.04", resultado: "", localizacaoId: "1511" },{ id: "363.04.108.0", data: "31/01/2026", hora: "09:30", equipacasa: "FTB.S12.0283.04", equipafora: "FTB.S12.1209.04", resultado: "", localizacaoId: "0222" },{ id: "363.04.109.0", data: "31/01/2026", hora: "10:30", equipacasa: "FTB.S12.2595.04", equipafora: "FTB.S12.5629.04", resultado: "", localizacaoId: "1862" },{ id: "363.04.110.0", data: "31/01/2026", hora: "09:00", equipacasa: "FTB.S12.0384.04", equipafora: "FTB.S12.0376.04", resultado: "", localizacaoId: "4064" },{ id: "363.04.111.0", data: "31/01/2026", hora: "12:00", equipacasa: "FTB.S12.1016.04", equipafora: "FTB.S12.1095.04", resultado: "", localizacaoId: "1642" },{ id: "363.04.112.0", data: "31/01/2026", hora: "09:00", equipacasa: "FTB.S12.0191.04", equipafora: "FTB.S12.0908.04", resultado: "", localizacaoId: "2009" },]},
+				{jornada: "15", data: "07/02/2026", jogos: [{ id: "363.04.113.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S12.5647.04", equipafora: "FTB.S12.4887.04", resultado: "", localizacaoId: "1641" },{ id: "363.04.114.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S12.0703.04", equipafora: "FTB.S12.1033.04", resultado: "", localizacaoId: "0131" },{ id: "363.04.115.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S12.0190.04", equipafora: "FTB.S12.0283.04", resultado: "", localizacaoId: "1853" },{ id: "363.04.116.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S12.1209.04", equipafora: "FTB.S12.2595.04", resultado: "", localizacaoId: "1894" },{ id: "363.04.117.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S12.5629.04", equipafora: "FTB.S12.0384.04", resultado: "", localizacaoId: "4753" },{ id: "363.04.118.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S12.0376.04", equipafora: "FTB.S12.1016.04", resultado: "", localizacaoId: "1753" },{ id: "363.04.119.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S12.1095.04", equipafora: "FTB.S12.0191.04", resultado: "", localizacaoId: "2045" },{ id: "363.04.120.0", data: "07/02/2026", hora: "10:00", equipacasa: "FTB.S12.0908.04", equipafora: "FTB.S12.0391.04", resultado: "", localizacaoId: "3348" },]},
+			  ]
+            }
+          ]
+        }
+      ]
+    };
+
+    const desportoSelect = document.getElementById('desportoSelect');
+    const escalaoSelect = document.getElementById('escalaoSelect');
+    const serieSelect = document.getElementById('serieSelect');
+    const jornadaSelect = document.getElementById('jornadaSelect');
+    const jornadaDiv = document.getElementById('jornada');
+	const equipaDestaqueSelect = document.getElementById('equipaDestaqueSelect');
+
+    // Preencher desportos
+    dados.desportos.forEach(d => {
+      const option = document.createElement('option');
+      option.value = d.id;
+      option.textContent = d.nome;
+      desportoSelect.appendChild(option);
+    });
+
+    function atualizarEscaloes() {
+      escalaoSelect.innerHTML = '';
+      const desportoId = desportoSelect.value;
+      const escaloesFiltrados = dados.competicoes
+        .filter(c => c.desportoId === desportoId)
+        .map(c => c.escalaoId);
+
+      const escaloesUnicos = [...new Set(escaloesFiltrados)];
+      escaloesUnicos.forEach(id => {
+        const escalao = dados.escaloes.find(e => e.id === id);
+        const option = document.createElement('option');
+        option.value = escalao.id;
+        option.textContent = escalao.nome;
+        escalaoSelect.appendChild(option);
+      });
+	  
+	  atualizarEquipasDestaque();
+      atualizarSeries();
+    }
+
+    function atualizarSeries() {
+      serieSelect.innerHTML = '';
+      const desportoId = desportoSelect.value;
+      const escalaoId = escalaoSelect.value;
+      const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
+
+      comp?.series.forEach((s, i) => {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `Série ${s.serie}`;
+        serieSelect.appendChild(option);
+      });
+
+	  atualizarEquipasDestaque();
+      atualizarJornadas();
+    }
+
+    function atualizarJornadas() {
+      jornadaSelect.innerHTML = '';
+      const desportoId = desportoSelect.value;
+      const escalaoId = escalaoSelect.value;
+      const serieIndex = serieSelect.value;
+      const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
+      const serie = comp?.series[serieIndex];	  
+
+      serie?.jornadas.forEach((j, i) => {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `Jornada ${j.jornada}`;
+        jornadaSelect.appendChild(option);
+      });
+
+	  atualizarEquipasDestaque();
+      atualizarCalendario();
+    }
+
+	function atualizarEquipasDestaque() {	  
+	  equipaDestaqueSelect.innerHTML = '<option value="">(nenhuma)</option>';
+	  const equipas = equipasFiltradas();	  
+
+	  let highlightedId = null;
+	  
+	  equipas.forEach(e => {
+		const clube = dados.clubes.find(c => c.id === e.clubeId);
+		const nome = `${e.nome}`;
+		const option = document.createElement('option');
+		option.value = e.id; // ← valor correto
+		option.textContent = nome;
+		equipaDestaqueSelect.appendChild(option);
+		
+		if (e.highlighted && highlightedId === null) {
+		  highlightedId = e.id;
+		}
+	  });
+	  
+	  // Seleciona a equipa destacada por omissão, se existir
+	  if (highlightedId !== null) {
+        equipaDestaqueSelect.value = highlightedId;
+      }
+	}
+	
+	function equipasFiltradas() {
+	  const desportoId = desportoSelect.value;
+	  const escalaoId = escalaoSelect.value;
+	  const serieIndex = serieSelect.value;
+
+	  const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
+	  const serie = comp?.series[serieIndex];
+
+	  if (!serie) return [];
+
+	  return dados.equipas.filter(e =>
+		e.desportoId === desportoId &&
+		e.escalaoId === escalaoId &&
+		serie.equipas.includes(e.id)
+	  );
+	}
+
+    function atualizarCalendario() {
+      const desportoId = desportoSelect.value;
+      const escalaoId = escalaoSelect.value;
+      const serieIndex = serieSelect.value;
+      const jornadaIndex = jornadaSelect.value;
+      const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
+      const serie = comp?.series[serieIndex];
+      const jornada = serie?.jornadas[jornadaIndex];
+
+      const mapaEquipas = Object.fromEntries(dados.equipas.map(e => {
+        const clube = dados.clubes.find(c => c.id === e.clubeId);
+        const escalao = dados.escaloes.find(es => es.id === e.escalaoId);
+        const desporto = dados.desportos.find(d => d.id === e.desportoId);
+        //return [e.id, `${e.nome} [${desporto?.nome} - ${escalao?.nome}]`];
+		return [e.id, `${e.nome}`];
+      }));
+
+      const mapaLocais = Object.fromEntries(dados.localizacoes.map(l => [l.id, l]));
+
+      jornadaDiv.innerHTML = `
+        <h2 class="mb-3">${dados.desportos.find(d => d.id === desportoId)?.nome} – ${dados.escaloes.find(e => e.id === escalaoId)?.nome} – Série ${serie?.serie} – Jornada ${jornada?.jornada} (${jornada?.data})</h2>
+        <table class="table table-bordered table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+			  <th>Data</th>
+			  <th>Hora</th>
+              <th>Equipa Casa</th>
+              <th>Resultado</th>
+              <th>Equipa Fora</th>
+            </tr>
+          </thead>
+          <tbody>
+          ${jornada?.jogos.map((jogo, index) => {
+		    const data = jogo.data ? jogo.data : '';
+			const horas = jogo.hora ? jogo.hora : '';
+            const casa = mapaEquipas[jogo.equipacasa] || jogo.equipacasa;
+            const fora = mapaEquipas[jogo.equipafora] || jogo.equipafora;
+            const resultado = jogo.resultado || '';
+            const local = jogo.localizacaoId ? mapaLocais[jogo.localizacaoId] : null;
+            const temLocalizacao = local && local.nome;
+			const temLocalGeo = temLocalizacao && local.georef.link;
+
+			const equipaDestaqueId = equipaDestaqueSelect.value;
+			const destacar = jogo.equipacasa === equipaDestaqueId || jogo.equipafora === equipaDestaqueId;
+			
+			// verifica se o jogo envolve o clube ISENTO
+			const equipaCasa = dados.equipas.find(e => e.id === jogo.equipacasa);
+			const equipaFora = dados.equipas.find(e => e.id === jogo.equipafora);
+			const destacarIsento = equipaCasa?.clubeId === "0000" || equipaFora?.clubeId === "0000";
+
+			let corFundo = "";
+			if(destacarIsento)
+			{
+				const clubeIsento = dados.clubes.find(c => c.id === 0);
+				corFundo = clubeIsento?.cor || "#e8e8e8"; // cor padrão se não definida
+			}
+			else if (destacar) {
+			  const equipa = dados.equipas.find(e => e.id === equipaDestaqueId);
+			  const clube = dados.clubes.find(c => c.id === equipa?.clubeId);
+			  corFundo = clube?.cor || "#ffffcc"; // cor padrão se não definida
+			}
+
+            return `
+            <tr style="${corFundo ? `--bs-table-bg: ${corFundo};` : ''}">
+			  <td rowspan="2">${jogo.id}</td>
+			  <td>${data}</td>
+			  <td>${horas}</td>
+			  <td>${casa}</td>
+			  <td>${resultado}</td>
+			  <td>${fora}</td>
+			</tr>
+			<tr style="${corFundo ? `--bs-table-bg: ${corFundo};` : ''}">
+			  <td colspan="5" style="font-size: 0.75em; color: #555; text-align: left;">
+				${temLocalizacao
+				  ? `📍 <b>${local.nome || ''}</b> (${local.relvado || ''} ${local.dimensoes.comprimento || ''}x${local.dimensoes.largura || ''}) ${temLocalGeo ? `– <a href="${local.georef.link}" target="_blank">VER NO MAPA</a>` : ''}`
+				  : '📍 Sem localização definida.'}
+			  </td>
+			</tr>
+            `;
+          }).join('')}
+		  </tbody>
+        </table>
+      `;
+    }
+	
+    // Inicializar a página com os dados
+    atualizarEscaloes();
+	atualizarEquipasDestaque();
+  </script>
+
+</body>
+</html>
