@@ -73,7 +73,6 @@ function atualizarJornadas() {
 function selecionarJornadaFutura(selectId, jornadas) {
   const hoje = new Date();
   const select = document.getElementById(selectId);
-  console.log("selecionarJornadaFutura" + select.id);       // General output
 
   // Ordena jornadas por data crescente
   const jornadasOrdenadas = jornadas.sort((a, b) => {
@@ -89,6 +88,7 @@ function selecionarJornadaFutura(selectId, jornadas) {
     const [dia, mes, ano] = jornada.data.split('/').map(Number);
     const dataJornada = new Date(ano, mes - 1, dia);
     if (dataJornada > hoje) {
+		  console.log("selecionarJornadaFutura " + dataJornada + " - " + hoje + " -- " (dataJornada > hoje));       // General output
       select.value = jornada.id;
       break;
     }
@@ -237,6 +237,7 @@ function atualizarCalendario() {
   `;
 
 }
+
 
 
 
