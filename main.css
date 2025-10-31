@@ -57,8 +57,8 @@ body {
 }
 
 .jogo-info {
-  flex: 0 0 20%;
-  max-width: 20%;
+  flex: 0 0 25%;
+  max-width: 25%;
   background-color: #f0f0f0;       /* cinzento claro */
   border-radius: 10px;             /* cantos arredondados */
   padding: 0.75rem 1rem;
@@ -68,14 +68,15 @@ body {
 }
 
 .jogo-equipas {
-  flex: 0 0 75%;
-  max-width: 75%;
+  flex: 0 0 73%;
+  max-width: 73%;
   background-color: #e7f1ff;
   border-radius: 10px;
   padding: 0.75rem 1rem;
   text-align: center;
   font-weight: 500;
   color: #000000;
+  margin-left: auto;
 }
 
 .jogo-local {
