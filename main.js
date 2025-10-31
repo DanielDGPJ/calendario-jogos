@@ -61,11 +61,11 @@ function atualizarJornadas() {
 
 	serie?.jornadas.forEach((j, i) => {
 		const option = document.createElement('option');
-        option.value = i;
+        option.value = j.jornada;
         option.textContent = `Jornada ${j.jornada}`;
         jornadaSelect.appendChild(option);
 	});
-    selecionarJornadaFutura("jornadaSelect", serie?.jornadas);
+    //selecionarJornadaFutura("jornadaSelect", serie?.jornadas);
 	atualizarEquipasDestaque();
 	atualizarCalendario();
 }
@@ -237,6 +237,7 @@ function atualizarCalendario() {
   `;
 
 }
+
 
 
 
