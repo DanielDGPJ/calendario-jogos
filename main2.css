@@ -89,8 +89,8 @@ body {
 }
 
 .jogo-info {
-  flex: 1 1 25%;
-  max-width: 25%;
+  flex: 1 1 30%;
+  max-width: 30%;
   background-color: #dbe4f0;
   border-radius: 10px;
   padding: 0.75rem 1rem;
@@ -99,8 +99,8 @@ body {
 }
 
 .jogo-local {
-  flex: 0 0 72%;
-  max-width: 72%;
+  flex: 0 0 67%;
+  max-width: 67%;
   background-color: #f0f0f0;
   border-radius: 10px;
   padding: 0.75rem 1rem;
@@ -127,3 +127,4 @@ body {
     max-width: 100%;
   }
 }
+
