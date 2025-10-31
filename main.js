@@ -89,7 +89,6 @@ function selecionarJornadaFutura(selectId, jornadas) {
     const dataJornada = new Date(ano, mes - 1, dia);
     if (dataJornada > hoje) {
       select.value = jornada.jornada;
-	  console.log("jornada ID: ", jornada.jornada);
       break;
     }
   }
@@ -237,6 +236,7 @@ function atualizarCalendario() {
   `;
 
 }
+
 
 
 
