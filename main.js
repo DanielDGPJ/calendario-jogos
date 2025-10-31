@@ -73,6 +73,7 @@ function atualizarJornadas() {
 function selecionarJornadaFutura(selectId, jornadas) {
   const hoje = new Date();
   const select = document.getElementById(selectId);
+  console.log("selecionarJornadaFutura" + select.id);       // General output
 
   // Ordena jornadas por data crescente
   const jornadasOrdenadas = jornadas.sort((a, b) => {
@@ -236,4 +237,5 @@ function atualizarCalendario() {
   `;
 
 }
+
 
