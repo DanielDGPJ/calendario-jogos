@@ -816,12 +816,12 @@
 					<strong>${casa}</strong>
 					${resultado ? `<span class="mx-2">${resultado}</span>` : '<span class="mx-2">vs</span>'}
 					<strong>${fora}</strong>
-				</div>
-          </div>
           <div class="jogo-local">
             ${temLocalizacao
-              ? `📍 <b>${local.nome || ''}</b> (${local.relvado || ''} ${local.dimensoes?.comprimento || ''}x${local.dimensoes?.largura || ''}) ${temLocalGeo ? `<div class="mt-1"><a href="${local.georef.link}" target="_blank"><strong>VER NO MAPA</strong></a></div>` : ''}`
-              : '📍 Sem localização definida.'}
+              ? `<b>${local.nome || ''}</b> (${local.relvado || ''} ${local.dimensoes?.comprimento || ''}x${local.dimensoes?.largura || ''}) ${temLocalGeo ? `<div><a href="${local.georef.link}" target="_blank"><strong>VER NO MAPA</strong></a></div>` : ''}`
+              : 'Sem localização definida.'}
+          </div>
+				</div>
           </div>
         </div>
       `;
