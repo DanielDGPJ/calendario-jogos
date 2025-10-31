@@ -65,7 +65,7 @@ function atualizarJornadas() {
         option.textContent = `Jornada ${j.jornada}`;
         jornadaSelect.appendChild(option);
 	});
-    //selecionarJornadaFutura("jornadaSelect", serie?.jornadas);
+    selecionarJornadaFutura("jornadaSelect", serie?.jornadas);
 	atualizarEquipasDestaque();
 	atualizarCalendario();
 }
@@ -237,6 +237,7 @@ function atualizarCalendario() {
   `;
 
 }
+
 
 
 
