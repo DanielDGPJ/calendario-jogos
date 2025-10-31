@@ -54,7 +54,6 @@ body {
   border: 2px solid #dee2e6;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  padding: 1rem;
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
@@ -122,4 +121,5 @@ body {
     margin-top: 0.5rem;
   }
 }
+
 
