@@ -123,10 +123,10 @@ function atualizarEquipasDestaque() {
 function equipasFiltradas() {
 	const desportoId = desportoSelect.value;
 	const escalaoId = escalaoSelect.value;
-	const serieIndex = serieSelect.value;
+	const serieId = serieSelect.value;
 
 	const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
-	const serie = comp?.series[serieIndex];
+	const serie = comp?.series.find(s => s.serie === serieId);
 
 	if (!serie) return [];
 
@@ -237,6 +237,7 @@ function atualizarCalendario() {
   `;
 
 }
+
 
 
 
