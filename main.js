@@ -77,8 +77,8 @@ function selecionarJornadaFutura(selectId, jornadas) {
 
   // Ordena jornadas por data crescente
   const jornadasOrdenadas = jornadas.sort((a, b) => {
-    const [diaA, mesA, anoA] = a.data.split('-').map(Number);
-    const [diaB, mesB, anoB] = b.data.split('-').map(Number);
+    const [diaA, mesA, anoA] = a.data.split('/').map(Number);
+    const [diaB, mesB, anoB] = b.data.split('/').map(Number);
     const dataA = new Date(anoA, mesA - 1, diaA);
     const dataB = new Date(anoB, mesB - 1, diaB);
     return dataA - dataB;
@@ -86,7 +86,7 @@ function selecionarJornadaFutura(selectId, jornadas) {
 
   // Procura a primeira jornada com data futura
   for (const jornada of jornadasOrdenadas) {
-    const [dia, mes, ano] = jornada.data.split('-').map(Number);
+    const [dia, mes, ano] = jornada.data.split('/').map(Number);
     const dataJornada = new Date(ano, mes - 1, dia);
     if (dataJornada > hoje) {
       select.value = jornada.id;
@@ -237,5 +237,6 @@ function atualizarCalendario() {
   `;
 
 }
+
 
 
