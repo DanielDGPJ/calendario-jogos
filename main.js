@@ -164,11 +164,11 @@ function ajustarLuminosidade(hex, percent) {
 function atualizarCalendario() {
 	const desportoId = desportoSelect.value;
 	const escalaoId = escalaoSelect.value;
-	const serie = serieSelect.value;
-	const jornada = jornadaSelect.value;
+	const serieId = serieSelect.value;
+	const jornadaId = jornadaSelect.value;
 	const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
 	const serie = comp?.series.find(s => s.serie === serieId);
-	const jornada = serie?.jornadas.find(j => j.jornada === jornada);
+	const jornada = serie?.jornadas.find(j => j.jornada === jornadaId);
 
 	const mapaEquipas = Object.fromEntries(dados.equipas.map(e => { return [e.id, `${e.nome}`];}));
   
@@ -237,6 +237,7 @@ function atualizarCalendario() {
   `;
 
 }
+
 
 
 
