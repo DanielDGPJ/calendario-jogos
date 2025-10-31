@@ -42,7 +42,7 @@ function atualizarSeries() {
 
 	comp?.series.forEach((s, i) => {
 		const option = document.createElement('option');
-		option.value = i;
+		option.value = s.serie;
         option.textContent = `Série ${s.serie}`;
         serieSelect.appendChild(option);
 	});
@@ -61,7 +61,7 @@ function atualizarJornadas() {
 
 	serie?.jornadas.forEach((j, i) => {
 		const option = document.createElement('option');
-        option.value = i;
+        option.value = j.jornada;
         option.textContent = `Jornada ${j.jornada}`;
         jornadaSelect.appendChild(option);
 	});
@@ -238,6 +238,7 @@ function atualizarCalendario() {
   `;
 
 }
+
 
 
 
