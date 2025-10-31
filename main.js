@@ -61,11 +61,9 @@ function atualizarJornadas() {
 
 	serie?.jornadas.forEach((j, i) => {
 		const option = document.createElement('option');
-		console.log("selecionarJornada", j.jornada, "Jornada" , j.jornada);
-        option.value = j.jornada;
+        option.value = i;
         option.textContent = `Jornada ${j.jornada}`;
         jornadaSelect.appendChild(option);
-		console.log("option", option);
 	});
     selecionarJornadaFutura("jornadaSelect", serie?.jornadas);
 	atualizarEquipasDestaque();
@@ -89,7 +87,6 @@ function selecionarJornadaFutura(selectId, jornadas) {
   for (const jornada of jornadasOrdenadas) {
     const [dia, mes, ano] = jornada.data.split('/').map(Number);
     const dataJornada = new Date(ano, mes - 1, dia);
-	  console.log("selecionarJornadaFutura", dataJornada, "-", hoje, "--", dataJornada > hoje);
     if (dataJornada > hoje) {
       select.value = jornada.jornada;
 	  console.log("jornada ID: ", jornada.jornada);
@@ -240,6 +237,7 @@ function atualizarCalendario() {
   `;
 
 }
+
 
 
 
