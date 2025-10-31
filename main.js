@@ -57,7 +57,7 @@ function atualizarJornadas() {
 	const escalaoId = escalaoSelect.value;
 	const serieId = serieSelect.value;
 	const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
-	const serie = comp?.series.find(s => s.id === serieId);	  
+	const serie = comp?.series.find(s => s.serie === serieId);	  
 
 	serie?.jornadas.forEach((j, i) => {
 		const option = document.createElement('option');
@@ -237,6 +237,7 @@ function atualizarCalendario() {
   `;
 
 }
+
 
 
 
