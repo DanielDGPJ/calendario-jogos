@@ -61,6 +61,7 @@ function atualizarJornadas() {
 
 	serie?.jornadas.forEach((j, i) => {
 		const option = document.createElement('option');
+		console.log("selecionarJornada", j.jornada, "Jornada" , ${j.jornada});
         option.value = j.jornada;
         option.textContent = `Jornada ${j.jornada}`;
         jornadaSelect.appendChild(option);
@@ -238,6 +239,7 @@ function atualizarCalendario() {
   `;
 
 }
+
 
 
 
