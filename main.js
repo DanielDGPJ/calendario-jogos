@@ -92,6 +92,7 @@ function selecionarJornadaFutura(selectId, jornadas) {
       break;
     }
   }
+}
 
 function atualizarEquipasDestaque() {	  
 	equipaDestaqueSelect.innerHTML = '<option value="">(nenhuma)</option>';
@@ -235,3 +236,4 @@ function atualizarCalendario() {
   `;
 
 }
+
