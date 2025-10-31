@@ -13,6 +13,16 @@ body {
   border-radius: 16px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
 }
+.shadow-box {
+  box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  border-radius: 8px;
+}
+.shadow-box-sm {
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  border-radius: 8px;
+}
 
 /* Título responsivo */
 .responsive-heading {
@@ -112,3 +122,4 @@ body {
     margin-top: 0.5rem;
   }
 }
+
