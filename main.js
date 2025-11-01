@@ -1,269 +1,227 @@
 let dados;
-const desportoSelect = document.getElementById('desportoSelect');
-const escalaoSelect = document.getElementById('escalaoSelect');
-const serieSelect = document.getElementById('serieSelect');
-const jornadaSelect = document.getElementById('jornadaSelect');
-const jornadaDiv = document.getElementById('jornada');
-const equipaDestaqueSelect = document.getElementById('equipaDestaqueSelect');
-	
-// Preencher desportos
+
+const elements = {
+  desportoSelect: document.getElementById('desportoSelect'),
+  escalaoSelect: document.getElementById('escalaoSelect'),
+  serieSelect: document.getElementById('serieSelect'),
+  jornadaSelect: document.getElementById('jornadaSelect'),
+  jornadaDiv: document.getElementById('jornada'),
+  equipaDestaqueSelect: document.getElementById('equipaDestaqueSelect'),
+};
+
+// Utility: Create option element
+const createOption = (value, text) => {
+  const option = document.createElement('option');
+  option.value = value;
+  option.textContent = text;
+  return option;
+};
+
+// Utility: Get selected values
+const getSelectedValues = () => ({
+  desportoId: elements.desportoSelect.value,
+  escalaoId: elements.escalaoSelect.value,
+  serieId: elements.serieSelect.value,
+  jornadaId: elements.jornadaSelect.value,
+});
+
+// Populate Desportos
 function atualizarDesportos() {
-	dados.desportos.forEach(d => {
-		const option = document.createElement('option');
-		option.value = d.id;
-		option.textContent = d.nome;
-		desportoSelect.appendChild(option);
-	});
+  dados.desportos.forEach(d => {
+    elements.desportoSelect.appendChild(createOption(d.id, d.nome));
+  });
 }
 
-function atualizarEscaloes(){
-	escalaoSelect.innerHTML = '';
-	const desportoId = desportoSelect.value;
-	const escaloesFiltrados = dados.competicoes.filter(c => c.desportoId === desportoId).map(c => c.escalaoId);
+// Populate Escalões
+function atualizarEscaloes() {
+  elements.escalaoSelect.innerHTML = '';
+  const { desportoId } = getSelectedValues();
 
-	const escaloesUnicos = [...new Set(escaloesFiltrados)];
-	escaloesUnicos.forEach(id => {
-		const escalao = dados.escaloes.find(e => e.id === id);
-        const option = document.createElement('option');
-        option.value = escalao.id;
-        option.textContent = escalao.nome;
-        escalaoSelect.appendChild(option);
-	});
-	  
-	atualizarEquipasDestaque();
-	atualizarSeries();
+  const escaloesUnicos = [...new Set(
+    dados.competicoes.filter(c => c.desportoId === desportoId).map(c => c.escalaoId)
+  )];
+
+  escaloesUnicos.forEach(id => {
+    const escalao = dados.escaloes.find(e => e.id === id);
+    if (escalao) elements.escalaoSelect.appendChild(createOption(escalao.id, escalao.nome));
+  });
+
+  atualizarEquipasDestaque();
+  atualizarSeries();
 }
 
+// Populate Series
 function atualizarSeries() {
-	serieSelect.innerHTML = '';
-	const desportoId = desportoSelect.value;
-	const escalaoId = escalaoSelect.value;
-	const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
+  elements.serieSelect.innerHTML = '';
+  const { desportoId, escalaoId } = getSelectedValues();
+  const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
 
-	comp?.series.forEach((s, i) => {
-		const option = document.createElement('option');
-		option.value = s.serie;
-        option.textContent = `Série ${s.serie}`;
-        serieSelect.appendChild(option);
-	});
+  comp?.series.forEach(s => {
+    elements.serieSelect.appendChild(createOption(s.serie, `Série ${s.serie}`));
+  });
 
-	atualizarEquipasDestaque();
-	atualizarJornadas();
+  atualizarEquipasDestaque();
+  atualizarJornadas();
 }
 
+// Populate Jornadas
 function atualizarJornadas() {
-	jornadaSelect.innerHTML = '';
-	const desportoId = desportoSelect.value;
-	const escalaoId = escalaoSelect.value;
-	const serieId = serieSelect.value;
-	const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
-	const serie = comp?.series.find(s => s.serie === serieId);	  
+  elements.jornadaSelect.innerHTML = '';
+  const { desportoId, escalaoId, serieId } = getSelectedValues();
+  const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
+  const serie = comp?.series.find(s => s.serie === serieId);
 
-	serie?.jornadas.forEach((j, i) => {
-		const option = document.createElement('option');
-        option.value = j.jornada;
-        option.textContent = `Jornada ${j.jornada}`;
-        jornadaSelect.appendChild(option);
-	});
-    selecionarJornadaFutura("jornadaSelect", serie?.jornadas);
-	atualizarEquipasDestaque();
-	atualizarCalendario();
+  serie?.jornadas.forEach(j => {
+    elements.jornadaSelect.appendChild(createOption(j.jornada, `Jornada ${j.jornada}`));
+  });
+
+  selecionarJornadaFutura(elements.jornadaSelect.id, serie?.jornadas);
+  atualizarEquipasDestaque();
+  atualizarCalendario();
 }
 
-function selecionarJornadaFutura(selectId, jornadas) {
+// Select next Jornada
+function selecionarJornadaFutura(selectId, jornadas = []) {
   const hoje = new Date();
   const select = document.getElementById(selectId);
 
-  // Ordena jornadas por data crescente
-  const jornadasOrdenadas = jornadas.sort((a, b) => {
-    const [diaA, mesA, anoA] = a.data.split('/').map(Number);
-    const [diaB, mesB, anoB] = b.data.split('/').map(Number);
-    const dataA = new Date(anoA, mesA - 1, diaA);
-    const dataB = new Date(anoB, mesB - 1, diaB);
-    return dataA - dataB;
+  const sorted = [...jornadas].sort((a, b) => {
+    const dateA = parseDate(a.data);
+    const dateB = parseDate(b.data);
+    return dateA - dateB;
   });
 
-  // Procura a primeira jornada com data futura
-  for (const jornada of jornadasOrdenadas) {
-    const [dia, mes, ano] = jornada.data.split('/').map(Number);
-    const dataJornada = new Date(ano, mes - 1, dia);
-	const dataMudarJornada = addDays(dataJornada, 1)
-    if (dataMudarJornada >= hoje) {
+  for (const jornada of sorted) {
+    const dataJornada = addDays(parseDate(jornada.data), 1);
+    if (dataJornada >= hoje) {
       select.value = jornada.jornada;
       break;
     }
   }
 }
 
+// Parse DD/MM/YYYY to Date
+function parseDate(str) {
+  const [d, m, y] = str.split('/').map(Number);
+  return new Date(y, m - 1, d);
+}
+
 function addDays(date, days) {
-  var result = new Date(date);
+  const result = new Date(date);
   result.setDate(result.getDate() + days);
   return result;
 }
 
+// Populate Equipas Destaque
+function atualizarEquipasDestaque() {
+  elements.equipaDestaqueSelect.innerHTML = '<option value="">(nenhuma)</option>';
+  const equipas = equipasFiltradas();
+  let highlightedId = null;
 
-function atualizarEquipasDestaque() {	  
-	equipaDestaqueSelect.innerHTML = '<option value="">(nenhuma)</option>';
-	const equipas = equipasFiltradas();	  
+  equipas.forEach(e => {
+    elements.equipaDestaqueSelect.appendChild(createOption(e.id, e.nome));
+    if (e.highlighted && !highlightedId) highlightedId = e.id;
+  });
 
-	let highlightedId = null;
-	  
-	equipas.forEach(e => {
-		const clube = dados.clubes.find(c => c.id === e.clubeId);
-		const nome = `${e.nome}`;
-		const option = document.createElement('option');
-		option.value = e.id; // ← valor correto
-		option.textContent = nome;
-		equipaDestaqueSelect.appendChild(option);
-		
-		if (e.highlighted && highlightedId === null) {
-		  highlightedId = e.id;
-		}
-	});
-	  
-	// Seleciona a equipa destacada por omissão, se existir
-	if (highlightedId !== null) {
-        equipaDestaqueSelect.value = highlightedId;
-	}
+  if (highlightedId) elements.equipaDestaqueSelect.value = highlightedId;
 }
-	
+
+// Filter Equipas
 function equipasFiltradas() {
-	const desportoId = desportoSelect.value;
-	const escalaoId = escalaoSelect.value;
-	const serieId = serieSelect.value;
+  const { desportoId, escalaoId, serieId } = getSelectedValues();
+  const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
+  const serie = comp?.series.find(s => s.serie === serieId);
+  if (!serie) return [];
 
-	const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
-	const serie = comp?.series.find(s => s.serie === serieId);
-
-	if (!serie) return [];
-
-	return dados.equipas.filter(e =>
-		e.desportoId === desportoId &&
-		e.escalaoId === escalaoId &&
-		serie.equipas.includes(e.id)
-	);
+  return dados.equipas.filter(e =>
+    e.desportoId === desportoId &&
+    e.escalaoId === escalaoId &&
+    serie.equipas.includes(e.id)
+  );
 }
 
-// Função para calcular cor de fundo alternativa
+// Color helpers
 function corEquipasFundo(base) {
-	if (!base || base === '#ffffff' || base.toLowerCase() === 'white') {
-		return '#e0e0e0'; // cinzento claro
-	}
-	return ajustarLuminosidade(base, -20); // escurece ligeiramente
+  if (!base || base.toLowerCase() === '#ffffff' || base.toLowerCase() === 'white') {
+    return '#e0e0e0';
+  }
+  return ajustarLuminosidade(base, -20);
 }
 
-	// Função para escurecer uma cor hex (simplificada)
 function ajustarLuminosidade(hex, percent) {
-	const num = parseInt(hex.replace('#', ''), 16);
-	const amt = Math.round(2.55 * percent);
-	const R = (num >> 16) + amt;
-	const G = ((num >> 8) & 0x00FF) + amt;
-	const B = (num & 0x0000FF) + amt;
-	
-	return '#' + (
-		0x1000000 +
-		(Math.max(0, Math.min(255, R)) << 16) +
-		(Math.max(0, Math.min(255, G)) << 8) +
-		Math.max(0, Math.min(255, B))
-	).toString(16).slice(1);
+  const num = parseInt(hex.replace('#', ''), 16);
+  const amt = Math.round(2.55 * percent);
+  const R = (num >> 16) + amt;
+  const G = ((num >> 8) & 0x00FF) + amt;
+  const B = (num & 0x0000FF) + amt;
+
+  return '#' + (
+    0x1000000 +
+    (Math.max(0, Math.min(255, R)) << 16) +
+    (Math.max(0, Math.min(255, G)) << 8) +
+    Math.max(0, Math.min(255, B))
+  ).toString(16).slice(1);
 }
 
+// Render Calendar
 function atualizarCalendario() {
-	const desportoId = desportoSelect.value;
-	const escalaoId = escalaoSelect.value;
-	const serieId = serieSelect.value;
-	const jornadaId = jornadaSelect.value;
-	const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
-	const serie = comp?.series.find(s => s.serie === serieId);
-	const jornada = serie?.jornadas.find(j => j.jornada === jornadaId);
+  const { desportoId, escalaoId, serieId, jornadaId } = getSelectedValues();
+  const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
+  const serie = comp?.series.find(s => s.serie === serieId);
+  const jornada = serie?.jornadas.find(j => j.jornada === jornadaId);
 
-	const mapaEquipas = Object.fromEntries(dados.equipas.map(e => { return [e.id, `${e.nome}`];}));
-  
-
-
+  const mapaEquipas = Object.fromEntries(dados.equipas.map(e => [e.id, e.nome]));
   const mapaLocais = Object.fromEntries(dados.localizacoes.map(l => [l.id, l]));
 
-	jornadaDiv.innerHTML = `
-		<h2 class="responsive-heading mb-3">
-		${dados.desportos.find(d => d.id === desportoId)?.nome} – 
-		${dados.escaloes.find(e => e.id === escalaoId)?.nome} – 
-		Série ${serie?.serie} – Jornada ${jornada?.jornada} (${jornada?.data})
-		</h2>
-
-    ${jornada?.jogos.map(jogo => {
-		const data = jogo.data || '';
-		const horas = jogo.hora || '';
-		const casa = mapaEquipas[jogo.equipacasa] || jogo.equipacasa;
-		const fora = mapaEquipas[jogo.equipafora] || jogo.equipafora;
-		const resultado = jogo.resultado || '';
-		const local = jogo.localizacaoId ? mapaLocais[jogo.localizacaoId] : null;
-		const temLocalizacao = local && local.nome;
-		const temLocalGeo = temLocalizacao && local.georef?.link;
-
-		const equipaDestaqueId = equipaDestaqueSelect.value;
-		const destacar = jogo.equipacasa === equipaDestaqueId || jogo.equipafora === equipaDestaqueId;
-
-		const equipaCasa = dados.equipas.find(e => e.id === jogo.equipacasa);
-		const equipaFora = dados.equipas.find(e => e.id === jogo.equipafora);
-		const destacarIsento = equipaCasa?.clubeId === "0000" || equipaFora?.clubeId === "0000";
-
-		let corFundo = "";
-		if (destacarIsento) {
-			const clubeIsento = dados.clubes.find(c => c.id === 0);
-			corFundo = clubeIsento?.cor || "#e8e8e8";
-		} else if (destacar) {
-			const equipa = dados.equipas.find(e => e.id === equipaDestaqueId);
-			const clube = dados.clubes.find(c => c.id === equipa?.clubeId);
-			corFundo = clube?.cor || "#ffffcc";
-		}
-		
-	const fundoEquipas = corEquipasFundo(corFundo);
-
-	return `
-        <div class="jogo-card" style="background-color: ${corFundo};border-color: ${fundoEquipas};">
-		    <div class="jogo-topo shadow-box-sm">
-				<div class="jogo-info" style="background-color: ${fundoEquipas}; border-radius: 10px; padding: 0.75rem 1rem;">
-					<div><strong>ID:</strong> ${jogo.id}</div>
-					<div><strong>Data:</strong> ${data}</div>
-					<div><strong>Hora:</strong> ${horas}</div>
-				</div>
-				<div class="jogo-equipas" style="background-color: ${fundoEquipas};">
-					<strong>${casa}</strong>
-					${resultado ? `<span class="mx-2">${resultado}</span>` : '<span class="mx-2">vs</span>'}
-					<strong>${fora}</strong>
-				<div class="jogo-local">
-					${temLocalizacao
-					? `<b>${local.nome || ''}</b> (${local.relvado || ''} ${local.dimensoes?.comprimento || ''}x${local.dimensoes?.largura || ''}) ${temLocalGeo ? `<div><a href="${local.georef.link}" target="_blank"><strong>VER NO MAPA</strong></a></div>` : ''}`
-					: 'Sem localização definida.'}
-				</div>
-			</div>
-        </div>
-    </div>
-      `;
-    }).join('')}
+  elements.jornadaDiv.innerHTML = `
+    <h2 class="responsive-heading mb-3">
+      ${dados.desportos.find(d => d.id === desportoId)?.nome} – 
+      ${dados.escaloes.find(e => e.id === escalaoId)?.nome} – 
+      Série ${serie?.serie} – Jornada ${jornada?.jornada} (${jornada?.data})
+    </h2>
+    ${jornada?.jogos.map(renderJogoCard).join('')}
   `;
 
+  function renderJogoCard(jogo) {
+    const equipaDestaqueId = elements.equipaDestaqueSelect.value;
+    const casa = mapaEquipas[jogo.equipacasa] || jogo.equipacasa;
+    const fora = mapaEquipas[jogo.equipafora] || jogo.equipafora;
+    const local = mapaLocais[jogo.localizacaoId] || null;
+    const destacar = [jogo.equipacasa, jogo.equipafora].includes(equipaDestaqueId);
+    const isento = ["0000"].includes(dados.equipas.find(e => e.id === jogo.equipacasa)?.clubeId) ||
+                   ["0000"].includes(dados.equipas.find(e => e.id === jogo.equipafora)?.clubeId);
+
+    let corFundo = "#fff";
+    if (isento) {
+      corFundo = dados.clubes.find(c => c.id === 0)?.cor || "#e8e8e8";
+    } else if (destacar) {
+      const equipa = dados.equipas.find(e => e.id === equipaDestaqueId);
+      corFundo = dados.clubes.find(c => c.id === equipa?.clubeId)?.cor || "#ffffcc";
+    }
+
+    const fundoEquipas = corEquipasFundo(corFundo);
+    const resultado = jogo.resultado || '<span class="mx-2">vs</span>';
+    const localInfo = local?.nome
+      ? `<b>${local.nome}</b> (${local.relvado || ''} ${local.dimensoes?.comprimento || ''}x${local.dimensoes?.largura || ''})` +
+        (local.georef?.link ? `<div><a href="${local.georef.link}" target="_blank"><strong>VER NO MAPA</strong></a></div>` : '')
+      : 'Sem localização definida.';
+
+    return `
+      <div class="jogo-card" style="background-color: ${corFundo}; border-color: ${fundoEquipas};">
+        <div class="jogo-topo shadow-box-sm">
+          <div class="jogo-info" style="background-color: ${fundoEquipas}; border-radius: 10px; padding: 0.75rem 1rem;">
+            <div><strong>ID:</strong> ${jogo.id}</div>
+            <div><strong>Data:</strong> ${jogo.data || ''}</div>
+            <div><strong>Hora:</strong> ${jogo.hora || ''}</div>
+          </div>
+          <div class="jogo-equipas" style="background-color: ${fundoEquipas};">
+            <strong>${casa}</strong>
+            ${jogo.resultado ? `<span class="mx-2">${jogo.resultado}</span>` : '<span class="mx-2">vs</span>'}
+            <strong>${fora}</strong>
+            <div class="jogo-local">${localInfo}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
