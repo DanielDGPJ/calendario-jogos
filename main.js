@@ -199,7 +199,7 @@ function atualizarCalendario() {
       corFundo = dados.clubes.find(c => c.id === equipa?.clubeId)?.cor || "#ffffcc";
     }
 
-    const fundoEquipas = corEquipasFundo(corFundo);
+    const fundoEquipas = (isento || destacar) ? corEquipasFundo(corFundo) : "#e0e0e0";
     const resultado = jogo.resultado || '<span class="mx-2">vs</span>';
     const localInfo = local?.nome
       ? `<b>${local.nome}</b> (${local.relvado || ''} ${local.dimensoes?.comprimento || ''}x${local.dimensoes?.largura || ''})` +
@@ -225,5 +225,6 @@ function atualizarCalendario() {
     `;
   }
 }
+
 
 
