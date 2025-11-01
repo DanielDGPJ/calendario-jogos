@@ -191,7 +191,7 @@ function atualizarCalendario() {
     const isento = ["0000"].includes(dados.equipas.find(e => e.id === jogo.equipacasa)?.clubeId) ||
                    ["0000"].includes(dados.equipas.find(e => e.id === jogo.equipafora)?.clubeId);
 
-    let corFundo = "#fff";
+    let corFundo = "#e0e0e0";
     if (isento) {
       corFundo = dados.clubes.find(c => c.id === 0)?.cor || "#e8e8e8";
     } else if (destacar) {
@@ -225,3 +225,4 @@ function atualizarCalendario() {
     `;
   }
 }
+
