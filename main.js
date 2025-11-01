@@ -87,13 +87,20 @@ function selecionarJornadaFutura(selectId, jornadas) {
   for (const jornada of jornadasOrdenadas) {
     const [dia, mes, ano] = jornada.data.split('/').map(Number);
     const dataJornada = new Date(ano, mes - 1, dia);
-	const dataMudarJornada = setDate(dataJornada + 1)
+	const dataMudarJornada = addDays(dataJornada, 1)
     if (dataMudarJornada >= hoje) {
       select.value = jornada.jornada;
       break;
     }
   }
 }
+
+function addDays(date, days) {
+  var result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
 
 function atualizarEquipasDestaque() {	  
 	equipaDestaqueSelect.innerHTML = '<option value="">(nenhuma)</option>';
@@ -237,6 +244,7 @@ function atualizarCalendario() {
   `;
 
 }
+
 
 
 
