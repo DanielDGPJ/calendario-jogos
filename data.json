@@ -39,6 +39,7 @@
 		{ "id": "5647", "nome": "EF BELÉM", "cor": "#ffffcc" }
     ],
     "equipas": [
+		{ "id": "FTB.S12.0000.02", "clubeId": "0000", "escalaoId": "S12", "desportoId": "FTB", "nome": "ISENTO" },
 		{ "id": "FTB.S12.0471.02", "clubeId": "0471", "escalaoId": "S12", "desportoId": "FTB", "nome": "ALVERCA 'A'" },
 		{ "id": "FTB.S12.0155.02", "clubeId": "0155", "escalaoId": "S12", "desportoId": "FTB", "nome": "AVEIRAS" },
 		{ "id": "FTB.S12.5414.02", "clubeId": "5414", "escalaoId": "S12", "desportoId": "FTB", "nome": "BRAGADENSE" },
