@@ -57,7 +57,7 @@ function atualizarSeries() {
   const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
 
   comp?.series.forEach(s => {
-    elements.serieSelect.appendChild(createOption(s.serie, `Série ${s.serie}`));
+    elements.serieSelect.appendChild(createOption(s.serie, s.nomeserie));
   });
 
   atualizarEquipasDestaque();
