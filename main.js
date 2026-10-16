@@ -243,14 +243,8 @@ function atualizarCalendario() {
 
     const { esconderId } = getSelectedValues();
 
-    if(isento && Number(esconderId) === 1)
-	{
-      return ``;
-    }
-	else if(Number(esconderId) === 2 && !(equipaDestaqueId === jogo.equipacasa || equipaDestaqueId === jogo.equipafora))
-	{
-		return ``;
-	}
+    if(Number(esconderId) === 1 && isento ){ return ``; }
+	else if(Number(esconderId) === 2 && !destacar ){ return ``; }
 	
     let corFundo = "#f2f2f2";
     if (isento) {
