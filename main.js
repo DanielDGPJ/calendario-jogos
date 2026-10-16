@@ -162,6 +162,8 @@ function atualizarEquipasDestaque(primeiro) {
   if(primeiro && params.equipaDestaque)
 	if(ValueExists(elements.equipaDestaqueSelect, params.equipaDestaque))
 	  elements.equipaDestaqueSelect.value = params.equipaDestaque;
+	else if (highlightedId)
+	  elements.equipaDestaqueSelect.value = highlightedId;
   else if (highlightedId)
 	elements.equipaDestaqueSelect.value = highlightedId;
 }
