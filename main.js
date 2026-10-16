@@ -44,8 +44,9 @@ function atualizarDesportos(primeiro) {
     elements.desportoSelect.appendChild(createOption(d.id, d.nome));
   });
   
-  if(primeiro && params.desporto != undefined)
-	elements.desportoSelect.value = params.desporto;
+  if(primeiro && params.desporto)
+	if(ValueExists(elements.desportoSelect, params.desporto))
+		elements.desportoSelect.value = params.desporto;
 }
 
 // Populate Escalões
@@ -62,8 +63,9 @@ function atualizarEscaloes(primeiro) {
     if (escalao) elements.escalaoSelect.appendChild(createOption(escalao.id, escalao.nome));
   });
   
-  if(primeiro && params.escalao != undefined)
-	elements.escalaoSelect.value = params.escalao;
+  if(primeiro && params.escalao)
+	if(ValueExists(elements.escalaoSelect, params.escalao))
+		elements.escalaoSelect.value = params.escalao;
 
   atualizarEquipasDestaque(primeiro);
   atualizarSeries(primeiro);
@@ -79,8 +81,9 @@ function atualizarSeries(primeiro) {
     elements.serieSelect.appendChild(createOption(s.serie, s.nomeserie));
   });
   
-  if(primeiro && params.serie != undefined)
-	elements.serieSelect.value = params.serie;
+  if(primeiro && params.serie)
+	if(ValueExists(elements.escalaoSelect, params.serie))
+	  elements.escalaoSelect.value = params.serie;
 
   atualizarEquipasDestaque(primeiro);
   atualizarJornadas(primeiro);
@@ -97,8 +100,11 @@ function atualizarJornadas(primeiro) {
     elements.jornadaSelect.appendChild(createOption(j.jornada, `Jornada ${j.jornada}`));
   });
   
-  if(primeiro && params.jornada != undefined)
-	elements.jornadaSelect.value = params.jornada;
+  if(primeiro && params.jornada)
+	if(ValueExists(elements.jornadaSelect, params.jornada))
+	  elements.jornadaSelect.value = params.jornada;
+	else
+	  selecionarJornadaFutura(elements.jornadaSelect.id, serie?.jornadas);
   else
     selecionarJornadaFutura(elements.jornadaSelect.id, serie?.jornadas);
 
@@ -126,6 +132,10 @@ function selecionarJornadaFutura(selectId, jornadas = []) {
   }
 }
 
+function ValueExists(select, value) {
+    return select.querySelector(`option[value="${CSS.escape(value)}"]`) !== null;
+}
+
 // Parse DD/MM/YYYY to Date
 function parseDate(str) {
   const [d, m, y] = str.split('/').map(Number);
@@ -149,15 +159,17 @@ function atualizarEquipasDestaque(primeiro) {
     if (e.highlighted && !highlightedId) highlightedId = e.id;
   });
 
-  if(primeiro && params.equipaDestaque != undefined)
-	elements.equipaDestaqueSelect.value = params.equipaDestaque;
+  if(primeiro && params.equipaDestaque)
+	if(ValueExists(elements.equipaDestaqueSelect, params.equipaDestaque))
+	  elements.equipaDestaqueSelect.value = params.equipaDestaque;
   else if (highlightedId)
 	elements.equipaDestaqueSelect.value = highlightedId;
 }
 
 function atualizarDetalhesVisualizacao(primeiro)
 {
-	if(primeiro && params.esconder != undefined)
+	if(primeiro && params.esconder)
+	  if(ValueExists(elements.esconderSelect, params.esconder))
 		elements.esconderSelect.value = params.esconder;
 }
 
