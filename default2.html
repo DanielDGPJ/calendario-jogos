@@ -22,15 +22,15 @@
     <div class="row g-3 mb-4">
       <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
         <label for="desportoSelect" class="form-label">Desporto</label>
-        <select id="desportoSelect" class="form-select" onchange="atualizarEscaloes()"></select>
+        <select id="desportoSelect" class="form-select" onchange="atualizarEscaloes(false)"></select>
       </div>
       <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
         <label for="escalaoSelect" class="form-label">Escalão</label>
-        <select id="escalaoSelect" class="form-select" onchange="atualizarSeries()"></select>
+        <select id="escalaoSelect" class="form-select" onchange="atualizarSeries(false)"></select>
       </div>
       <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
         <label for="serieSelect" class="form-label">Série</label>
-        <select id="serieSelect" class="form-select" onchange="atualizarJornadas()"></select>
+        <select id="serieSelect" class="form-select" onchange="atualizarJornadas(false)"></select>
       </div>
       <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
         <label for="jornadaSelect" class="form-label">Jornada</label>
@@ -41,10 +41,11 @@
 	    <select id="equipaDestaqueSelect" class="form-select" onchange="atualizarCalendario()"></select>
 	  </div>
       <div class="col-xs-12 col-sm-12 col-md-6 col-lg-3">
-	    <label for="equipaDestaqueSelect" class="form-label">Esconder Isento</label>
-		<select id="isentoSelect" class="form-select" onchange="atualizarCalendario()">
-		    <option value="1">Sim</option>
-		    <option value="0">Não</option>
+	    <label for="esconderSelect" class="form-label">Detalhe visualização</label>
+		<select id="esconderSelect" class="form-select" onchange="atualizarCalendario()">
+		    <option value="1">Esconder Isento</option>
+			<option value="2">Mostrar Destacada</option>
+		    <option value="0">Mostrar tudo</option>
 		</select>
 	  </div>
     </div>
@@ -56,9 +57,10 @@
   <script>
     fetch('data.json').then(response => response.json()).then(json => {
 		dados = json;
-		atualizarDesportos();
-		atualizarEscaloes();
-		atualizarEquipasDestaque();
+		atualizarDetalhesVisualizacao(true);
+		atualizarDesportos(true);
+		atualizarEscaloes(true);
+		atualizarEquipasDestaque(true);
 	});
   </script>
 
