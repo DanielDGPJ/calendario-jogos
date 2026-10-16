@@ -58,7 +58,7 @@
 		{ "id": "FTB.S11.0703.03", "clubeId": "0703", "escalaoId": "S11", "desportoId": "FTB", "nome": "PONTE FRIELAS 'A'" },
 		{ "id": "FTB.S11.0796.03", "clubeId": "0796", "escalaoId": "S11", "desportoId": "FTB", "nome": "LOURES" },
 		{ "id": "FTB.S11.0979.03", "clubeId": "0979", "escalaoId": "S11", "desportoId": "FTB", "nome": "FRIELAS" },
-		{ "id": "FTB.S11.1017.03", "clubeId": "1017", "escalaoId": "S11", "desportoId": "FTB", "nome": "SACAVENENSE 'A'" },
+		{ "id": "FTB.S11.1017.03", "clubeId": "1017", "escalaoId": "S11", "desportoId": "FTB", "nome": "SACAVENENSE", "highlighted": true },
 		{ "id": "FTB.S11.1093.03", "clubeId": "1093", "escalaoId": "S11", "desportoId": "FTB", "nome": "PINHEIRO LOURES" },
 		{ "id": "FTB.S11.1125.03", "clubeId": "1125", "escalaoId": "S11", "desportoId": "FTB", "nome": "POVOENSE 'B'" },
 		{ "id": "FTB.S11.2712.03", "clubeId": "2712", "escalaoId": "S11", "desportoId": "FTB", "nome": "CATUJALENSE 'A'" },
