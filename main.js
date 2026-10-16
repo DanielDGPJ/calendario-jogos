@@ -194,7 +194,7 @@ function atualizarCalendario() {
                    ["0000"].includes(dados.equipas.find(e => e.id === jogo.equipafora)?.clubeId);
 
     const { esconderisentoId } = getSelectedValues();
-    if(isento && esconderisentoId === 1)
+    if(isento && Number(esconderisentoId) === 1)
       return ``;
     
     let corFundo = "#f2f2f2";
