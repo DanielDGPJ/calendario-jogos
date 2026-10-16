@@ -23,6 +23,7 @@ const getSelectedValues = () => ({
   escalaoId: elements.escalaoSelect.value,
   serieId: elements.serieSelect.value,
   jornadaId: elements.jornadaSelect.value,
+  esconderisentoId: elements.isentoSelect.value,
 });
 
 // Populate Desportos
@@ -191,6 +192,10 @@ function atualizarCalendario() {
     const isento = ["0000"].includes(dados.equipas.find(e => e.id === jogo.equipacasa)?.clubeId) ||
                    ["0000"].includes(dados.equipas.find(e => e.id === jogo.equipafora)?.clubeId);
 
+    const { esconderisentoId } = getSelectedValues();
+    if(isento && esconderisentoId === 1)
+      return ``;
+    
     let corFundo = "#f2f2f2";
     if (isento) {
       corFundo = dados.clubes.find(c => c.id === 0)?.cor || "#e8e8e8";
