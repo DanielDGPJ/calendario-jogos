@@ -149,8 +149,10 @@ function atualizarEquipasDestaque(primeiro) {
     if (e.highlighted && !highlightedId) highlightedId = e.id;
   });
 
-  if (highlightedId)
-	  elements.equipaDestaqueSelect.value = highlightedId;
+  if(primeiro && params.equipaDestaque != undefined)
+	elements.equipaDestaqueSelect.value = params.equipaDestaque;
+  else if (highlightedId)
+	elements.equipaDestaqueSelect.value = highlightedId;
 }
 
 function atualizarDetalhesVisualizacao(primeiro)
