@@ -7,6 +7,7 @@ const elements = {
   jornadaSelect: document.getElementById('jornadaSelect'),
   jornadaDiv: document.getElementById('jornada'),
   equipaDestaqueSelect: document.getElementById('equipaDestaqueSelect'),
+  isentoSelect: document.getElementById('isentoSelect'),
 };
 
 // Utility: Create option element
