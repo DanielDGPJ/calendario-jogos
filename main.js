@@ -82,8 +82,8 @@ function atualizarSeries(primeiro) {
   });
   
   if(primeiro && params.serie)
-	if(ValueExists(elements.escalaoSelect, params.serie))
-	  elements.escalaoSelect.value = params.serie;
+	if(ValueExists(elements.serieSelect, params.serie))
+	  elements.serieSelect.value = params.serie;
 
   atualizarEquipasDestaque(primeiro);
   atualizarJornadas(primeiro);
