@@ -121,13 +121,13 @@ function selecionarJornadaFutura(selectId, jornadas = []) {
   const select = document.getElementById(selectId);
 
   const sorted = [...jornadas].sort((a, b) => {
-    const dateA = parseDate(a.data);
-    const dateB = parseDate(b.data);
+    const dateA = parseDataHora(a.data);
+    const dateB = parseDataHora(b.data);
     return dateA - dateB;
   });
 
   for (const jornada of sorted) {
-    const dataJornada = addDays(parseDate(jornada.data), 1);
+    const dataJornada = addDays(parseDataHora(jornada.data), 1);
     if (dataJornada >= hoje) {
       select.value = jornada.jornada;
       break;
@@ -140,9 +140,15 @@ function ValueExists(select, value) {
 }
 
 // Parse DD/MM/YYYY to Date
-function parseDate(str) {
-  const [d, m, y] = str.split('/').map(Number);
-  return new Date(y, m - 1, d);
+function parseDataHora(data, hora = '23:59') {
+    if (!data) {
+        return new Date(9999, 11, 31, 23, 59, 59);
+    }
+
+    const [dia, mes, ano] = data.split('/').map(Number);
+    const [h, m] = hora.split(':').map(Number);
+
+    return new Date(ano, mes - 1, dia, h, m);
 }
 
 function addDays(date, days) {
@@ -216,20 +222,6 @@ function ajustarLuminosidade(hex, percent) {
   ).toString(16).slice(1);
 }
 
-function getDataHora(jogo) {
-	if (!jogo.data) { return new Date('9999-12-31T23:59:59'); }
-	
-    const [dia, mes, ano] = jogo.data.split('/');
-
-    let hora =23;
-    let minuto =59;
-
-    if (jogo.hora) {
-        [hora, minuto] = jogo.hora.split(':').map(Number);
-    }
-    return new Date(ano, mes - 1, dia, hora, minuto);
-}
-
 function sortJogos(jogos, tipo) {
     const jogosOrdenados = [...jogos];
 	console.log(tipo)
@@ -238,7 +230,7 @@ function sortJogos(jogos, tipo) {
             return jogosOrdenados.sort((a, b) => a.id.localeCompare(b.id));
 
         case 2: // Data + Hora
-            return jogosOrdenados.sort((a, b) => getDataHora(a) - getDataHora(b));
+            return jogosOrdenados.sort((a, b) => parseDataHora(a.data, a.hora) - parseDataHora(b.data, b.hora));
         default:
             return jogosOrdenados;
     }
