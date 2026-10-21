@@ -178,7 +178,7 @@ function parseDataHora(data, hora = '23:59') {
     if (!data) { return new Date(9999, 11, 31, 23, 59, 59);}
 
     const [dia, mes, ano] = data.split('/').map(Number);
-    const [h, m] = hora.split(':').map(Number);
+    const [h, m] = (hora || '23:59').split(':').map(Number);
 
     return new Date(ano, mes - 1, dia, h, m);
 }
