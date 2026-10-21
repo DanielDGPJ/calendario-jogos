@@ -120,7 +120,7 @@ function selecionarJornadaFutura(selectId, jornadas = []) {
   const hoje = new Date();
   const select = document.getElementById(selectId);
 
-  const jornadasOrdenadas = sortJornadas(jornadas);
+  const jornadasOrdenadas = OrdenarJornadas(jornadas);
 
   for (const jornada of jornadasOrdenadas) {
     const dataJornada = addDays(parseDataHora(jornada.data), 1);
