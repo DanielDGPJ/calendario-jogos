@@ -216,23 +216,29 @@ function ajustarLuminosidade(hex, percent) {
   ).toString(16).slice(1);
 }
 
+function getDataHora(jogo) {
+	if (!jogo.data) { return new Date('9999-12-31T23:59:59'); }
+	
+    const [dia, mes, ano] = jogo.data.split('/');
+
+    let hora =23;
+    let minuto =59;
+
+    if (jogo.hora) {
+        [hora, minuto] = jogo.hora.split(':').map(Number);
+    }
+    return new Date(ano, mes - 1, dia, hora, minuto);
+}
+
 function sortJogos(jogos, tipo) {
     const jogosOrdenados = [...jogos];
-	
-    switch (tipo) {
+	console.log(tipo)
+    switch (Number(tipo)) {
         case 1: // ID
             return jogosOrdenados.sort((a, b) => a.id.localeCompare(b.id));
 
         case 2: // Data + Hora
-            return jogosOrdenados.sort((a, b) => {
-                const [diaA, mesA, anoA] = a.data.split('/');
-                const [diaB, mesB, anoB] = b.data.split('/');
-
-                const dataA = new Date(`${anoA}-${mesA}-${diaA}T${a.hora || '00:00'}`);
-                const dataB = new Date(`${anoB}-${mesB}-${diaB}T${b.hora || '00:00'}`);
-
-                return dataA - dataB;
-            });
+            return jogosOrdenados.sort((a, b) => getDataHora(a) - getDataHora(b));
         default:
             return jogosOrdenados;
     }
