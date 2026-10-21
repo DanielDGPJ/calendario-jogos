@@ -65,6 +65,10 @@
   <script>
     fetch('data.json').then(response => response.json()).then(json => {
 		dados = json;
+		// Índices para acesso rápido
+        dados.mapaEquipas = Object.fromEntries( dados.equipas.map(e => [e.id, e]) );
+        dados.mapaClubes = Object.fromEntries( dados.clubes.map(c => [c.id, c]) );
+        dados.mapaLocais = Object.fromEntries( dados.localizacoes.map(l => [l.id, l]) );
 		atualizarDetalhesVisualizacao(true);
 		atualizarDesportos(true);
 		atualizarEscaloes(true);
