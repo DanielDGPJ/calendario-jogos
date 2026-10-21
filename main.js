@@ -120,13 +120,9 @@ function selecionarJornadaFutura(selectId, jornadas = []) {
   const hoje = new Date();
   const select = document.getElementById(selectId);
 
-  const sorted = [...jornadas].sort((a, b) => {
-    const dateA = parseDataHora(a.data);
-    const dateB = parseDataHora(b.data);
-    return dateA - dateB;
-  });
+  const jornadasOrdenadas = sortJornadas(jornadas);
 
-  for (const jornada of sorted) {
+  for (const jornada of jornadasOrdenadas) {
     const dataJornada = addDays(parseDataHora(jornada.data), 1);
     if (dataJornada >= hoje) {
       select.value = jornada.jornada;
@@ -139,11 +135,8 @@ function ValueExists(select, value) {
     return select.querySelector(`option[value="${CSS.escape(value)}"]`) !== null;
 }
 
-// Parse DD/MM/YYYY to Date
 function parseDataHora(data, hora = '23:59') {
-    if (!data) {
-        return new Date(9999, 11, 31, 23, 59, 59);
-    }
+    if (!data) { return new Date(9999, 11, 31, 23, 59, 59);}
 
     const [dia, mes, ano] = data.split('/').map(Number);
     const [h, m] = hora.split(':').map(Number);
@@ -222,9 +215,9 @@ function ajustarLuminosidade(hex, percent) {
   ).toString(16).slice(1);
 }
 
-function sortJogos(jogos, tipo) {
+function OrdenarJogos(jogos, tipo) {
     const jogosOrdenados = [...jogos];
-	console.log(tipo)
+
     switch (Number(tipo)) {
         case 1: // ID
             return jogosOrdenados.sort((a, b) => a.id.localeCompare(b.id));
@@ -234,6 +227,12 @@ function sortJogos(jogos, tipo) {
         default:
             return jogosOrdenados;
     }
+}
+
+function OrdenarJornadas(jornadas) {
+    return [...jornadas].sort((a, b) =>
+        parseDataHora(a.data) - parseDataHora(b.data)
+    );
 }
 
 // Render Calendar
@@ -253,7 +252,7 @@ function atualizarCalendario() {
       ${dados.escaloes.find(e => e.id === escalaoId)?.nome} – 
       Série ${serie?.serie} – Jornada ${jornada?.jornada} (${jornada?.data})
     </h2>
-    ${sortJogos(jornada?.jogos ?? [], ordenacaoId).map(renderJogoCard).join('')}
+    ${OrdenarJogos(jornada?.jogos ?? [], ordenacaoId).map(renderJogoCard).join('')}
   `;
 
   function renderJogoCard(jogo) {
