@@ -213,6 +213,28 @@ function ajustarLuminosidade(hex, percent) {
   ).toString(16).slice(1);
 }
 
+function sortJogos(jogos, tipo) {
+    const jogosOrdenados = [...jogos];
+	
+    switch (tipo) {
+        case 1: // ID
+            return jogosOrdenados.sort((a, b) => a.id.localeCompare(b.id));
+
+        case 2: // Data + Hora
+            return jogosOrdenados.sort((a, b) => {
+                const [diaA, mesA, anoA] = a.data.split('/');
+                const [diaB, mesB, anoB] = b.data.split('/');
+
+                const dataA = new Date(`${anoA}-${mesA}-${diaA}T${a.hora || '00:00'}`);
+                const dataB = new Date(`${anoB}-${mesB}-${diaB}T${b.hora || '00:00'}`);
+
+                return dataA - dataB;
+            });
+        default:
+            return jogosOrdenados;
+    }
+}
+
 // Render Calendar
 function atualizarCalendario() {
   const { desportoId, escalaoId, serieId, jornadaId } = getSelectedValues();
@@ -222,14 +244,15 @@ function atualizarCalendario() {
 
   const mapaEquipas = Object.fromEntries(dados.equipas.map(e => [e.id, e.nome]));
   const mapaLocais = Object.fromEntries(dados.localizacoes.map(l => [l.id, l]));
-
+  const OrdenacaoId = 1;
+	
   elements.jornadaDiv.innerHTML = `
     <h2 class="responsive-heading mb-3">
       ${dados.desportos.find(d => d.id === desportoId)?.nome} – 
       ${dados.escaloes.find(e => e.id === escalaoId)?.nome} – 
       Série ${serie?.serie} – Jornada ${jornada?.jornada} (${jornada?.data})
     </h2>
-    ${jornada?.jogos.map(renderJogoCard).join('')}
+    ${sortJogos(jornada?.jogos ?? [], OrdenacaoId).map(renderJogoCard).join('')}
   `;
 
   function renderJogoCard(jogo) {
