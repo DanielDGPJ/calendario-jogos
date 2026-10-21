@@ -1,5 +1,6 @@
 let dados;
 const query = new URLSearchParams(window.location.search);
+const CLUBE_ISENTO = "0000";
 
 const params = {
   desporto: query.get('desporto'),
@@ -41,15 +42,33 @@ const getSelectedValues = () => ({
   ordenacaoId: elements.ordenacaoSelect.value,
 });
 
+function aplicarParametro(primeiro, select, valor) {
+    if (primeiro && valor && existeValor(select, valor)) {
+        select.value = valor;
+        return true;
+    }
+    return false;
+}
+
+function obterCompeticao(desportoId, escalaoId) {
+    return dados.competicoes.find( c => c.desportoId === desportoId && c.escalaoId === escalaoId );
+}
+
+function obterSerie(desportoId, escalaoId, serieId) {
+    return obterCompeticao(desportoId, escalaoId)?.series.find( s => s.serie === serieId );
+}
+
+function obterJornada(desportoId, escalaoId, serieId, jornadaId) {
+    return obterSerie(desportoId, escalaoId, serieId)?.jornadas.find(j => j.jornada === jornadaId);
+}
+
 // Populate Desportos
 function atualizarDesportos(primeiro) {
   dados.desportos.forEach(d => {
     elements.desportoSelect.appendChild(createOption(d.id, d.nome));
   });
-  
-  if(primeiro && params.desporto)
-	if(ValueExists(elements.desportoSelect, params.desporto))
-		elements.desportoSelect.value = params.desporto;
+
+  aplicarParametro(primeiro, elements.desportoSelect, params.desporto);
 }
 
 // Populate Escalões
@@ -65,10 +84,8 @@ function atualizarEscaloes(primeiro) {
     const escalao = dados.escaloes.find(e => e.id === id);
     if (escalao) elements.escalaoSelect.appendChild(createOption(escalao.id, escalao.nome));
   });
-  
-  if(primeiro && params.escalao)
-	if(ValueExists(elements.escalaoSelect, params.escalao))
-		elements.escalaoSelect.value = params.escalao;
+
+  aplicarParametro(primeiro, elements.escalaoSelect, params.escalao);
 
   atualizarEquipasDestaque(primeiro);
   atualizarSeries(primeiro);
@@ -78,15 +95,14 @@ function atualizarEscaloes(primeiro) {
 function atualizarSeries(primeiro) {
   elements.serieSelect.innerHTML = '';
   const { desportoId, escalaoId } = getSelectedValues();
-  const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
+
+  const comp = obterCompeticao(desportoId, escalaoId);
 
   comp?.series.forEach(s => {
     elements.serieSelect.appendChild(createOption(s.serie, s.nomeserie));
   });
-  
-  if(primeiro && params.serie)
-	if(ValueExists(elements.serieSelect, params.serie))
-	  elements.serieSelect.value = params.serie;
+
+  aplicarParametro(primeiro, elements.serieSelect, params.serie);
 
   atualizarEquipasDestaque(primeiro);
   atualizarJornadas(primeiro);
@@ -96,20 +112,17 @@ function atualizarSeries(primeiro) {
 function atualizarJornadas(primeiro) {
   elements.jornadaSelect.innerHTML = '';
   const { desportoId, escalaoId, serieId } = getSelectedValues();
-  const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
-  const serie = comp?.series.find(s => s.serie === serieId);
+
+  const serie = obterSerie(desportoId, escalaoId, serieId);
 
   serie?.jornadas.forEach(j => {
     elements.jornadaSelect.appendChild(createOption(j.jornada, `Jornada ${j.jornada}`));
   });
   
-  if(primeiro && params.jornada)
-	if(ValueExists(elements.jornadaSelect, params.jornada))
-	  elements.jornadaSelect.value = params.jornada;
-	else
-	  selecionarJornadaFutura(elements.jornadaSelect.id, serie?.jornadas);
-  else
-    selecionarJornadaFutura(elements.jornadaSelect.id, serie?.jornadas);
+if (!aplicarParametro(primeiro,elements.jornadaSelect,params.jornada))
+{
+    selecionarJornadaFutura(elements.jornadaSelect.id,serie?.jornadas);
+}
 
   atualizarEquipasDestaque(primeiro);
   atualizarCalendario(primeiro);
@@ -120,7 +133,7 @@ function selecionarJornadaFutura(selectId, jornadas = []) {
   const hoje = new Date();
   const select = document.getElementById(selectId);
 
-  const jornadasOrdenadas = OrdenarJornadas(jornadas);
+  const jornadasOrdenadas = ordenarJornadas(jornadas);
 
   for (const jornada of jornadasOrdenadas) {
     const dataJornada = addDays(parseDataHora(jornada.data), 1);
@@ -131,7 +144,7 @@ function selecionarJornadaFutura(selectId, jornadas = []) {
   }
 }
 
-function ValueExists(select, value) {
+function existeValor(select, value) {
     return select.querySelector(`option[value="${CSS.escape(value)}"]`) !== null;
 }
 
@@ -161,28 +174,22 @@ function atualizarEquipasDestaque(primeiro) {
     if (e.highlighted && !highlightedId) highlightedId = e.id;
   });
 
-  if(primeiro && params.equipaDestaque)
-  {
-	if(ValueExists(elements.equipaDestaqueSelect, params.equipaDestaque)){ elements.equipaDestaqueSelect.value = params.equipaDestaque; }
-	else if (highlightedId){ elements.equipaDestaqueSelect.value = highlightedId; }
-  }
-  else if (highlightedId){
-	elements.equipaDestaqueSelect.value = highlightedId;
+  if (!aplicarParametro( primeiro, elements.equipaDestaqueSelect, params.equipaDestaque) && highlightedId ) {
+    elements.equipaDestaqueSelect.value = highlightedId;
   }
 }
 
 function atualizarDetalhesVisualizacao(primeiro)
 {
-	if(primeiro && params.esconder)
-	  if(ValueExists(elements.esconderSelect, params.esconder))
-		elements.esconderSelect.value = params.esconder;
+  aplicarParametro(primeiro, elements.esconderSelect, params.esconder);
 }
 
 // Filter Equipas
 function equipasFiltradas() {
   const { desportoId, escalaoId, serieId } = getSelectedValues();
-  const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
-  const serie = comp?.series.find(s => s.serie === serieId);
+
+  const serie = obterSerie(desportoId, escalaoId, serieId);
+
   if (!serie) return [];
 
   return dados.equipas.filter(e =>
@@ -215,32 +222,30 @@ function ajustarLuminosidade(hex, percent) {
   ).toString(16).slice(1);
 }
 
-function OrdenarJogos(jogos, tipo) {
-    const jogosOrdenados = [...jogos];
+function ordenarPorData(items) {
+    return [...items].sort( (a, b) => parseDataHora(a.data, a.hora) - parseDataHora(b.data, b.hora) );
+}
 
+function ordenarJogos(jogos, tipo) {
     switch (Number(tipo)) {
         case 1: // ID
-            return jogosOrdenados.sort((a, b) => a.id.localeCompare(b.id));
-
+            return [...jogos].sort((a, b) => a.id.localeCompare(b.id));
         case 2: // Data + Hora
-            return jogosOrdenados.sort((a, b) => parseDataHora(a.data, a.hora) - parseDataHora(b.data, b.hora));
+            return ordenarPorData(jogos);
         default:
-            return jogosOrdenados;
+            return [...jogos];
     }
 }
 
-function OrdenarJornadas(jornadas) {
-    return [...jornadas].sort((a, b) =>
-        parseDataHora(a.data) - parseDataHora(b.data)
-    );
+function ordenarJornadas(jornadas) { 
+	return ordenarPorData(jornadas);
 }
 
 // Render Calendar
 function atualizarCalendario() {
   const { desportoId, escalaoId, serieId, jornadaId } = getSelectedValues();
-  const comp = dados.competicoes.find(c => c.desportoId === desportoId && c.escalaoId === escalaoId);
-  const serie = comp?.series.find(s => s.serie === serieId);
-  const jornada = serie?.jornadas.find(j => j.jornada === jornadaId);
+	
+  const jornada = obterJornada(desportoId, escalaoId, serieId, jornadaId);
 
   const mapaEquipas = Object.fromEntries(dados.equipas.map(e => [e.id, e.nome]));
   const mapaLocais = Object.fromEntries(dados.localizacoes.map(l => [l.id, l]));
@@ -252,29 +257,32 @@ function atualizarCalendario() {
       ${dados.escaloes.find(e => e.id === escalaoId)?.nome} – 
       Série ${serie?.serie} – Jornada ${jornada?.jornada} (${jornada?.data})
     </h2>
-    ${OrdenarJogos(jornada?.jogos ?? [], ordenacaoId).map(renderJogoCard).join('')}
+    ${ordenarJogos(jornada?.jogos ?? [], ordenacaoId).map(renderJogoCard).join('')}
   `;
 
   function renderJogoCard(jogo) {
-    const { equipaDestaqueId } = getSelectedValues();
-    const casa = mapaEquipas[jogo.equipacasa] || jogo.equipacasa;
-    const fora = mapaEquipas[jogo.equipafora] || jogo.equipafora;
-    const local = mapaLocais[jogo.localizacaoId] || null;
-    const destacar = [jogo.equipacasa, jogo.equipafora].includes(equipaDestaqueId);
-    const isento = ["0000"].includes(dados.equipas.find(e => e.id === jogo.equipacasa)?.clubeId) ||
-                   ["0000"].includes(dados.equipas.find(e => e.id === jogo.equipafora)?.clubeId);
+    const { equipaDestaqueId, esconderId } = getSelectedValues();
+	
+	const equipaCasa = dados.mapaEquipas[jogo.equipacasa];
+	const equipaFora = dados.mapaEquipas[jogo.equipafora];
+	const equipaDestaque = dados.mapaEquipas[equipaDestaqueId];
+	  
+    const local = dados.mapaLocais[jogo.localizacaoId];
 
-    const { esconderId } = getSelectedValues();
+    const casa = equipaCasa?.nome || jogo.equipacasa;
+    const fora = equipaFora?.nome || jogo.equipafora;
+	  
+    const destacar = jogo.equipacasa === equipaDestaqueId || jogo.equipafora === equipaDestaqueId;	  
+    const isento = equipaCasa?.clubeId === CLUBE_ISENTO || equipaFora?.clubeId === CLUBE_ISENTO;
 
     if(Number(esconderId) === 1 && isento ){ return ``; }
 	else if(Number(esconderId) === 2 && !destacar ){ return ``; }
 	
     let corFundo = "#f2f2f2";
     if (isento) {
-      corFundo = dados.clubes.find(c => c.id === 0)?.cor || "#e8e8e8";
+      corFundo = dados.mapaClubes[0]?.cor || "#e8e8e8";
     } else if (destacar) {
-      const equipa = dados.equipas.find(e => e.id === equipaDestaqueId);
-      corFundo = dados.clubes.find(c => c.id === equipa?.clubeId)?.cor || "#ffffcc";
+      corFundo = dados.mapaClubes[equipaDestaque?.clubeId]?.cor || '#ffffcc';
     }
 
     const fundoEquipas = (isento || destacar) ? corEquipasFundo(corFundo) : "#e0e0e0";
