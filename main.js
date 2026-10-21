@@ -399,12 +399,11 @@ function obterCorFundo(isento, destacar, equipaDestaque) {
     if (isento) {
         return dados.mapaClubes[CLUBE_ISENTO]?.cor || "#e8e8e8";
     }
-
-    if (destacar) {
+    else if (destacar) {
         return dados.mapaClubes[equipaDestaque?.clubeId]?.cor || "#ffffcc";
     }
-
-    return "#f2f2f2";
+    else
+    	return "#f2f2f2";
 }
 
 
