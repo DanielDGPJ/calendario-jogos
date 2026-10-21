@@ -25,22 +25,36 @@ function criarMapas() {
     dados.mapaClubes = criarMapa(dados.clubes);
     dados.mapaEquipas = criarMapa(dados.equipas);
     dados.mapaLocais = criarMapa(dados.localizacoes);
-
 	dados.mapaCompeticoes = criarMapa(dados.competicoes);
-
-    dados.mapaSeries = {};
-    dados.mapaJornadas = {};
+	
+    dados.mapaSeries = criarMapaSeries();
+	
+	dados.mapaJornadas = criarMapaJornadas();
+}
+function criarMapaSeries() {
+    const mapa = {};
 
     dados.competicoes.forEach(comp => {
         comp.series.forEach(serie => {
+            mapa[serie.id] = serie;
+        });
+    });
 
-            dados.mapaSeries[serie.id] = serie;
+    return mapa;
+}
 
+function criarMapaJornadas() {
+    const mapa = {};
+
+    dados.competicoes.forEach(comp => {
+        comp.series.forEach(serie => {
             serie.jornadas.forEach(jornada => {
-                dados.mapaJornadas[jornada.id] = jornada;
+                mapa[jornada.id] = jornada;
             });
         });
     });
+
+    return mapa;
 }
 
 inicializar();
