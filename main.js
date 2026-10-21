@@ -96,7 +96,7 @@ function atualizarEscaloes(primeiro) {
     if (escalao) fragment.appendChild(createOption(escalao.id, escalao.nome)); 
   });
 
-  elements.desportoSelect.appendChild(fragment);
+  elements.escalaoSelect.appendChild(fragment);
 
   aplicarParametro(primeiro, elements.escalaoSelect, params.escalao);
 
@@ -114,10 +114,10 @@ function atualizarSeries(primeiro) {
   const fragment = document.createDocumentFragment();
 
   comp?.series.forEach(s => {
-	fragment.appendChild(createOption(escalao.serie, escalao.nomeserie)); 
+	fragment.appendChild(createOption(s.serie, s.nomeserie)); 
   });
 
-  elements.desportoSelect.appendChild(fragment);
+  elements.serieSelect.appendChild(fragment);
 
   aplicarParametro(primeiro, elements.serieSelect, params.serie);
 
@@ -138,7 +138,7 @@ function atualizarJornadas(primeiro) {
 	fragment.appendChild(createOption(j.jornada, `Jornada ${j.jornada}`)); 
   });
 
-  elements.desportoSelect.appendChild(fragment);
+  elements.jornadaSelect.appendChild(fragment);
   
   if (!aplicarParametro(primeiro,elements.jornadaSelect,params.jornada))
   {
@@ -282,7 +282,8 @@ function atualizarCalendario() {
     </h2>
     ${ordenarJogos(jornada?.jogos ?? [], ordenacaoId).map(renderJogoCard).join('')}
   `;
-
+}
+	
   function renderJogoCard(jogo) {
     const { equipaDestaqueId, esconderId } = getSelectedValues();
 	
@@ -333,7 +334,7 @@ function atualizarCalendario() {
       </div>
     `;
   }
-}
+
 
 
 
