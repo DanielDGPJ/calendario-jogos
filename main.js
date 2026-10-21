@@ -1,4 +1,50 @@
 let dados;
+
+async function inicializar() {
+    const response = await fetch('data.json');
+    dados = await response.json();
+
+    criarMapas();
+
+    atualizarDetalhesVisualizacao(true);
+    atualizarOrdenacao(true);
+    atualizarDesportos(true);
+    atualizarEscaloes(true);
+    atualizarEquipasDestaque(true);
+}
+
+function criarMapa(array) {
+    return Object.fromEntries(
+        array.map(item => [item.id, item])
+    );
+}
+
+function criarMapas() {
+    dados.mapaDesportos = criarMapa(dados.desportos);
+    dados.mapaEscaloes = criarMapa(dados.escaloes);
+    dados.mapaClubes = criarMapa(dados.clubes);
+    dados.mapaEquipas = criarMapa(dados.equipas);
+    dados.mapaLocais = criarMapa(dados.localizacoes);
+
+	dados.mapaCompeticoes = criarMapa(dados.competicoes);
+
+    dados.mapaSeries = {};
+    dados.mapaJornadas = {};
+
+    dados.competicoes.forEach(comp => {
+        comp.series.forEach(serie => {
+
+            dados.mapaSeries[serie.id] = serie;
+
+            serie.jornadas.forEach(jornada => {
+                dados.mapaJornadas[jornada.id] = jornada;
+            });
+        });
+    });
+}
+
+inicializar();
+
 const query = new URLSearchParams(window.location.search);
 const CLUBE_ISENTO = "0000";
 
@@ -61,18 +107,6 @@ function aplicarParametro(primeiro, select, valor) {
     return false;
 }
 
-function obterCompeticao(desportoId, escalaoId) {
-    return dados.competicoes.find( c => c.desportoId === desportoId && c.escalaoId === escalaoId );
-}
-
-function obterSerie(desportoId, escalaoId, serieId) {
-    return obterCompeticao(desportoId, escalaoId)?.series.find( s => s.serie === serieId );
-}
-
-function obterJornada(desportoId, escalaoId, serieId, jornadaId) {
-    return obterSerie(desportoId, escalaoId, serieId)?.jornadas.find(j => j.jornada === jornadaId);
-}
-
 // Populate Desportos
 function atualizarDesportos(primeiro) {
   const fragment = document.createDocumentFragment();
@@ -115,12 +149,12 @@ function atualizarSeries(primeiro) {
   elements.serieSelect.innerHTML = '';
   const { desportoId, escalaoId } = getSelectedValues();
 
-  const comp = obterCompeticao(desportoId, escalaoId);
+  const comp = dados.mapaCompeticoes[`${desportoId}.${escalaoId}`];
 
   const fragment = document.createDocumentFragment();
 
   comp?.series.forEach(s => {
-	fragment.appendChild(createOption(s.serie, s.nomeserie)); 
+	fragment.appendChild(createOption(s.id, s.nomeserie)); 
   });
 
   elements.serieSelect.appendChild(fragment);
@@ -134,14 +168,14 @@ function atualizarSeries(primeiro) {
 // Populate Jornadas
 function atualizarJornadas(primeiro) {
   elements.jornadaSelect.innerHTML = '';
-  const { desportoId, escalaoId, serieId } = getSelectedValues();
+  const { serieId } = getSelectedValues();
 
-  const serie = obterSerie(desportoId, escalaoId, serieId);
+  const serie = dados.mapaSeries[serieId];
 
   const fragment = document.createDocumentFragment();
 	
   serie?.jornadas.forEach(j => {
-	fragment.appendChild(createOption(j.jornada, `Jornada ${j.jornada}`)); 
+	fragment.appendChild(createOption(j.id, `Jornada ${j.jornada}`)); 
   });
 
   elements.jornadaSelect.appendChild(fragment);
@@ -164,7 +198,7 @@ function selecionarJornadaFutura(select, jornadas = []) {
   for (const jornada of jornadasOrdenadas) {
     const dataJornada = addDays(parseDataHora(jornada.data), 1);
     if (dataJornada >= hoje) {
-      select.value = jornada.jornada;
+      select.value = jornada.id;
       break;
     }
   }
@@ -217,19 +251,13 @@ function atualizarOrdenacao(primeiro)
 
 // Filter Equipas
 function equipasFiltradas() {
-  const { desportoId, escalaoId, serieId } = getSelectedValues();
+  const { serieId } = getSelectedValues();
 
-  const serie = obterSerie(desportoId, escalaoId, serieId);
-  
+  const serie = dados.mapaSeries[serieId];
+	
   if (!serie) return [];
   
-  const equipasSerie = new Set(serie.equipas);
-
-  return dados.equipas.filter(e =>
-    e.desportoId === desportoId &&
-    e.escalaoId === escalaoId &&
-    equipasSerie.has(e.id)
-  );
+  return serie?.equipas.map(id => dados.mapaEquipas[id]).filter(Boolean) ?? [];
 }
 
 // Color helpers
@@ -280,10 +308,13 @@ function ordenarJornadas(jornadas) {
 
 // Render Calendar
 function atualizarCalendario() {
-  const { desportoId, escalaoId, serieId, jornadaId, ordenacaoId } = getSelectedValues();
+  const { desportoId, escalaoId, serieId, jornadaId, ordenacaoId, equipaDestaqueId, esconderId } = getSelectedValues();
 
-  const serie = obterSerie(desportoId, escalaoId, serieId);
-  const jornada = obterJornada(desportoId, escalaoId, serieId, jornadaId);
+  //const serie = obterSerie(desportoId, escalaoId, serieId);
+  //const jornada = obterJornada(desportoId, escalaoId, serieId, jornadaId);
+
+  const serie = dados.mapaSeries[serieId];
+  const jornada = dados.mapaJornadas[jornadaId];
 	
   elements.jornadaDiv.innerHTML = `
     <h2 class="responsive-heading mb-3">
@@ -291,13 +322,11 @@ function atualizarCalendario() {
       ${dados.mapaEscaloes[escalaoId]?.nome} – 
       Série ${serie?.serie} – Jornada ${jornada?.jornada} (${jornada?.data})
     </h2>
-    ${ordenarJogos(jornada?.jogos ?? [], ordenacaoId).map(renderJogoCard).join('')}
+    ${ordenarJogos(jornada?.jogos ?? [], ordenacaoId).map(j => renderJogoCard(j,equipaDestaqueId,esconderId)).join('')}
   `;
 }
 	
-  function renderJogoCard(jogo) {
-    const { equipaDestaqueId, esconderId } = getSelectedValues();
-	
+  function renderJogoCard(jogo,equipaDestaqueId,esconderId) {
 	const equipaCasa = dados.mapaEquipas[jogo.equipacasa];
 	const equipaFora = dados.mapaEquipas[jogo.equipafora];
 	const equipaDestaque = dados.mapaEquipas[equipaDestaqueId];
