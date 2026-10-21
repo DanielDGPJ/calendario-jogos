@@ -1,16 +1,25 @@
 let dados;
 
 async function inicializar() {
-    const response = await fetch('data.json');
-    dados = await response.json();
+	try {
+      const response = await fetch('data.json');
+	  if (!response.ok) {
+            throw new Error( `Erro ao carregar data.json (${response.status})`);
+      }
+      dados = await response.json();
 
-    criarMapas();
+      criarMapas();
 
-    atualizarDetalhesVisualizacao(true);
-    atualizarOrdenacao(true);
-    atualizarDesportos(true);
-    atualizarEscaloes(true);
-    atualizarEquipasDestaque(true);
+      atualizarDetalhesVisualizacao(true);
+      atualizarOrdenacao(true);
+      atualizarDesportos(true);
+      atualizarEscaloes(true);
+      atualizarEquipasDestaque(true);
+    }
+    catch (erro) {
+		console.error(erro);
+        elements.jornadaDiv.innerHTML = '<p>Erro ao carregar os dados.</p>';
+    }
 }
 
 function criarMapa(array) {
@@ -20,16 +29,15 @@ function criarMapa(array) {
 }
 
 function criarMapas() {
-    dados.mapaDesportos = criarMapa(dados.desportos);
-    dados.mapaEscaloes = criarMapa(dados.escaloes);
-    dados.mapaClubes = criarMapa(dados.clubes);
-    dados.mapaEquipas = criarMapa(dados.equipas);
-    dados.mapaLocais = criarMapa(dados.localizacoes);
+    dados.mapaDesportos   = criarMapa(dados.desportos);
+    dados.mapaEscaloes    = criarMapa(dados.escaloes);
+    dados.mapaClubes      = criarMapa(dados.clubes);
+    dados.mapaEquipas     = criarMapa(dados.equipas);
+    dados.mapaLocais      = criarMapa(dados.localizacoes);
 	dados.mapaCompeticoes = criarMapa(dados.competicoes);
 	
-    dados.mapaSeries = criarMapaSeries();
-	
-	dados.mapaJornadas = criarMapaJornadas();
+    dados.mapaSeries      = criarMapaSeries();
+	dados.mapaJornadas    = criarMapaJornadas();
 }
 function criarMapaSeries() {
     const mapa = {};
@@ -163,7 +171,8 @@ function atualizarSeries(primeiro) {
   elements.serieSelect.innerHTML = '';
   const { desportoId, escalaoId } = getSelectedValues();
 
-  const comp = dados.mapaCompeticoes[`${desportoId}.${escalaoId}`];
+  const competicaoId = `${desportoId}.${escalaoId}`;
+  const comp = dados.mapaCompeticoes[competicaoId];
 
   const fragment = document.createDocumentFragment();
 
@@ -243,10 +252,14 @@ function atualizarEquipasDestaque(primeiro) {
   const equipas = equipasFiltradas();
   let highlightedId = null;
 
+  const fragment = document.createDocumentFragment();
+
   equipas.forEach(e => {
-    elements.equipaDestaqueSelect.appendChild(createOption(e.id, e.nome));
-    if (e.highlighted && !highlightedId) highlightedId = e.id;
+    fragment.appendChild(createOption(e.id, e.nome));
+    if (e.highlighted && !highlightedId) { highlightedId = e.id; }
   });
+
+  elements.equipaDestaqueSelect.appendChild(fragment);
 
   if (!aplicarParametro( primeiro, elements.equipaDestaqueSelect, params.equipaDestaque) && highlightedId ) {
     elements.equipaDestaqueSelect.value = highlightedId;
@@ -271,7 +284,7 @@ function equipasFiltradas() {
 	
   if (!serie) return [];
   
-  return serie?.equipas.map(id => dados.mapaEquipas[id]).filter(Boolean) ?? [];
+  return serie.equipas.map(id => dados.mapaEquipas[id]).filter(Boolean);
 }
 
 // Color helpers
@@ -324,9 +337,6 @@ function ordenarJornadas(jornadas) {
 function atualizarCalendario() {
   const { desportoId, escalaoId, serieId, jornadaId, ordenacaoId, equipaDestaqueId, esconderId } = getSelectedValues();
 
-  //const serie = obterSerie(desportoId, escalaoId, serieId);
-  //const jornada = obterJornada(desportoId, escalaoId, serieId, jornadaId);
-
   const serie = dados.mapaSeries[serieId];
   const jornada = dados.mapaJornadas[jornadaId];
 	
@@ -356,15 +366,11 @@ function atualizarCalendario() {
     if (Number(esconderId) === VISUALIZACAO.ESCONDER_ISENTO && isento) return '';
     if (Number(esconderId) === VISUALIZACAO.MOSTRAR_DESTACADA && !destacar) return '';
 	
-    let corFundo = "#f2f2f2";
-    if (isento) {
-      corFundo = dados.mapaClubes[0]?.cor || "#e8e8e8";
-    } else if (destacar) {
-      corFundo = dados.mapaClubes[equipaDestaque?.clubeId]?.cor || '#ffffcc';
-    }
+    const corFundo = obterCorFundo(isento, destacar, equipaDestaque);
 
     const fundoEquipas = (isento || destacar) ? corEquipasFundo(corFundo) : "#e0e0e0";
-    const resultado = jogo.resultado || '<span class="mx-2">vs</span>';
+    const resultado = jogo.resultado ? `<span class="mx-2">${jogo.resultado}</span>` : '<span class="mx-2">vs</span>';
+
     const localInfo = local?.nome
       ? `<b>${local.nome}</b> (${local.relvado || ''} ${local.dimensoes?.comprimento || ''}x${local.dimensoes?.largura || ''})` +
         (local.georef?.link ? `<div><a href="${local.georef.link}" target="_blank"><strong>VER NO MAPA</strong></a></div>` : '')
@@ -380,7 +386,7 @@ function atualizarCalendario() {
           </div>
           <div class="jogo-equipas" style="background-color: ${fundoEquipas};">
             <strong>${casa}</strong>
-            ${jogo.resultado ? `<span class="mx-2">${jogo.resultado}</span>` : '<span class="mx-2">vs</span>'}
+            ${resultado}
             <strong>${fora}</strong>
             <div class="jogo-local">${localInfo}</div>
           </div>
@@ -388,6 +394,18 @@ function atualizarCalendario() {
       </div>
     `;
   }
+
+function obterCorFundo(isento, destacar, equipaDestaque) {
+    if (isento) {
+        return dados.mapaClubes[CLUBE_ISENTO]?.cor || "#e8e8e8";
+    }
+
+    if (destacar) {
+        return dados.mapaClubes[equipaDestaque?.clubeId]?.cor || "#ffffcc";
+    }
+
+    return "#f2f2f2";
+}
 
 
 
