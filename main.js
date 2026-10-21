@@ -2,6 +2,11 @@ let dados;
 const query = new URLSearchParams(window.location.search);
 const CLUBE_ISENTO = "0000";
 
+const ORDENACAO = {
+    ID: 1,
+    DATA_HORA: 2
+};
+
 const params = {
   desporto: query.get('desporto'),
   escalao: query.get('escalao'),
@@ -64,9 +69,13 @@ function obterJornada(desportoId, escalaoId, serieId, jornadaId) {
 
 // Populate Desportos
 function atualizarDesportos(primeiro) {
+  const fragment = document.createDocumentFragment();
+
   dados.desportos.forEach(d => {
-    elements.desportoSelect.appendChild(createOption(d.id, d.nome));
+    fragment.appendChild(createOption(d.id, d.nome)); 
   });
+
+  elements.desportoSelect.appendChild(fragment);
 
   aplicarParametro(primeiro, elements.desportoSelect, params.desporto);
 }
@@ -80,10 +89,14 @@ function atualizarEscaloes(primeiro) {
     dados.competicoes.filter(c => c.desportoId === desportoId).map(c => c.escalaoId)
   )];
 
+  const fragment = document.createDocumentFragment();
+
   escaloesUnicos.forEach(id => {
-    const escalao = dados.escaloes.find(e => e.id === id);
-    if (escalao) elements.escalaoSelect.appendChild(createOption(escalao.id, escalao.nome));
+	const escalao = dados.mapaEscaloes[id];
+    if (escalao) fragment.appendChild(createOption(escalao.id, escalao.nome)); 
   });
+
+  elements.desportoSelect.appendChild(fragment);
 
   aplicarParametro(primeiro, elements.escalaoSelect, params.escalao);
 
@@ -98,9 +111,13 @@ function atualizarSeries(primeiro) {
 
   const comp = obterCompeticao(desportoId, escalaoId);
 
+  const fragment = document.createDocumentFragment();
+
   comp?.series.forEach(s => {
-    elements.serieSelect.appendChild(createOption(s.serie, s.nomeserie));
+	fragment.appendChild(createOption(escalao.serie, escalao.nomeserie)); 
   });
+
+  elements.desportoSelect.appendChild(fragment);
 
   aplicarParametro(primeiro, elements.serieSelect, params.serie);
 
@@ -115,14 +132,18 @@ function atualizarJornadas(primeiro) {
 
   const serie = obterSerie(desportoId, escalaoId, serieId);
 
+  const fragment = document.createDocumentFragment();
+	
   serie?.jornadas.forEach(j => {
-    elements.jornadaSelect.appendChild(createOption(j.jornada, `Jornada ${j.jornada}`));
+	fragment.appendChild(createOption(j.jornada, `Jornada ${j.jornada}`)); 
   });
+
+  elements.desportoSelect.appendChild(fragment);
   
-if (!aplicarParametro(primeiro,elements.jornadaSelect,params.jornada))
-{
+  if (!aplicarParametro(primeiro,elements.jornadaSelect,params.jornada))
+  {
     selecionarJornadaFutura(elements.jornadaSelect,serie?.jornadas);
-}
+  }
 
   atualizarEquipasDestaque(primeiro);
   atualizarCalendario(primeiro);
@@ -188,13 +209,15 @@ function equipasFiltradas() {
   const { desportoId, escalaoId, serieId } = getSelectedValues();
 
   const serie = obterSerie(desportoId, escalaoId, serieId);
-
+  
   if (!serie) return [];
+  
+  const equipasSerie = new Set(serie.equipas);
 
   return dados.equipas.filter(e =>
     e.desportoId === desportoId &&
     e.escalaoId === escalaoId &&
-    serie.equipas.includes(e.id)
+    equipasSerie.has(e.id)
   );
 }
 
@@ -222,14 +245,18 @@ function ajustarLuminosidade(hex, percent) {
 }
 
 function ordenarPorData(items) {
-    return [...items].sort( (a, b) => parseDataHora(a.data, a.hora) - parseDataHora(b.data, b.hora) );
+    return [...items].sort((a, b) => {
+        const dataA = parseDataHora(a.data, a.hora).getTime();
+        const dataB = parseDataHora(b.data, b.hora).getTime();
+        return dataA - dataB;
+    });
 }
 
 function ordenarJogos(jogos, tipo) {
     switch (Number(tipo)) {
-        case 1: // ID
+        case ORDENACAO.ID:
             return [...jogos].sort((a, b) => a.id.localeCompare(b.id));
-        case 2: // Data + Hora
+        case ORDENACAO.DATA_HORA:
             return ordenarPorData(jogos);
         default:
             return [...jogos];
@@ -242,17 +269,15 @@ function ordenarJornadas(jornadas) {
 
 // Render Calendar
 function atualizarCalendario() {
-  const { desportoId, escalaoId, serieId, jornadaId } = getSelectedValues();
+  const { desportoId, escalaoId, serieId, jornadaId, ordenacaoId } = getSelectedValues();
 
   const serie = obterSerie(desportoId, escalaoId, serieId);
   const jornada = obterJornada(desportoId, escalaoId, serieId, jornadaId);
-
-  const {ordenacaoId } = getSelectedValues();
 	
   elements.jornadaDiv.innerHTML = `
     <h2 class="responsive-heading mb-3">
-      ${dados.desportos.find(d => d.id === desportoId)?.nome} – 
-      ${dados.escaloes.find(e => e.id === escalaoId)?.nome} – 
+      ${dados.mapaDesportos[desportoId]?.nome} – 
+      ${dados.mapaEscaloes[escalaoId]?.nome} – 
       Série ${serie?.serie} – Jornada ${jornada?.jornada} (${jornada?.data})
     </h2>
     ${ordenarJogos(jornada?.jogos ?? [], ordenacaoId).map(renderJogoCard).join('')}
