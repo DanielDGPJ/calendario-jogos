@@ -121,7 +121,7 @@ function atualizarJornadas(primeiro) {
   
 if (!aplicarParametro(primeiro,elements.jornadaSelect,params.jornada))
 {
-    selecionarJornadaFutura(elements.jornadaSelect.id,serie?.jornadas);
+    selecionarJornadaFutura(elements.jornadaSelect,serie?.jornadas);
 }
 
   atualizarEquipasDestaque(primeiro);
@@ -129,9 +129,8 @@ if (!aplicarParametro(primeiro,elements.jornadaSelect,params.jornada))
 }
 
 // Select next Jornada
-function selecionarJornadaFutura(selectId, jornadas = []) {
+function selecionarJornadaFutura(select, jornadas = []) {
   const hoje = new Date();
-  const select = document.getElementById(selectId);
 
   const jornadasOrdenadas = ordenarJornadas(jornadas);
 
@@ -244,11 +243,10 @@ function ordenarJornadas(jornadas) {
 // Render Calendar
 function atualizarCalendario() {
   const { desportoId, escalaoId, serieId, jornadaId } = getSelectedValues();
-	
+
+  const serie = obterSerie(desportoId, escalaoId, serieId);
   const jornada = obterJornada(desportoId, escalaoId, serieId, jornadaId);
 
-  const mapaEquipas = Object.fromEntries(dados.equipas.map(e => [e.id, e.nome]));
-  const mapaLocais = Object.fromEntries(dados.localizacoes.map(l => [l.id, l]));
   const {ordenacaoId } = getSelectedValues();
 	
   elements.jornadaDiv.innerHTML = `
