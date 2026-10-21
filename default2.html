@@ -72,6 +72,7 @@
         dados.mapaEquipas = Object.fromEntries( dados.equipas.map(e => [e.id, e]) );
         dados.mapaLocais = Object.fromEntries( dados.localizacoes.map(l => [l.id, l]) );
 		atualizarDetalhesVisualizacao(true);
+		atualizarOrdenacao(true);
 		atualizarDesportos(true);
 		atualizarEscaloes(true);
 		atualizarEquipasDestaque(true);
