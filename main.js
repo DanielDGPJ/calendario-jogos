@@ -210,6 +210,11 @@ function atualizarDetalhesVisualizacao(primeiro)
   aplicarParametro(primeiro, elements.esconderSelect, params.esconder);
 }
 
+function atualizarOrdenacao(primeiro)
+{
+  aplicarParametro(primeiro, elements.ordenacaoSelect, params.ordenacao);
+}
+
 // Filter Equipas
 function equipasFiltradas() {
   const { desportoId, escalaoId, serieId } = getSelectedValues();
