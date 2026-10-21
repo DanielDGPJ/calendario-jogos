@@ -7,7 +7,8 @@ const params = {
   serie: query.get('serie'),
   jornada: query.get('jornada'),
   equipaDestaque: query.get('equipaDestaque'),
-  esconder: query.get('esconder')
+  esconder: query.get('esconder'),
+  ordenacao: query.get('ordenar')
 };
 
 const elements = {
@@ -18,6 +19,7 @@ const elements = {
   jornadaDiv: document.getElementById('jornada'),
   equipaDestaqueSelect: document.getElementById('equipaDestaqueSelect'),
   esconderSelect: document.getElementById('esconderSelect'),
+  ordenacaoSelect: document.getElementById('ordenacaoSelect'),
 };
 
 // Utility: Create option element
@@ -36,6 +38,7 @@ const getSelectedValues = () => ({
   jornadaId: elements.jornadaSelect.value,
   equipaDestaqueId: elements.equipaDestaqueSelect.value,
   esconderId: elements.esconderSelect.value,
+  ordenacaoId: elements.ordenacaoSelect.value,
 });
 
 // Populate Desportos
@@ -244,7 +247,7 @@ function atualizarCalendario() {
 
   const mapaEquipas = Object.fromEntries(dados.equipas.map(e => [e.id, e.nome]));
   const mapaLocais = Object.fromEntries(dados.localizacoes.map(l => [l.id, l]));
-  const OrdenacaoId = 1;
+  const {ordenacaoId } = getSelectedValues();
 	
   elements.jornadaDiv.innerHTML = `
     <h2 class="responsive-heading mb-3">
@@ -252,7 +255,7 @@ function atualizarCalendario() {
       ${dados.escaloes.find(e => e.id === escalaoId)?.nome} – 
       Série ${serie?.serie} – Jornada ${jornada?.jornada} (${jornada?.data})
     </h2>
-    ${sortJogos(jornada?.jogos ?? [], OrdenacaoId).map(renderJogoCard).join('')}
+    ${sortJogos(jornada?.jogos ?? [], ordenacaoId).map(renderJogoCard).join('')}
   `;
 
   function renderJogoCard(jogo) {
