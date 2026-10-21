@@ -4,7 +4,13 @@ const CLUBE_ISENTO = "0000";
 
 const ORDENACAO = {
     ID: 1,
-    DATA_HORA: 2
+    DATA_HORA: 2,
+	SEM_ORDENACAO: 0
+};
+const VISUALIZACAO = {
+    ESCONDER_ISENTO: 1,
+    MOSTRAR_DESTACADA: 2,
+	MOSTRAR_TODO: 3
 };
 
 const params = {
@@ -299,8 +305,8 @@ function atualizarCalendario() {
     const destacar = jogo.equipacasa === equipaDestaqueId || jogo.equipafora === equipaDestaqueId;	  
     const isento = equipaCasa?.clubeId === CLUBE_ISENTO || equipaFora?.clubeId === CLUBE_ISENTO;
 
-    if(Number(esconderId) === 1 && isento ){ return ``; }
-	else if(Number(esconderId) === 2 && !destacar ){ return ``; }
+    if (Number(esconderId) === VISUALIZACAO.ESCONDER_ISENTO && isento) return '';
+    if (Number(esconderId) === VISUALIZACAO.MOSTRAR_DESTACADA && !destacar) return '';
 	
     let corFundo = "#f2f2f2";
     if (isento) {
