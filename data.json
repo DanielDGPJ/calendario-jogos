@@ -8,7 +8,7 @@
         { "id": "S13", "nome": "Sub-13 (Futebol 9)" }
       ],
     "clubes": [
-        { "id": "0000", "nome": "ISENTO", "cor": "#ffffcc" },
+        { "id": "0000", "nome": "ISENTO", "cor": "#e8e8e8" },
 		{ "id": "0050", "nome": "BOBADELENSE", "cor": "#ffffcc" },
 		{ "id": "0053", "nome": "CARREGADO", "cor": "#ffffcc" },
 		{ "id": "0155", "nome": "AVEIRAS", "cor": "#ffffcc" },
