@@ -340,14 +340,26 @@ function atualizarCalendario() {
   const serie = dados.mapaSeries[serieId];
   const jornada = dados.mapaJornadas[jornadaId];
 	
-  elements.jornadaDiv.innerHTML = `
-    <h2 class="responsive-heading mb-3">
-      ${dados.mapaDesportos[desportoId]?.nome} – 
-      ${dados.mapaEscaloes[escalaoId]?.nome} – 
-      Série ${serie?.serie} – Jornada ${jornada?.jornada} (${jornada?.data})
-    </h2>
-    ${ordenarJogos(jornada?.jogos ?? [], ordenacaoId).map(j => renderJogoCard(j,equipaDestaqueId,esconderId)).join('')}
-  `;
+  elements.jornadaDiv.replaceChildren();
+
+  const fragment = document.createDocumentFragment();
+
+  const titulo = document.createElement("h2");
+  titulo.className = "responsive-heading mb-3";
+  titulo.textContent =
+	`${dados.mapaDesportos[desportoId]?.nome} – ` +
+    `${dados.mapaEscaloes[escalaoId]?.nome} – ` +
+    `Série ${serie?.serie} – Jornada ${jornada?.jornada} (${jornada?.data})`;
+
+    fragment.appendChild(titulo);
+
+    ordenarJogos(jornada?.jogos ?? [], ordenacaoId)
+      .forEach(jogo => {
+        const card = renderJogoCard(jogo, equipaDestaqueId, esconderId );
+
+        if (card) { fragment.appendChild(card); }
+      });
+  elements.jornadaDiv.appendChild(fragment);
 }
 	
   function renderJogoCard(jogo,equipaDestaqueId,esconderId) {
