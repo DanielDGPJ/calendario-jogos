@@ -377,7 +377,7 @@ function renderJogoCard(jogo, equipaDestaqueId, esconderId) {
 
     if (Number(esconderId) === VISUALIZACAO.ESCONDER_ISENTO && isento ) { return null; }
 
-    if (Number(esconderId) === VISUALIZACAO.MOSTRAR_DESTACADA &&,!destacar ) { return null; }
+    if (Number(esconderId) === VISUALIZACAO.MOSTRAR_DESTACADA && !destacar ) { return null; }
 
     const corFundo = obterCorFundo(isento, destacar, equipaDestaque);
 
