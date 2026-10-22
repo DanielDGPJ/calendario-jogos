@@ -362,50 +362,66 @@ function atualizarCalendario() {
   elements.jornadaDiv.appendChild(fragment);
 }
 	
-  function renderJogoCard(jogo,equipaDestaqueId,esconderId) {
-	const equipaCasa = dados.mapaEquipas[jogo.equipacasa];
-	const equipaFora = dados.mapaEquipas[jogo.equipafora];
-	const equipaDestaque = dados.mapaEquipas[equipaDestaqueId];
-	  
+function renderJogoCard(jogo, equipaDestaqueId, esconderId) {
+    const equipaCasa = dados.mapaEquipas[jogo.equipacasa];
+    const equipaFora = dados.mapaEquipas[jogo.equipafora];
+    const equipaDestaque = dados.mapaEquipas[equipaDestaqueId];
+
     const local = dados.mapaLocais[jogo.localizacaoId];
 
     const casa = equipaCasa?.nome || jogo.equipacasa;
     const fora = equipaFora?.nome || jogo.equipafora;
-	  
-    const destacar = jogo.equipacasa === equipaDestaqueId || jogo.equipafora === equipaDestaqueId;	  
+
+    const destacar = jogo.equipacasa === equipaDestaqueId || jogo.equipafora === equipaDestaqueId;
     const isento = equipaCasa?.clubeId === CLUBE_ISENTO || equipaFora?.clubeId === CLUBE_ISENTO;
 
-    if (Number(esconderId) === VISUALIZACAO.ESCONDER_ISENTO && isento) return '';
-    if (Number(esconderId) === VISUALIZACAO.MOSTRAR_DESTACADA && !destacar) return '';
-	
+    if (Number(esconderId) === VISUALIZACAO.ESCONDER_ISENTO && isento ) { return null; }
+
+    if (Number(esconderId) === VISUALIZACAO.MOSTRAR_DESTACADA &&,!destacar ) { return null; }
+
     const corFundo = obterCorFundo(isento, destacar, equipaDestaque);
 
     const fundoEquipas = (isento || destacar) ? corEquipasFundo(corFundo) : "#e0e0e0";
-    const resultado = jogo.resultado ? `<span class="mx-2">${jogo.resultado}</span>` : '<span class="mx-2">vs</span>';
+
+    const resultado = jogo.resultado
+        ? `<span class="mx-2">${jogo.resultado}</span>`
+        : '<span class="mx-2">vs</span>';
 
     const localInfo = local?.nome
-      ? `<b>${local.nome}</b> (${local.relvado || ''} ${local.dimensoes?.comprimento || ''}x${local.dimensoes?.largura || ''})` +
-        (local.georef?.link ? `<div><a href="${local.georef.link}" target="_blank"><strong>VER NO MAPA</strong></a></div>` : '')
-      : 'Sem localização definida.';
+        ? `<b>${local.nome}</b>`
+        : 'Sem localização definida.';
 
-    return `
-      <div class="jogo-card" style="background-color: ${corFundo}; border-color: ${fundoEquipas};">
+    const card = document.createElement("div");
+
+    card.className = "jogo-card";
+
+    card.style.backgroundColor = corFundo;
+    card.style.borderColor = fundoEquipas;
+
+    card.innerHTML = `
         <div class="jogo-topo shadow-box-sm">
-          <div class="jogo-info" style="background-color: ${fundoEquipas}; border-radius: 10px; padding: 0.75rem 1rem;">
-            <div><strong>ID:</strong> ${jogo.id}</div>
-            <div><strong>Data:</strong> ${jogo.data || ''}</div>
-            <div><strong>Hora:</strong> ${jogo.hora || ''}</div>
-          </div>
-          <div class="jogo-equipas" style="background-color: ${fundoEquipas};">
-            <strong>${casa}</strong>
-            ${resultado}
-            <strong>${fora}</strong>
-            <div class="jogo-local">${localInfo}</div>
-          </div>
+            <div class="jogo-info"
+                 style="background-color:${fundoEquipas}; border-radius:10px; padding:0.75rem 1rem;">
+                <div><strong>ID:</strong> ${jogo.id}</div>
+                <div><strong>Data:</strong> ${jogo.data || ''}</div>
+                <div><strong>Hora:</strong> ${jogo.hora || ''}</div>
+            </div>
+
+            <div class="jogo-equipas"
+                 style="background-color:${fundoEquipas};">
+                <strong>${casa}</strong>
+                ${resultado}
+                <strong>${fora}</strong>
+
+                <div class="jogo-local">
+                    ${localInfo}
+                </div>
+            </div>
         </div>
-      </div>
     `;
-  }
+
+    return card;
+}
 
 function obterCorFundo(isento, destacar, equipaDestaque) {
     if (isento) {
