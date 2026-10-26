@@ -1,24 +1,54 @@
-let dados;
+let dados = {};
+
+async function carregarJson(ficheiro) {
+    const response = await fetch(ficheiro);
+
+    if (!response.ok) {
+        throw new Error(`Erro ao carregar ${ficheiro} (${response.status})`);
+    }
+
+    return response.json();
+}
 
 async function inicializar() {
-	try {
-      const response = await fetch('data.json');
-	  if (!response.ok) {
-            throw new Error( `Erro ao carregar data.json (${response.status})`);
-      }
-      dados = await response.json();
+    try {
+        const [
+            desportos,
+            escaloes,
+            clubes,
+            equipas,
+            localizacoes,
+            competicoes
+        ] = await Promise.all([
+            carregarJson("desportos.json"),
+            carregarJson("escaloes.json"),
+            carregarJson("clubes.json"),
+            carregarJson("equipas.json"),
+            carregarJson("localizacoes.json"),
+            carregarJson("competicoes.json")
+        ]);
 
-      criarMapas();
+        dados = {
+            desportos,
+            escaloes,
+            clubes,
+            equipas,
+            localizacoes,
+            competicoes
+        };
 
-      atualizarDetalhesVisualizacao(true);
-      atualizarOrdenacao(true);
-      atualizarDesportos(true);
-      atualizarEscaloes(true);
-      atualizarEquipasDestaque(true);
+        criarMapas();
+
+        atualizarDetalhesVisualizacao(true);
+        atualizarOrdenacao(true);
+        atualizarDesportos(true);
+        atualizarEscaloes(true);
+        atualizarEquipasDestaque(true);
     }
     catch (erro) {
-		console.error(erro);
-        elements.jornadaDiv.innerHTML = '<p>Erro ao carregar os dados.</p>';
+        console.error(erro);
+        elements.jornadaDiv.innerHTML =
+            "<p>Erro ao carregar os dados.</p>";
     }
 }
 

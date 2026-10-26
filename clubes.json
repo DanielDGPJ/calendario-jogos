@@ -1,0 +1,192 @@
+[
+    {
+        "id": "0000",
+        "nome": "ISENTO",
+        "cor": "#e8e8e8"
+    },
+    {
+        "id": "0050",
+        "nome": "BOBADELENSE",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "0053",
+        "nome": "CARREGADO",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "0155",
+        "nome": "AVEIRAS",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "0147",
+        "nome": "TOJAL",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "0220",
+        "nome": "CULTURAL",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "0330",
+        "nome": "BUCELENSES",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "0365",
+        "nome": "SANTA IRIA",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "0376",
+        "nome": "UNIDOS",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "0401",
+        "nome": "ARRUDENSE",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "0471",
+        "nome": "ALVERCA",
+        "cor": "#e6e6fA"
+    },
+    {
+        "id": "0577",
+        "nome": "CAMARATE",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "0703",
+        "nome": "PONTE FRIELAS",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "0769",
+        "nome": "VIALONGA",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "0796",
+        "nome": "LOURES",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "0813",
+        "nome": "CASTANHEIRA",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "0908",
+        "nome": "MUSGUEIRA",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "0948",
+        "nome": "CANEÇAS",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "0979",
+        "nome": "FRIELAS",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "1002",
+        "nome": "SANJOANENSE",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "1017",
+        "nome": "SACAVENENSE",
+        "cor": "#fce4ec"
+    },
+    {
+        "id": "1093",
+        "nome": "PINHEIRO LOURES",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "1095",
+        "nome": "SPORTING",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "1125",
+        "nome": "POVOENSE",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "1151",
+        "nome": "SANTA MARIA",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "1165",
+        "nome": "VILAFRANQUENSE",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "1216",
+        "nome": "ZAMBUJALENSE",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "1315",
+        "nome": "UD RECREIO",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "1669",
+        "nome": "TENENTE VALDEZ",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "2595",
+        "nome": "COL S J BRITO",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "2712",
+        "nome": "CATUJALENSE",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "2903",
+        "nome": "DESPERTAR",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "4887",
+        "nome": "ALTA LISBOA",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "5414",
+        "nome": "BRAGADENSE",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "5629",
+        "nome": "COL PEDRO ARRUPE",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "5647",
+        "nome": "EF BELÉM",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "5903",
+        "nome": "TOCOF",
+        "cor": "#ffffcc"
+    },
+    {
+        "id": "5979",
+        "nome": "FALCONS",
+        "cor": "#ffffcc"
+    }
+]

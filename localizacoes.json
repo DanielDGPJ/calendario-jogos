@@ -1,0 +1,648 @@
+[
+    {
+        "id": "0023",
+        "clubeId": [
+            "0053"
+        ],
+        "nome": "CAMPO JOSÉ LACERDA PINTO BARREIROS",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "100",
+            "largura": "64"
+        },
+        "georef": {
+            "latitude": "39.022501",
+            "longitude": "-8.978878",
+            "link": "https://maps.app.goo.gl/9FcX4z1F8tq3V5sb8"
+        }
+    },
+    {
+        "id": "0131",
+        "clubeId": [
+            "0703"
+        ],
+        "nome": "CAMPO BONJARDIM",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "100",
+            "largura": "63"
+        },
+        "georef": {
+            "latitude": "38.816855",
+            "longitude": "-9.152803",
+            "link": "https://maps.app.goo.gl/XqFKaVib98d1QoyJ7"
+        }
+    },
+    {
+        "id": "0262",
+        "clubeId": [
+            "0769"
+        ],
+        "nome": "PARQUE JOGOS GD VIALONGA",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "90",
+            "largura": "45"
+        },
+        "georef": {
+            "latitude": "38.874314",
+            "longitude": "-9.077705",
+            "link": "https://maps.app.goo.gl/wTjkdtuYFQcLhhxLA"
+        }
+    },
+    {
+        "id": "1323",
+        "clubeId": [
+            "0813"
+        ],
+        "nome": "CAMPO SÃO JOÃO",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "100",
+            "largura": "61"
+        },
+        "georef": {
+            "latitude": "38.985844",
+            "longitude": "-8.972936",
+            "link": "https://maps.app.goo.gl/iZ6dHcCV5XdggGq9A"
+        }
+    },
+    {
+        "id": "1482",
+        "clubeId": [
+            "0577"
+        ],
+        "nome": "CAMPO QUINTA BARROS",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "90",
+            "largura": "52"
+        },
+        "georef": {
+            "latitude": "38.803839",
+            "longitude": "-9.140032",
+            "link": "https://maps.app.goo.gl/NBSNpk9ZNUzc7PAt7"
+        }
+    },
+    {
+        "id": "1540",
+        "clubeId": [
+            "1165"
+        ],
+        "nome": "CAMPO DO CEVADEIRO Nº 1",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "100",
+            "largura": "64"
+        },
+        "georef": {
+            "latitude": "38.945328",
+            "longitude": "-8.994412",
+            "link": "https://maps.app.goo.gl/VVkPukXM3qKpJWKo8"
+        }
+    },
+    {
+        "id": "1641",
+        "clubeId": [
+            "5647"
+        ],
+        "nome": "CAMPO Nº 3 RESTELO",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "90",
+            "largura": "45"
+        },
+        "georef": {
+            "latitude": "38.702241",
+            "longitude": "-9.208749",
+            "link": "https://maps.app.goo.gl/cRHKn8tWaVTzgNuz6"
+        }
+    },
+    {
+        "id": "1753",
+        "clubeId": [
+            "0376"
+        ],
+        "nome": "CAMPO Bº PADRE CRUZ (UNIDOS)",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "94",
+            "largura": "56"
+        },
+        "georef": {
+            "latitude": "38.770323",
+            "longitude": "-9.187531",
+            "link": "https://maps.app.goo.gl/YyNcfSJ9ewSFiugq8"
+        }
+    },
+    {
+        "id": "1829",
+        "clubeId": [
+            "1151"
+        ],
+        "nome": "COMPLEXO LÚDICO UNIÃO D. R. SANTA MARIA",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "94",
+            "largura": "60"
+        },
+        "georef": {
+            "latitude": "38.775548",
+            "longitude": "-9.195182",
+            "link": "https://maps.app.goo.gl/p8JQfmHLEBooq7Qw6"
+        }
+    },
+    {
+        "id": "1832",
+        "clubeId": [
+            "0330"
+        ],
+        "nome": "CAMPO JULIO CAMILO ALVES",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "90",
+            "largura": "60"
+        },
+        "georef": {
+            "latitude": "38.900523",
+            "longitude": "-9.119484",
+            "link": "https://maps.app.goo.gl/HQgpowsN5XWQ2x2X6"
+        }
+    },
+    {
+        "id": "1849",
+        "clubeId": [
+            "0147"
+        ],
+        "nome": "CAMPO MEIA LARANJA",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "91",
+            "largura": "56"
+        },
+        "georef": {
+            "latitude": "38.857094",
+            "longitude": "-9.140204",
+            "link": "https://maps.app.goo.gl/ZB6a8GMWfQUNDwf57"
+        }
+    },
+    {
+        "id": "1850",
+        "clubeId": [
+            "0155"
+        ],
+        "nome": "CAMPO PRIMEIRO DE ABRIL",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "94",
+            "largura": "55"
+        },
+        "georef": {
+            "latitude": "39.149537",
+            "longitude": "-8.900290",
+            "link": "https://maps.app.goo.gl/ohDsFh3vrPHRWQ866"
+        }
+    },
+    {
+        "id": "1855",
+        "clubeId": [
+            "1669"
+        ],
+        "nome": "PARQUE JOGOS CER TENENTE VALDEZ",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "100",
+            "largura": "60"
+        },
+        "georef": {
+            "latitude": "38.778432",
+            "longitude": "-9.204682",
+            "link": "https://maps.app.goo.gl/pDDES25iD6jte7a98"
+        }
+    },
+    {
+        "id": "1861",
+        "clubeId": [
+            "0401"
+        ],
+        "nome": "CAMPO MUNICIPAL ARRUDA DOS VINHOS",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "100",
+            "largura": "64"
+        },
+        "georef": {
+            "latitude": "38.981311",
+            "longitude": "-9.079172",
+            "link": "https://maps.app.goo.gl/aUJSFGbgTQ8Z2Fj59"
+        }
+    },
+    {
+        "id": "1862",
+        "clubeId": [
+            "2595"
+        ],
+        "nome": "CAMPO COLEGIO SAO JOAO BRITO",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "95",
+            "largura": "45"
+        },
+        "georef": {
+            "latitude": "38.773109",
+            "longitude": "-9.158756",
+            "link": "https://maps.app.goo.gl/o3k8j7SXGuaN1MC36"
+        }
+    },
+    {
+        "id": "1883",
+        "clubeId": [
+            "0948"
+        ],
+        "nome": "CAMPO DA LAPA",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "100",
+            "largura": "56"
+        },
+        "georef": {
+            "latitude": "38.810801",
+            "longitude": "-9.228104",
+            "link": "https://maps.app.goo.gl/MRkQ6nc7ajNAeZ3i8"
+        }
+    },
+    {
+        "id": "1886",
+        "clubeId": [
+            "1002"
+        ],
+        "nome": "CAMPO DO SC SANJOANENSE",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "90",
+            "largura": "49"
+        },
+        "georef": {
+            "latitude": "38.821946",
+            "longitude": "-9.094710",
+            "link": "https://maps.app.goo.gl/FJo12mFrxRvPBHK46"
+        }
+    },
+    {
+        "id": "1890",
+        "clubeId": [
+            "1093"
+        ],
+        "nome": "CAMPO MAJOR ROSA BASTOS",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "90",
+            "largura": "45"
+        },
+        "georef": {
+            "latitude": "38.838689",
+            "longitude": "-9.194389",
+            "link": "https://maps.app.goo.gl/Yb2gJseuM4Lvn4Tt8"
+        }
+    },
+    {
+        "id": "1917",
+        "clubeId": [
+            "0979,5903"
+        ],
+        "nome": "CAMPO DA CORREDOURA",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "99",
+            "largura": "55"
+        },
+        "georef": {
+            "latitude": "38.824191",
+            "longitude": "-9.144636",
+            "link": "https://maps.app.goo.gl/mKzDiZ6uBBYMPWRw7"
+        }
+    },
+    {
+        "id": "2009",
+        "clubeId": [
+            "1095"
+        ],
+        "nome": "CAMPO FERNANDO PERFEITO",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "90",
+            "largura": "45"
+        },
+        "georef": {
+            "latitude": "38.778211",
+            "longitude": "-9.121387",
+            "link": "https://maps.app.goo.gl/8DfAuUdCGCiHDLsv6"
+        }
+    },
+    {
+        "id": "2045",
+        "clubeId": [
+            "1095"
+        ],
+        "nome": "ESTADIO UNIVERSITARIO LISBOA - CAMPO 6",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "101",
+            "largura": "71"
+        },
+        "georef": {
+            "latitude": "38.756533",
+            "longitude": "-9.164103",
+            "link": "https://maps.app.goo.gl/A9LtahzbN4eaWqCH7"
+        }
+    },
+    {
+        "id": "2050",
+        "clubeId": [
+            "0796"
+        ],
+        "nome": "CAMPO DAS CORREDOURAS",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "100",
+            "largura": "58"
+        },
+        "georef": {
+            "latitude": "38.859688",
+            "longitude": "-9.194380",
+            "link": "https://maps.app.goo.gl/1XPks9xFEyYpRdrB8"
+        }
+    },
+    {
+        "id": "2142",
+        "clubeId": [
+            "1315"
+        ],
+        "nome": "CAMPO ARNEIROS",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "100",
+            "largura": "60"
+        },
+        "georef": {
+            "latitude": "39.039425",
+            "longitude": "-8.932987",
+            "link": "https://maps.app.goo.gl/ati9JsUNoSWsHES58"
+        }
+    },
+    {
+        "id": "2212",
+        "clubeId": [
+            "0365"
+        ],
+        "nome": "CAMPO ATLETICO REYNOLDS",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "100",
+            "largura": "56"
+        },
+        "georef": {
+            "latitude": "38.845024",
+            "longitude": "-9.089897",
+            "link": "https://maps.app.goo.gl/MtFX15ChT9naH5BAA"
+        }
+    },
+    {
+        "id": "2214",
+        "clubeId": [
+            "0050"
+        ],
+        "nome": "PARQUE DESP. MUNIC. BOBADELA",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "100",
+            "largura": "57"
+        },
+        "georef": {
+            "latitude": "38.804748",
+            "longitude": "-9.100939",
+            "link": "https://maps.app.goo.gl/81UFhKmdqGFvHrjH8"
+        }
+    },
+    {
+        "id": "2221",
+        "clubeId": [
+            "1216"
+        ],
+        "nome": "CAMPO CONDE MENDIA - ZAMBUJALENSE",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "100",
+            "largura": "64"
+        },
+        "georef": {
+            "latitude": "38.870093",
+            "longitude": "-9.121151",
+            "link": "https://maps.app.goo.gl/LThZAbSPSYBeE4Tb6"
+        }
+    },
+    {
+        "id": "2229",
+        "clubeId": [
+            "2712,5979"
+        ],
+        "nome": "CAMPO 1º MAIO | CATUJAL",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "100",
+            "largura": "54"
+        },
+        "georef": {
+            "latitude": "38.815483",
+            "longitude": "-9.117773",
+            "link": "https://maps.app.goo.gl/7VvVYgBCLmwWNjfe7"
+        }
+    },
+    {
+        "id": "2231",
+        "clubeId": [
+            "1017"
+        ],
+        "nome": "COMPLEXO DESPORTIVO ELIAS PEREIRA - CAMPO Nº 2",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "90",
+            "largura": "45"
+        },
+        "georef": {
+            "latitude": "38.789721",
+            "longitude": "-9.103482",
+            "link": "https://maps.app.goo.gl/ksqgnCywh6zAeuob7"
+        }
+    },
+    {
+        "id": "2716",
+        "clubeId": [
+            "1125"
+        ],
+        "nome": "COMP. DESP. QTª PIEDADE CAMPO Nº 1",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "104",
+            "largura": "64"
+        },
+        "georef": {
+            "latitude": "38.864548",
+            "longitude": "-9.070868",
+            "link": "https://maps.app.goo.gl/5y2rbN3ghX7TqxcD7"
+        }
+    },
+    {
+        "id": "3348",
+        "clubeId": [
+            "0908,4887"
+        ],
+        "nome": "COMPLEXO DESPORTIVO ALTO LUMIAR CAMPO 1",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "105",
+            "largura": "65"
+        },
+        "georef": {
+            "latitude": "38.774931",
+            "longitude": "-9.145449",
+            "link": "https://maps.app.goo.gl/UQ1rsJ71Fsu4u4SM8"
+        }
+    },
+    {
+        "id": "3691",
+        "clubeId": [
+            "2903"
+        ],
+        "nome": "CAMPO PARQUE URBANO 25 ABRIL",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "90",
+            "largura": "50"
+        },
+        "georef": {
+            "latitude": "38.801317",
+            "longitude": "-9.235062",
+            "link": "https://maps.app.goo.gl/E5gyAsDD9v15gJseA"
+        }
+    },
+    {
+        "id": "3865",
+        "clubeId": [
+            "1125"
+        ],
+        "nome": "COMP. DESP. QTª PIEDADE CAMPO Nº 2",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "90",
+            "largura": "50"
+        },
+        "georef": {
+            "latitude": "38.864548",
+            "longitude": "-9.070868",
+            "link": "https://maps.app.goo.gl/5y2rbN3ghX7TqxcD7"
+        }
+    },
+    {
+        "id": "4462",
+        "clubeId": [
+            "5414"
+        ],
+        "nome": "CAMPO DR. MANUEL PEREIRA-Bº DAS BRAGADAS",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "93",
+            "largura": "60"
+        },
+        "georef": {
+            "latitude": "38.859844",
+            "longitude": "-9.085971",
+            "link": "https://maps.app.goo.gl/JqiXg3UwtLPYdz81A"
+        }
+    },
+    {
+        "id": "4753",
+        "clubeId": [
+            "5629"
+        ],
+        "nome": "CAMPO COLEGIO PEDRO ARRUPE",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "100",
+            "largura": "50"
+        },
+        "georef": {
+            "latitude": "38.793282",
+            "longitude": "-9.097549",
+            "link": "https://maps.app.goo.gl/KSRBDgTBBjsHCxQw6"
+        }
+    },
+    {
+        "id": "5117",
+        "clubeId": [
+            "0471"
+        ],
+        "nome": "C.FORMACAO FC ALVERCA | CAMPO 1",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "105",
+            "largura": "68"
+        },
+        "georef": {
+            "latitude": "38.892814",
+            "longitude": "-9.034390",
+            "link": "https://maps.app.goo.gl/xGysjQgcu5Qr4Xf89"
+        }
+    },
+    {
+        "id": "5210",
+        "clubeId": [
+            "0471"
+        ],
+        "nome": "C.FORMACAO FC ALVERCA | CAMPO 3",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "57",
+            "largura": "45"
+        },
+        "georef": {
+            "latitude": "38.892814",
+            "longitude": "-9.034390",
+            "link": "https://maps.app.goo.gl/xGysjQgcu5Qr4Xf89"
+        }
+    },
+    {
+        "id": "5230",
+        "clubeId": [
+            "0220"
+        ],
+        "nome": "ACADEMIA JOGADOR - CAMPO 3",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "105",
+            "largura": "68"
+        },
+        "georef": {
+            "latitude": "38.790461",
+            "longitude": "-9.188389",
+            "link": "https://maps.app.goo.gl/ibzVov8TTBGaCFfw9"
+        }
+    },
+    {
+        "id": "5494",
+        "clubeId": [
+            "0471"
+        ],
+        "nome": "C.FORMACAO FC ALVERCA | CAMPO 2",
+        "relvado": "Relvado Sintético",
+        "dimensoes": {
+            "comprimento": "105",
+            "largura": "68"
+        },
+        "georef": {
+            "latitude": "38.892814",
+            "longitude": "-9.034390",
+            "link": "https://maps.app.goo.gl/xGysjQgcu5Qr4Xf89"
+        }
+    }
+]
