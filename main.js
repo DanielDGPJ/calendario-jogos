@@ -387,9 +387,7 @@ function renderJogoCard(jogo, equipaDestaqueId, esconderId) {
         ? `<span class="mx-2">${jogo.resultado}</span>`
         : '<span class="mx-2">vs</span>';
 
-    const localInfo = local?.nome
-        ? `<b>${local.nome}</b>`
-        : 'Sem localização definida.';
+    const localInfo = obterLocalizacao(local);
 
     const card = document.createElement("div");
 
@@ -432,6 +430,50 @@ function obterCorFundo(isento, destacar, equipaDestaque) {
     }
     else
     	return "#f2f2f2";
+}
+
+function obterLocalizacao(local)
+{
+    if (!local?.nome)
+    {
+        return "Sem localização definida.";
+    }
+
+    let html = `<b>${local.nome}</b>`;
+
+    if (
+        local.relvado ||
+        local.dimensoes?.comprimento ||
+        local.dimensoes?.largura
+    )
+    {
+        html += ` (${local.relvado || ""}`;
+
+        if (local.dimensoes?.comprimento)
+        {
+            html += ` ${local.dimensoes.comprimento}`;
+        }
+
+        if (local.dimensoes?.largura)
+        {
+            html += `x${local.dimensoes.largura}`;
+        }
+
+        html += ")";
+    }
+
+    if (local.georef?.link)
+    {
+        html += `
+            <div class="mt-1">
+                ${local.georef.link}
+                    <strong>📍 VER NO MAPA</strong>
+                </a>
+            </div>
+        `;
+    }
+
+    return html;
 }
 
 
