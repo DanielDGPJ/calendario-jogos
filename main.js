@@ -450,7 +450,7 @@ function obterLocalizacao(local)
 
 	if (local.georef?.link)
 	{
-	    html += `<div class="mt-1"><a href="${local.georef.link}"target="_blank" rel="noopener noreferrer"><strong>📍 VER NO MAPA</strong></a></div>`;
+	    html += `<div class="mt-1">📍 <a href="${local.georef.link}"target="_blank" rel="noopener noreferrer"><strong>VER NO MAPA</strong></a></div>`;
 	}
 
     return html;
