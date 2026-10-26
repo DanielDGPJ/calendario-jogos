@@ -1,6 +1,6 @@
 /* Estilo geral da página */
 body {
-  background-color: #eef1f5;
+  background-color: #000000;
   color: #212529;
   font-family: 'Segoe UI', 'Roboto', sans-serif;
   padding-top: 30px;
@@ -8,7 +8,7 @@ body {
 
 /* Container principal */
 .container {
-  background-color: #ffffff;
+  background-color: #a0a0a0;
   padding: 40px;
   border-radius: 16px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
