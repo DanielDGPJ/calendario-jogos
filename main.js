@@ -434,44 +434,24 @@ function obterCorFundo(isento, destacar, equipaDestaque) {
 
 function obterLocalizacao(local)
 {
-    if (!local?.nome)
-    {
-        return "Sem localização definida.";
-    }
+    if (!local?.nome){ return "Sem localização definida."; }
 
     let html = `<b>${local.nome}</b>`;
 
-    if (
-        local.relvado ||
-        local.dimensoes?.comprimento ||
-        local.dimensoes?.largura
-    )
+    if (local.relvado || local.dimensoes?.comprimento || local.dimensoes?.largura)
     {
         html += ` (${local.relvado || ""}`;
-
-        if (local.dimensoes?.comprimento)
-        {
-            html += ` ${local.dimensoes.comprimento}`;
-        }
-
-        if (local.dimensoes?.largura)
-        {
-            html += `x${local.dimensoes.largura}`;
-        }
+		
+        if (local.dimensoes?.comprimento){ html += ` ${local.dimensoes.comprimento}`; }
+        if (local.dimensoes?.largura){ html += `x${local.dimensoes.largura}`; }
 
         html += ")";
     }
 
-    if (local.georef?.link)
-    {
-        html += `
-            <div class="mt-1">
-                ${local.georef.link}
-                    <strong>📍 VER NO MAPA</strong>
-                </a>
-            </div>
-        `;
-    }
+	if (local.georef?.link)
+	{
+	    html += `<div class="mt-1"><a href="${local.georef.link}"target="_blank" rel="noopener noreferrer"><strong>📍 VER NO MAPA</strong></a></div>`;
+	}
 
     return html;
 }
