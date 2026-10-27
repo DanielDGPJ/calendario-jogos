@@ -20,12 +20,12 @@ async function inicializar() {
             localizacoes,
             competicoes
         ] = await Promise.all([
-            carregarJson("desportos.json"),
-            carregarJson("escaloes.json"),
-            carregarJson("clubes.json"),
-            carregarJson("equipas.json"),
-            carregarJson("localizacoes.json"),
-            carregarJson("competicoes.json")
+            carregarJson("data/desportos.json"),
+            carregarJson("data/escaloes.json"),
+            carregarJson("data/clubes.json"),
+            carregarJson("data/equipas.json"),
+            carregarJson("data/localizacoes.json"),
+            carregarJson("data/competicoes.json")
         ]);
 
         dados = {
